@@ -44,7 +44,3 @@ void destroyItem(struct TokenListItem *item) {
 void destroyList(struct TokenList *list) {
     free(list);
 }
-
-int main() {
-    return 0;
-}
