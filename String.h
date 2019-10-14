@@ -1,5 +1,5 @@
-import <stdio.h>
-import <bool.h>
+#import <stdio.h>
+#import <stdbool.h>
 
 struct String {
     int lenght;

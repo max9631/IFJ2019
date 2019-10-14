@@ -1,4 +1,4 @@
-#import <bool.h>
+#import <stdbool.h>
 #import "String.h"
 
 
