@@ -1,42 +1,44 @@
-#import <bool.h>
+#import <stdbool.h>
 #import "String.h"
 
-struct TokenList {
-    TokenListItem *first;
-    TokenListItem *last;
 
 struct TokenListItem {
-    TokenListItem *nextItem;
-    String *token;
-} TokenListItem;
+    struct TokenListItem *nextItem;
+    struct String *token;
+};
+
+struct TokenList {
+    struct TokenListItem *first;
+    struct TokenListItem *last;
+};
 
 
 /**
  * Allocates and initializes TokenList
  */
-TokenList *createList();
+struct TokenList *createList();
 
 /**
  * Creates TokenListItem and chains it to the list. 
  */
-bool addTokenToList(String *token, TokenList *list);
+bool addTokenToList(struct String *token, struct TokenList *list);
 
 /**
  * Returns first element of the list and sets list->first to firstElement->nextItem;
  */
-TokenListItem *pop(TokenList *list);
+struct TokenListItem *pop(struct TokenList *list);
 
 /**
  * Returns element wheather the list is empty.
  */
-bool isEmpty(TokenList *list);
+bool isEmpty(struct TokenList *list);
 
 /**
  * Deallocates item.
  */
-bool destroy(TokenListItem *item);
+void destroyItem(struct TokenListItem *item);
 
 /**
  * Deallocates list.
  */
-bool destroy(TokenList *list);
+void destroyList(struct TokenList *list);
