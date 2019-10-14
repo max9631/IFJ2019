@@ -1,4 +1,4 @@
 #import "TokenList.h"
 #import "String.h"
 
-TokenList *scan(char **document);
+struct TokenList *scan(char **document);
