@@ -3,7 +3,7 @@
  - Jiří Veverka
  - Tomáš Rusín
  - Adam Salih
- - Hobbit
+ - Michal Halabica
 
 ## Workflow
 Kazdý si vytvořte vlastní větev s vaším jménem ve formatu `xlogin01`. Zde budete implementovat vaše řesení. Vaše implementace se bude mergovat do `develop` pomoci pull requestů. Každýmu pull request (PR) musí udělat code review alespoň jeden člen (ideálně takový, kterého se bude daná implementace týkat). PR merguje vždy autor pull requestu.
