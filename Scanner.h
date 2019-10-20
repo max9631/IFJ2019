@@ -1,4 +1,9 @@
-#import "TokenList.h"
-#import "String.h"
+#ifndef SCANNER_H
+#define SCANNER_H
+#include <stdio.h>
+#include "TokenList.h"
+#include "String.h"
 
-struct TokenList *scan(char **document);
+void scan(TokenList *list, FILE *document);
+
+#endif

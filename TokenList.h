@@ -1,5 +1,8 @@
-#import <stdbool.h>
-#import "String.h"
+#ifndef TOKENLIST_H
+#define TOKENLIST_H
+#include <stdbool.h>
+#include <stdlib.h>
+#include "String.h"
 
 
 typedef struct TokenListItem {
@@ -19,7 +22,7 @@ typedef struct TokenList {
 struct TokenList *createList();
 
 /**
- * Creates TokenListItem and chains it to the list. 
+ * Creates TokenListItem and chains it to the list.
  */
 bool addTokenToList(String *token, TokenList *list);
 
@@ -42,3 +45,5 @@ void destroyItem(TokenListItem *item);
  * Deallocates list.
  */
 void destroyList(TokenList *list);
+
+#endif
