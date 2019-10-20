@@ -4,6 +4,15 @@
 #include "TokenList.h"
 #include "String.h"
 
-void scan(TokenList *list, FILE *document);
+typedef struct Document {
+	FILE *file;
+	int currentChar;
+	int currentIndent;
+} Document;
+
+Document *createDocument(FILE *file);
+void destroyDocument(Document *document);
+
+void scan(TokenList *list, Document *document);
 
 #endif

@@ -1,13 +1,20 @@
 #include "Scanner.h"
 
-typedef struct LexerState {
-	FILE *file;
-	int currentChar;
-} LexerState;
+Document *createDocument(FILE *file) {
+	Document *document = (Document *) malloc(sizeof(Document));
+	document->file = file;
+	document->currentIndent = 0;
+	nextCharacter(document);
+    return document;
+}
 
-int nextCharacter(struct LexerState *state) {
-	state->currentChar = getc(state->file);
-	return state->currentChar;
+void destroyDocument(Document *document) {
+	free(document);
+}
+
+int nextCharacter(struct Document *document) {
+	document->currentChar = getc(document->file);
+	return document->currentChar;
 }
 
 bool isNumber(int c) { return c > 47 && c < 58; } // 0-9
