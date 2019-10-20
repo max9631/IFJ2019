@@ -1,4 +1,3 @@
-#include <stdlib.h>
 #include "TokenList.h"
 
 struct TokenList *createList() {

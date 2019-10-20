@@ -1,8 +1,5 @@
-
 #ifndef STRING_H
 #define STRING_H
-#include <stdio.h>
-#include <stdbool.h>
 
 typedef struct String {
     int lenght;
@@ -23,5 +20,4 @@ bool areSame(String *str1, String *str2);
  * Deallocates str.
  */
 bool destroy(String *str);
-
 #endif
