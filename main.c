@@ -15,6 +15,6 @@ int main(int argc, char *argv[]) {
 }
 
 void cleanResources() {
-	if(tokenList != NULL)
-		destroyList(tokenList);
+    if(tokenList != NULL)
+        destroyList(tokenList);
 }

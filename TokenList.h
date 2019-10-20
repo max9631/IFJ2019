@@ -19,7 +19,7 @@ typedef struct TokenList {
 /**
  * Allocates and initializes TokenList
  */
-struct TokenList *createList();
+TokenList *createList();
 
 /**
  * Creates TokenListItem and chains it to the list.
@@ -29,7 +29,7 @@ bool addTokenToList(Token *token, TokenList *list);
 /**
  * Returns first element of the list and sets list->first to firstElement->nextItem;
  */
-struct TokenListItem *pop(TokenList *list);
+Token *pop(TokenList *list);
 
 /**
  * Returns element wheather the list is empty.
@@ -39,11 +39,21 @@ bool isEmpty(TokenList *list);
 /**
  * Deallocates item.
  */
-void destroyItem(TokenListItem *item);
+void destroyListItem(TokenListItem *item);
 
 /**
  * Deallocates list.
  */
 void destroyList(TokenList *list);
+
+/**
+ * Returns first token.
+*/
+Token *peek(TokenList *list);
+
+/**
+ * Returns token on specific offset.
+*/
+Token *peekNext(TokenList *list, int offset);
 
 #endif
