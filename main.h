@@ -6,3 +6,5 @@
 #include "Scanner.h"
 #include "String.h"
 #include "Error.h"
+
+bool isDebug(int argc, char **argv);

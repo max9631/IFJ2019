@@ -56,4 +56,9 @@ Token *peek(TokenList *list);
 */
 Token *peekNext(TokenList *list, int offset);
 
+/*
+ * Prints content of token list to stdout.
+*/
+void debugPrintTokenList(TokenList *list);
+
 #endif
