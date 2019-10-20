@@ -35,7 +35,7 @@ struct Token *defineValue(int *c, FILE *file) {
 }
 
 struct Token *defineIdentifier(int *c, FILE *file) {
-
+    
 }
 
 struct Token *defineString(int *c, FILE *file) {
