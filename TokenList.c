@@ -23,13 +23,13 @@ bool addTokenToList(Token *token, struct TokenList *list) {
     return true;
 }
 
-struct TokenListItem *pop(struct TokenList *list) {
+Token *pop(struct TokenList *list) {
     struct TokenListItem *item = list->first;
     list->first = item->nextItem;
     if (list->first == NULL) {
         list->last = NULL;
     }
-    return item;
+    return item->token;
 }
 
 bool isEmpty(struct TokenList *list) {
@@ -69,7 +69,7 @@ Token *peekNext(TokenList *list, int offset) {
     for(int i = 0; i < offset; i++) {
         item = item->nextItem;
 
-        if(item == NULL && i < offset-1) 
+        if(item == NULL) 
             return NULL;
     }
 
