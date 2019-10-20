@@ -43,5 +43,5 @@ struct Token *defineString(int *c, FILE *file) {
 }
 
 void scan(TokenList *list, FILE *document) {
-
+  
 }
