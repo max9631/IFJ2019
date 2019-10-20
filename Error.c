@@ -8,7 +8,7 @@ void handleError(ErrorCodes code, char *message, ...) {
 	vfprintf(stderr, message, argList);
 
 	cleanResources();
-	
+
 	va_end(argList);
 	exit(code);
 }

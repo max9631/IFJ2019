@@ -4,17 +4,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
+#include "Error.h"
 
 typedef struct String {
     int lenght;
     char *value;
 } String;
 
+
 /**
  * Creates a string using malloc.
  */
-String *stringInit(int c);
-
+String *createString(char **chars);
 /**
  * Adds a character to the string str
  * [in] string *str: Original string
@@ -31,7 +33,7 @@ bool appendCharacter(String *str, int c);
 /**
  * Deallocates str.
  */
-void stringDestroy(String *str);
+void destroyString(String *str);
 
 /**
   * Returns length of a input string

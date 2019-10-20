@@ -35,7 +35,7 @@ struct Token *defineValue(int *c, FILE *file) {
 }
 
 struct Token *defineIdentifier(int *c, FILE *file) {
-  
+
 }
 
 struct Token *defineString(int *c, FILE *file) {
@@ -43,5 +43,8 @@ struct Token *defineString(int *c, FILE *file) {
 }
 
 void scan(TokenList *list, FILE *document) {
-
+  int c = 0;
+  while((c = getc(document)) != EOF){
+    printf("%c", c);
+  }
 }

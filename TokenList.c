@@ -8,7 +8,7 @@ struct TokenList *createList() {
 
 }
 
-bool addTokenToList(Token *token, struct TokenList *list) {
+bool addTokenToList(String *token, TokenList *list) {
     struct TokenListItem *item = (struct TokenListItem *) malloc(sizeof(struct TokenList));
     item->nextItem = NULL;
     item->token = token;
@@ -23,7 +23,7 @@ bool addTokenToList(Token *token, struct TokenList *list) {
     return true;
 }
 
-struct TokenListItem *pop(struct TokenList *list) {
+struct TokenListItem *pop(TokenList *list) {
     struct TokenListItem *item = list->first;
     list->first = item->nextItem;
     if (list->first == NULL) {
@@ -32,20 +32,14 @@ struct TokenListItem *pop(struct TokenList *list) {
     return item;
 }
 
-bool isEmpty(struct TokenList *list) {
+bool isEmpty(TokenList *list) {
     return list->first == NULL;
 }
 
-void destroyItem(struct TokenListItem *item) {
+void destroyItem(TokenListItem *item) {
     free(item);
 }
 
-void destroyList(struct TokenList *list) {
-    TokenListItem *item = list->first;
-    while (item != NULL) {
-        TokenListItem *tmp = item;
-        item = tmp->nextItem;
-        destroyItem(tmp);
-    }
+void destroyList(TokenList *list) {
     free(list);
 }
