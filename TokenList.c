@@ -49,3 +49,29 @@ void destroyList(struct TokenList *list) {
     }
     free(list);
 }
+
+Token *peek(TokenList *list) {
+    return peekNext(list, 0);
+}
+
+Token *peekNext(TokenList *list, int offset) {
+    if(list == NULL)
+        return NULL;
+
+    TokenListItem *item = list->first;
+
+    if(item == NULL)
+        return NULL;
+
+    if(offset == 0)
+        return item->token;
+
+    for(int i = 0; i < offset; i++) {
+        item = item->nextItem;
+
+        if(item == NULL && i < offset-1) 
+            return NULL;
+    }
+
+    return item->token;
+}
