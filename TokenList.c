@@ -8,7 +8,7 @@ struct TokenList *createList() {
 
 }
 
-bool addTokenToList(struct String *token, struct TokenList *list) {
+bool addTokenToList(Token *token, struct TokenList *list) {
     struct TokenListItem *item = (struct TokenListItem *) malloc(sizeof(struct TokenList));
     item->nextItem = NULL;
     item->token = token;

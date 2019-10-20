@@ -2,7 +2,7 @@
 #define TOKENTYPE_H
 
 typedef enum TokenType {
-    //TODO
+    InvalidToken = -1
 } TokenType;
 
 #endif
