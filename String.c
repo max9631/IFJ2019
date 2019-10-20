@@ -21,6 +21,14 @@ bool appendCharacter(String *str, int c) {
 	return true;
 }
 
+bool stringEquals(String *str1, String *str2){
+  if(stringLength(str1->value) != stringLength(str2->value)) return false;
+  for(int i = 0; i < stringLength(str1->value); i++){
+    if(str1->value[i] != str2->value[i]) return false;
+  }
+  return true;
+}
+
 void stringDestroy(String *str) {
 	free(str->value);
 	free(str);
