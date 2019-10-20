@@ -29,7 +29,7 @@ bool addTokenToList(Token *token, TokenList *list);
 /**
  * Returns first element of the list and sets list->first to firstElement->nextItem;
  */
-TokenListItem *pop(TokenList *list);
+Token *pop(TokenList *list);
 
 /**
  * Returns element wheather the list is empty.
