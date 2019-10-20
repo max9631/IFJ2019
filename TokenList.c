@@ -1,5 +1,5 @@
-#import <stdlib.h>
-#import "TokenList.h"
+#include <stdlib.h>
+#include "TokenList.h"
 
 struct TokenList *createList() {
     struct TokenList *list = (struct TokenList *) malloc(sizeof(struct TokenList));
@@ -42,5 +42,11 @@ void destroyItem(struct TokenListItem *item) {
 }
 
 void destroyList(struct TokenList *list) {
+    TokenListItem *item = list->first;
+    while (item != NULL) {
+        TokenListItem *tmp = item;
+        item = tmp->nextItem;
+        destroyItem(tmp);
+    }
     free(list);
 }
