@@ -8,4 +8,6 @@ typedef struct Token {
     TokenType type;
 } Token;
 
+Token *createToken(String *string, TokenType type);
+
 #endif
