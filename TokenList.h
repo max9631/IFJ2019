@@ -3,11 +3,11 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include "String.h"
-
+#include "Token.h"
 
 typedef struct TokenListItem {
     struct TokenListItem *nextItem;
-    struct String *token;
+    struct Token *token;
 } TokenListItem;
 
 typedef struct TokenList {
@@ -24,7 +24,7 @@ struct TokenList *createList();
 /**
  * Creates TokenListItem and chains it to the list.
  */
-bool addTokenToList(String *token, TokenList *list);
+bool addTokenToList(Token *token, TokenList *list);
 
 /**
  * Returns first element of the list and sets list->first to firstElement->nextItem;
