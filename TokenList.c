@@ -1,15 +1,14 @@
 #include "TokenList.h"
 
-struct TokenList *createList() {
-    struct TokenList *list = (struct TokenList *) malloc(sizeof(struct TokenList));
+TokenList *createList() {
+    TokenList *list = (TokenList *) malloc(sizeof(TokenList));
     list->first = NULL;
     list->last = NULL;
     return list;
-
 }
 
-bool addTokenToList(Token *token, struct TokenList *list) {
-    struct TokenListItem *item = (struct TokenListItem *) malloc(sizeof(struct TokenList));
+bool addTokenToList(Token *token, TokenList *list) {
+    TokenListItem *item = (TokenListItem *) malloc(sizeof(TokenList));
     item->nextItem = NULL;
     item->token = token;
     if (item == NULL) return false;
@@ -23,29 +22,32 @@ bool addTokenToList(Token *token, struct TokenList *list) {
     return true;
 }
 
-Token *pop(struct TokenList *list) {
-    struct TokenListItem *item = list->first;
+Token *pop(TokenList *list) {
+    TokenListItem *item = list->first;
     list->first = item->nextItem;
     if (list->first == NULL) {
         list->last = NULL;
     }
-    return item->token;
+
+    Token *token = item->token;
+    destroyListItem(item);
+    return token;
 }
 
-bool isEmpty(struct TokenList *list) {
+bool isEmpty(TokenList *list) {
     return list->first == NULL;
 }
 
-void destroyItem(struct TokenListItem *item) {
+void destroyListItem(TokenListItem *item) {
     free(item);
 }
 
-void destroyList(struct TokenList *list) {
+void destroyList(TokenList *list) {
     TokenListItem *item = list->first;
     while (item != NULL) {
         TokenListItem *tmp = item;
         item = tmp->nextItem;
-        destroyItem(tmp);
+        destroyListItem(tmp);
     }
     free(list);
 }

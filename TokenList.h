@@ -39,7 +39,7 @@ bool isEmpty(TokenList *list);
 /**
  * Deallocates item.
  */
-void destroyItem(TokenListItem *item);
+void destroyListItem(TokenListItem *item);
 
 /**
  * Deallocates list.
