@@ -6,4 +6,4 @@
 #include "TokenList.h"
 #include "Scanner.h"
 #include "String.h"
-#include "Errors.h"
+#include "Error.h"

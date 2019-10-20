@@ -1,8 +1,8 @@
-#include <stdio.h>
-#include <stdarg.h>
-
 #ifndef Errors
 #define Errors
+
+#include <stdio.h>
+#include <stdarg.h>
 
 typedef enum ErrorCodes {
     OK = 0,
