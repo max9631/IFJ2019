@@ -59,6 +59,6 @@ Token *peekNext(TokenList *list, int offset);
 /*
  * Prints content of token list to stdout.
 */
-void debugPrintTokenList(TokenList *list);
+void printTokenList(TokenList *list, bool isDebug);
 
 #endif

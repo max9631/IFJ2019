@@ -3,6 +3,8 @@
 TokenList *tokenList = NULL;
 
 int main(int argc, char *argv[]) {
+    isDebug = true;
+
     FILE *file = fopen(argv[1], "r");
     if (file == NULL)
         handleError(2, "Invalid file name");
@@ -18,22 +20,7 @@ int main(int argc, char *argv[]) {
     addTokenToList(token, tokenList);
 
     //scan(tokenList, file);
-
-    if(isDebug(argc, argv)) {
-        debugPrintTokenList(tokenList);
-    }
-}
-
-bool isDebug(int argc, char **argv) {
-    if(argc == 1)
-        return false;
-
-    for(int i = 0; i < argc; i++) {
-        if(strcmp(argv[i], "--debug") == 0)
-            return true;
-    }
-
-    return false;
+    printTokenList(tokenList, isDebug);
 }
 
 void cleanResources() {
