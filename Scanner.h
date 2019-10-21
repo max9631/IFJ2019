@@ -1,6 +1,8 @@
 #ifndef SCANNER_H
 #define SCANNER_H
+
 #include <stdio.h>
+
 #include "TokenList.h"
 #include "String.h"
 #include "Token.h"
@@ -9,13 +11,16 @@
 typedef struct Document {
 	FILE *file;
 	int currentChar;
-	int currentIndent;
+	int lastIndent;
+	int line;
+	int row;
 } Document;
 
 Document *createDocument(FILE *file);
 int nextCharacter(Document *document);
 void destroyDocument(Document *document);
 
+bool isNewLine(Document *document);
 bool isEndOfLine(int c);
 bool isNumber(int c);
 bool isCharacter(int c);
@@ -38,6 +43,7 @@ bool isTerminator(int c);
 Token *defineValue(Document *document);
 Token *defineIdentifier(Document *document);
 Token *defineString(Document *document);
+void countIndent(TokenList *list, Document *document);
 
 void scan(TokenList *list, Document *document);
 

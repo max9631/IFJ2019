@@ -3,7 +3,10 @@
 Document *createDocument(FILE *file) {
 	Document *document = (Document *) malloc(sizeof(Document));
 	document->file = file;
-	document->currentIndent = 0;
+	document->lastIndent = 0;
+	document->row = 0;
+	document->line = 0;
+	document->currentChar = (int) '\n';
 	nextCharacter(document);
     return document;
 }
@@ -13,10 +16,17 @@ void destroyDocument(Document *document) {
 }
 
 int nextCharacter(Document *document) {
+	if (isEndOfLine(document->currentChar)) {
+		document->line++;
+		document->row = 0;
+	} else {
+		document->row++;
+	}
 	document->currentChar = getc(document->file);
 	return document->currentChar;
 }
 
+bool isNewLine(Document *document) { return document->row == 0; }
 bool isEndOfLine(int c) { return c == (int) '\n'; }
 
 bool isNumber(int c) { return c > 47 && c < 58; } // 0-9
@@ -99,6 +109,24 @@ Token *defineString(Document *document) {
 	return createToken(string, DATA_TOKEN_STRING);
 }
 
+void countIndent(TokenList *list, Document *document) {
+	int sum = 0;
+	int ch;
+	while (isSpace((ch = nextCharacter(document)))) 
+		sum++;
+	if (isEndOfLine(ch)) return;
+	if (sum == document->lastIndent) 
+		return;
+	if (sum > document->lastIndent + 1) 
+		handleError(SyntaxError, "Wrong number of indents at line %d row %d", document->line, document->row);
+	else if (sum == document->lastIndent + 1)
+		addTokenToList(createToken(NULL, TOKEN_INDENT), list);
+	else if (sum < document->lastIndent) {
+		int d = document->lastIndent - sum;
+		for (int i = 0; i < d; i++)
+			addTokenToList(createToken(NULL, TOKEN_DEINDENT), list);
+	}
+}
 
 void scan(TokenList *list, Document *document) {
 	struct Token *token = NULL;
@@ -110,6 +138,7 @@ void scan(TokenList *list, Document *document) {
 		if (isNumber(current)) token = defineValue(document);
 		else if (isCharacter(current)) token = defineIdentifier(document);
 		else if (isApostroph(current)) token = defineString(document);
+		else if (isSpace(current) && isNewLine(document)) { tokenOccured = false; countIndent(list, document); }
 		else if (isOpeningParen(current)) { token = createToken(createStringFromChar(current), TOKEN_OPAREN); current = nextCharacter(document); }
 		else if (isClosingParen(current)) { token = createToken(createStringFromChar(current), TOKEN_CPAREN); current = nextCharacter(document); }
 		else if (isColon(current)) { token = createToken(createStringFromChar(current), TOKEN_COLON); current = nextCharacter(document); }
