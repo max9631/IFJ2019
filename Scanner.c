@@ -4,7 +4,7 @@ Document *createDocument(FILE *file) {
 	Document *document = (Document *) malloc(sizeof(Document));
 	document->file = file;
 	document->lastIndent = 0;
-	document->row = 0;
+	document->column = 0;
 	document->line = 0;
 	document->currentChar = (int) '\n';
 	nextCharacter(document);
@@ -18,15 +18,15 @@ void destroyDocument(Document *document) {
 int nextCharacter(Document *document) {
 	if (isEndOfLine(document->currentChar)) {
 		document->line++;
-		document->row = 0;
+		document->column = 0;
 	} else {
-		document->row++;
+		document->column++;
 	}
 	document->currentChar = getc(document->file);
 	return document->currentChar;
 }
 
-bool isNewLine(Document *document) { return document->row == 0; }
+bool isNewLine(Document *document) { return document->column == 0; }
 bool isEndOfLine(int c) { return c == (int) '\n'; }
 
 bool isNumber(int c) { return c > 47 && c < 58; } // 0-9
@@ -118,7 +118,7 @@ void countIndent(TokenList *list, Document *document) {
 	if (sum == document->lastIndent) 
 		return;
 	if (sum > document->lastIndent + 1) 
-		handleError(SyntaxError, "Wrong number of indents at line %d row %d", document->line, document->row);
+		handleError(SyntaxError, "Wrong number of indents at line %d column %d", document->line, document->column);
 	else if (sum == document->lastIndent + 1)
 		addTokenToList(createToken(NULL, TOKEN_INDENT), list);
 	else if (sum < document->lastIndent) {
@@ -153,7 +153,7 @@ void scan(TokenList *list, Document *document) {
 		else if (isTerminator(current)) { tokenOccured = false; current = nextCharacter(document); }
 		else {
 			printf("%c is value %d\n", current, current);
-			handleError(SyntaxError, "Invalid number syntax at line %d, row %d", document->line, document->row);
+			handleError(SyntaxError, "Invalid number syntax on line %d, column %d", document->line, document->column);
 		}
 		
 		if (tokenOccured && token == NULL) {

@@ -13,7 +13,7 @@ typedef struct Document {
 	int currentChar;
 	int lastIndent;
 	int line;
-	int row;
+	int column;
 } Document;
 
 Document *createDocument(FILE *file);
