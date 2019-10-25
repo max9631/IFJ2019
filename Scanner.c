@@ -65,7 +65,7 @@ Token *defineValue(Document *document) {
 		else isValid = false;
 		c = nextCharacter(document);
 	}
-	if (!isValid) handleError(SyntaxError, "Invalid number syntax near %s", string->value);
+	if (!isValid) handleError(LexError, "Invalid number syntax near %s", string->value);
 	TokenType type = DATA_TOKEN_INT;
 	if (dotOccured) 
 		type = DATA_TOKEN_FLOAT; 
