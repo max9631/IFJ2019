@@ -91,8 +91,8 @@ char* convertTokenTypeToString(TokenType type) {
     return tokenTypeAsString;
 }
 
-void printTokenList(TokenList *list, bool isDebug) {
-    if(isDebug) return;
+void printTokenList(TokenList *list) {
+    if(inDebugMode) return;
 
     if (list == NULL) {
         printf("Token list is not initialized.\n");

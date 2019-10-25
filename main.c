@@ -1,9 +1,7 @@
 #include "main.h"
 
-TokenList *tokenList = NULL;
-
 int main(int argc, char *argv[]) {
-    isDebug = true;
+    inDebugMode = true;
 
     FILE *file = fopen(argv[1], "r");
     if (file == NULL)
@@ -20,10 +18,6 @@ int main(int argc, char *argv[]) {
     addTokenToList(token, tokenList);
 
     //scan(tokenList, file);
-    printTokenList(tokenList, isDebug);
+    printTokenList(tokenList);
 }
 
-void cleanResources() {
-    if(tokenList != NULL)
-        destroyList(tokenList);
-}

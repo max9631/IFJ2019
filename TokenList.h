@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "String.h"
 #include "Token.h"
+#include "Resource.h"
 
 typedef struct TokenListItem {
     struct TokenListItem *nextItem;
@@ -59,6 +60,6 @@ Token *peekNext(TokenList *list, int offset);
 /*
  * Prints content of token list to stdout.
 */
-void printTokenList(TokenList *list, bool isDebug);
+void printTokenList(TokenList *list);
 
 #endif
