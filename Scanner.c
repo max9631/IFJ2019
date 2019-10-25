@@ -31,19 +31,19 @@ bool isEndOfLine(int c) { return c == (int) '\n'; }
 
 bool isNumber(int c) { return c > 47 && c < 58; } // 0-9
 bool isCharacter(int c) { return (c > 64 && c < 91) || (c > 96 && c < 123); } // a-z || A-Z
-bool isOpeningParen(int c) { return c == 40; } // (
-bool isClosingParen(int c) { return c == 41; } // )
-bool isDot(int c) { return c == 46; } // .
-bool isColon(int c) { return c == 44; } // ,
-bool isEqual(int c) { return c == 61; } // =
-bool isApostroph(int c) { return c == 34; } // "
-bool isNot(int c) { return c == 33; } // !
-bool isGreater(int c) { return c == 62; } // >
-bool isLessThan(int c) { return c == 60; } // <
-bool isPlus(int c) { return c == 43; } // +
-bool isMinus(int c) { return c == 45; } // -
-bool isDevision(int c) { return c == 47; } // /
-bool isMultiplication(int c) { return c == 42; } // *
+bool isOpeningParen(int c) { return c == (int) '('; }
+bool isClosingParen(int c) { return c == (int) ')'; }
+bool isDot(int c) { return c == (int) '.'; }
+bool isColon(int c) { return c == (int) ','; }
+bool isEqual(int c) { return c == (int) '='; }
+bool isApostroph(int c) { return c == (int) '"'; }
+bool isNot(int c) { return c == (int) '!'; }
+bool isGreater(int c) { return c == (int) '>'; }
+bool isLessThan(int c) { return c == (int) '<'; }
+bool isPlus(int c) { return c == (int) '+'; }
+bool isMinus(int c) { return c == (int) '-'; }
+bool isDevision(int c) { return c == (int) '/'; }
+bool isMultiplication(int c) { return c == (int) '*'; }
 bool isSpace(int c) { return c == (int) ' '; }
 
 bool isTerminator(int c) { return c == EOF || c == (int) ' ' || c == (int) '\n'; }
