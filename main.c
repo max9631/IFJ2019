@@ -1,20 +1,23 @@
 #include "main.h"
 
-TokenList *tokenList = NULL;
-
 int main(int argc, char *argv[]) {
-    if(argc != 2)
-        handleError(1, "Invalid argument %s", "test");
+    inDebugMode = true;
 
     FILE *file = fopen(argv[1], "r");
     if (file == NULL)
         handleError(2, "Invalid file name");
 
     tokenList = createList();
-    scan(tokenList, file);
+    
+    Token *token = malloc(sizeof(Token));
+    token->type = InvalidToken;
+
+    char *exStr = "ABCD";
+    token->value = createString(&exStr);
+
+    addTokenToList(token, tokenList);
+
+    //scan(tokenList, file);
+    printTokenList(tokenList);
 }
 
-void cleanResources() {
-    if(tokenList != NULL)
-        destroyList(tokenList);
-}

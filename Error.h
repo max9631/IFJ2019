@@ -1,9 +1,11 @@
-#ifndef Errors
-#define Errors
+#ifndef Error_H
+#define Error_H
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+
+#include "Resource.h"
 
 typedef enum ErrorCodes {
     OK = 0,
@@ -17,7 +19,6 @@ typedef enum ErrorCodes {
     InternalError = 99
 } ErrorCodes;
 
-void cleanResources();
 void handleError(ErrorCodes code, char* message, ...);
 
 #endif
