@@ -58,5 +58,6 @@ typedef struct Token {
 } Token;
 
 Token *createToken(String *string, TokenType type);
+char* convertTokenTypeToString(TokenType type);
 
 #endif

@@ -78,19 +78,6 @@ Token *peekNext(TokenList *list, int offset) {
     return item->token;
 }
 
-char* convertTokenTypeToString(TokenType type) {
-    char *tokenTypeAsString = malloc(sizeof(char) * 500);
-    
-    switch (type)
-    {
-        default: 
-            sprintf(tokenTypeAsString, "InvalidToken (%d)", type);
-            break;
-    }
-
-    return tokenTypeAsString;
-}
-
 void printTokenList(TokenList *list) {
     if(inDebugMode) return;
 
