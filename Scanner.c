@@ -187,12 +187,10 @@ int skipUntilNewLine(Document *document) {
 }
 
 void scan(TokenList *list, Document *document) {
-	struct Token *token = NULL;
-	int current = nextCharacter(document);
-	while (current != EOF) {
-		bool tokenOccured = true;
-		token = NULL;
-		printf("Current char is: %c\n", current);
+	while (document->currentChar != EOF) {
+		int current = document->currentChar;
+		Token *token = NULL;
+		
 		if (isNewLine(document) && isSpace(current)) generateIndent(list, document);
 		else if (isComment(current)) skipUntilNewLine(document);
 		else if (isNumber(current)) token = defineValue(document);
@@ -207,13 +205,10 @@ void scan(TokenList *list, Document *document) {
 			printf("%c is value of %d\n", current, current);
 			handleError(SyntaxError, "Invalid number syntax on line %d, column %d", document->line, document->column);
 		}
-		
-		if (tokenOccured && token == NULL) {
-			destroyList(list);
-			printf("DEBUG: Last char is %c\n", current);
-			handleError(11, "Scanner: Input file could not be loaded.");
-		} else if (tokenOccured) {
-			printf("new token: %s\n", token->value->value);
+
+		if (token != NULL) {
+			if (inDebugMode)
+				printf("new token: %s\n", token->value->value);
 			addTokenToList(token, list);
 		}
 	}
