@@ -63,20 +63,15 @@ Token *defineValue(Document *document) {
 	int c = document->currentChar;
 	struct String *string = createStringFromChar(c);
 	bool dotOccured = false;
-	bool isValid = true;
 	c = nextCharacter(document);
-	while (!isTerminator(c)) {
-		int ch = c;
-		appendCharacter(string, ch);
-		if (isNumber(ch)) {}
-		else if (isDot(ch)) {
-			if (!dotOccured) dotOccured = true;
-			else isValid = false;
-		} 
-		else isValid = false;
+	while (isNumber(c) || isDot(c)) {
+		if ((isDot(c) && dotOccured)) {
+			handleError(LexError, "Invalid number syntax");
+		}
+		dotOccured = dotOccured || isDot(c);
+		appendCharacter(string, c);
 		c = nextCharacter(document);
 	}
-	if (!isValid) handleError(LexError, "Invalid number syntax near %s", string->value);
 	TokenType type = DATA_TOKEN_INT;
 	if (dotOccured) 
 		type = DATA_TOKEN_FLOAT; 
