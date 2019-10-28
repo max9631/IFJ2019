@@ -79,7 +79,7 @@ Token *peekNext(TokenList *list, int offset) {
 }
 
 void printTokenList(TokenList *list) {
-    if(inDebugMode) return;
+    if(!inDebugMode) return;
 
     if (list == NULL) {
         printf("Token list is not initialized.\n");
