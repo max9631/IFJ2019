@@ -103,26 +103,56 @@ Token *defineIdentifier(Document *document) {
 Token *defineString(Document *document) {
 	if (inDebugMode)
 		printf("defining string\n");
-	int c = document->currentChar;
-	struct String *string = createStringFromChar(c);
-	c = nextCharacter(document);
-	if (isApostroph(c)) {
-		appendCharacter(string, c);
-		c = nextCharacter(document);
+	if (isDoubleQuote((document->currentChar)))
+		return defineDoubleQuoteString(document);
+	else if (isApostroph((document->currentChar)))
+		return defineApostrophString(document);
+	return NULL;
+}
+
+Token *defineDoubleQuoteString(Document *document) {
+	int ch = nextCharacter(document);
+	bool isMultilineString = false;
+	if (isDoubleQuote(ch)) {
+		ch = nextCharacter(document);
+		if (isDoubleQuote(ch)) {
+			isMultilineString = true;
+			ch = nextCharacter(document);
+		} else {
+			return createToken(NULL, DATA_TOKEN_STRING);
+		}
 	}
-	while (!isApostroph(c)) {
-		appendCharacter(string, c);
-		c = nextCharacter(document);
+	String *string = recordStringUntilChar(document, (int) '"');
+	if (isMultilineString) {
+		for (int i = 0; i < 2; i++) {
+			ch = nextCharacter(document);
+			if (!isDoubleQuote(ch)) {
+				handleError(LexError, "Incorrect string end");
+			}
+		}
 	}
-	if (c == EOF){
-		printf("Invalid String: %s\n", string->value); 
-		handleError(SyntaxError, "Invalid String: %s", string->value);
-	}
-	if (c == (int)'"') {
-		appendCharacter(string, c);
-		c = nextCharacter(document);
-	}
+	nextCharacter(document);
 	return createToken(string, DATA_TOKEN_STRING);
+}
+
+Token *defineApostrophString(Document *document) {
+	nextCharacter(document);
+	String *string = recordStringUntilChar(document, (int) '\'');
+	nextCharacter(document);
+	return createToken(string, DATA_TOKEN_STRING);
+}
+
+String *recordStringUntilChar(Document *document, int endChar) {
+	int ch = document->currentChar;
+	String *string = createStringFromChar(ch);
+	bool isEscaping = false;
+	ch = nextCharacter(document);
+	while (ch != endChar || isEscaping) {
+		isEscaping = (isEscaping) ? false : ch == (int) '\\';
+		if (!isEscaping) appendCharacter(string, ch);
+		ch = nextCharacter(document);
+	}
+	return string;
 }
 
 Token *defineOperator(Document *document, int c) {

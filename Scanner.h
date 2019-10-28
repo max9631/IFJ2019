@@ -46,6 +46,9 @@ bool isOperator(int c);
 Token *defineValue(Document *document);
 Token *defineIdentifier(Document *document);
 Token *defineString(Document *document);
+Token *defineDoubleQuoteString(Document *document);
+Token *defineApostrophString(Document *document);
+String *recordStringUntilChar(Document *document, int endChar);
 void countIndent(TokenList *list, Document *document);
 
 void scan(TokenList *list, Document *document);
