@@ -15,7 +15,7 @@ String *createString(char **chars){
 	if (str == NULL) handleError(InternalError, "String Error: Could not initialize memory");
 	str->value = (char *) malloc(sizeof(char*));
 	if (str->value == NULL) handleError(InternalError, "String Error: Could not initialize memory");
-	memcpy (&str->value, &*chars, sizeof(**chars) );
+	strcpy(str->value, *chars);
 	str->lenght = stringLength(*chars);
 	return str;
 }

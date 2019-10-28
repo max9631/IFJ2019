@@ -77,3 +77,38 @@ Token *peekNext(TokenList *list, int offset) {
 
     return item->token;
 }
+
+char* convertTokenTypeToString(TokenType type) {
+    char *tokenTypeAsString = malloc(sizeof(char) * 500);
+    
+    switch (type)
+    {
+        default: 
+            sprintf(tokenTypeAsString, "InvalidToken (%d)", type);
+            break;
+    }
+
+    return tokenTypeAsString;
+}
+
+void printTokenList(TokenList *list) {
+    if(inDebugMode) return;
+
+    if (list == NULL) {
+        printf("Token list is not initialized.\n");
+        return;
+    }
+
+    TokenListItem *item = list->first;
+    while(item != NULL) {
+        Token *token = item->token;
+
+        printf("<TokenListItem NextExists=\"%s\"> <Token Type=\"%s\" Value=\"%s\" /> </TokenListItem>\n",
+            item->nextItem == NULL ? "false" : "true",
+            convertTokenTypeToString(token->type),
+            token->value == NULL ? "NULL" : token->value->value
+        );
+
+        item = item->nextItem;
+    }
+}
