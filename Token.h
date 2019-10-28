@@ -3,8 +3,7 @@
 #include "String.h"
 
 typedef enum {
-    TOKEN_IDENTIFIER, //Identifier
-    TOKEN_FUNCTION, //Function identifier (can end with ? or !)
+    TOKEN_IDENTIFIER = 1, //Identifier
 
     /* Data types */
     DATA_TOKEN_INT, //Integer
@@ -13,19 +12,22 @@ typedef enum {
     DATA_TOKEN_NONE, //NULL
 
     /* Operators */
-    OPERATOR_MUL, // *
-    OPERATOR_DIV, // /
-    OPERATOR_ADD, //+
-    OPERATOR_SUB, //-
-    OPERATOR_ASSIGN, //=
-
-    OPERATOR_EQL, //==
+    OPERATOR_NOT, //!
     OPERATOR_NEQL,//!=
-    OPERATOR_LESS, //<
-    OPERATOR_LESSEQL, //<=
     OPERATOR_MORE, //>
     OPERATOR_MOREEQL, //>=
-    OPERATOR_NOT,
+    OPERATOR_LESS, //<
+    OPERATOR_LESSEQL, //<=
+    OPERATOR_ADD, //+
+    OPERATOR_ADD_ASSIGN, //+=
+    OPERATOR_SUB, //-
+    OPERATOR_SUB_ASSIGN, //-=
+    OPERATOR_ASSIGN, //=
+    OPERATOR_EQL, //==
+    OPERATOR_DIV, // /
+    OPERATOR_DIV_ASSIGN, // /=
+    OPERATOR_MUL, //*
+    OPERATOR_MUL_ASSIGN, //*=
 
     /* Misc */
     TOKEN_OPAREN, //(

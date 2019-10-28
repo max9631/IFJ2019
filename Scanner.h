@@ -7,6 +7,7 @@
 #include "String.h"
 #include "Token.h"
 #include "Error.h"
+#include "Resource.h"
 
 typedef struct Document {
 	FILE *file;
@@ -38,7 +39,9 @@ bool isMinus(int c);
 bool isDevision(int c);
 bool isMultiplication(int c);
 bool isSpace(int c);
+bool isComment(int c);
 bool isTerminator(int c);
+bool isOperator(int c);
 
 Token *defineValue(Document *document);
 Token *defineIdentifier(Document *document);
