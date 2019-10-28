@@ -87,15 +87,14 @@ void printTokenList(TokenList *list) {
     }
 
     TokenListItem *item = list->first;
+    printf("<TokenList>\n");
     while(item != NULL) {
         Token *token = item->token;
-
-        printf("<TokenListItem NextExists=\"%s\"> <Token Type=\"%s\" Value=\"%s\" /> </TokenListItem>\n",
-            item->nextItem == NULL ? "false" : "true",
+        printf("  <Token Type=\"%s\" Value=\"%s\" />\n",
             convertTokenTypeToString(token->type),
             token->value == NULL ? "NULL" : token->value->value
         );
-
         item = item->nextItem;
     }
+    printf("</TokenList>\n");
 }
