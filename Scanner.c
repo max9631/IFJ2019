@@ -36,7 +36,8 @@ bool isClosingParen(int c) { return c == (int) ')'; }
 bool isDot(int c) { return c == (int) '.'; }
 bool isColon(int c) { return c == (int) ','; }
 bool isEqual(int c) { return c == (int) '='; }
-bool isApostroph(int c) { return c == (int) '"'; }
+bool isDoubleQuote(int c) { return c == (int) '"'; }
+bool isApostroph(int c) { return c == (int) '\''; }
 bool isNot(int c) { return c == (int) '!'; }
 bool isGreater(int c) { return c == (int) '>'; }
 bool isLessThan(int c) { return c == (int) '<'; }
@@ -47,6 +48,9 @@ bool isMultiplication(int c) { return c == (int) '*'; }
 bool isSpace(int c) { return c == (int) ' '; }
 
 bool isTerminator(int c) { return c == EOF || c == (int) ' ' || c == (int) '\n'; }
+bool isString(int c) { 
+	return isDoubleQuote(c) || isApostroph(c);
+}
 
 bool isOperator(int c) {
 	return isNot(c) || isGreater(c) || isLessThan(c) || isPlus(c) || isMinus(c) || isDevision(c) || isMultiplication(c) || isEqual(c);
@@ -103,7 +107,7 @@ Token *defineString(Document *document) {
 		c = nextCharacter(document);
 	}
 	if (c == EOF){
-		printf("Invalid String: %s", string->value); 
+		printf("Invalid String: %s\n", string->value); 
 		handleError(SyntaxError, "Invalid String: %s", string->value);
 	}
 	if (c == (int)'"') {
@@ -165,12 +169,12 @@ void scan(TokenList *list, Document *document) {
 		if (isNewLine(document) && isSpace(current)) generateIndent(list, document);
 		else if (isNumber(current)) token = defineValue(document);
 		else if (isCharacter(current)) token = defineIdentifier(document);
-		else if (isApostroph(current)) token = defineString(document);
 		else if (isOpeningParen(current)) { token = createToken(createStringFromChar(current), TOKEN_OPAREN); current = nextCharacter(document); }
 		else if (isClosingParen(current)) { token = createToken(createStringFromChar(current), TOKEN_CPAREN); current = nextCharacter(document); }
 		else if (isColon(current)) { token = createToken(createStringFromChar(current), TOKEN_COLON); current = nextCharacter(document); }
-		else if (isMultiplication(current)) { token = createToken(createStringFromChar(current), OPERATOR_MUL); current = nextCharacter(document); }
 		else if (isTerminator(current)) { tokenOccured = false; current = nextCharacter(document); }
+		else if (isString(current)) token = defineString(document);
+		else if (isOperator(current)) token = defineOperator(document, current);
 		else {
 			printf("%c is value %d\n", current, current);
 			handleError(SyntaxError, "Invalid number syntax on line %d, column %d", document->line, document->column);
