@@ -48,6 +48,10 @@ bool isSpace(int c) { return c == (int) ' '; }
 
 bool isTerminator(int c) { return c == EOF || c == (int) ' ' || c == (int) '\n'; }
 
+bool isOperator(int c) {
+	return isNot(c) || isGreater(c) || isLessThan(c) || isPlus(c) || isMinus(c) || isDevision(c) || isMultiplication(c) || isEqual(c);
+}
+
 Token *defineValue(Document *document) {
 	int c = document->currentChar;
 	struct String *string = createStringFromChar(c);
@@ -109,7 +113,30 @@ Token *defineString(Document *document) {
 	return createToken(string, DATA_TOKEN_STRING);
 }
 
-void countIndent(TokenList *list, Document *document) {
+Token *defineOperator(Document *document, int c) {
+	if (inDebugMode)
+		printf("defining operator\n");
+	String *string = createStringFromChar(c);
+	TokenType *type;
+
+	if (isNot(c)) type = OPERATOR_NOT;
+	else if (isGreater(c)) type = OPERATOR_MORE;
+	else if (isLessThan(c)) type = OPERATOR_LESS;
+	else if (isPlus(c)) type = OPERATOR_ADD;
+	else if (isMinus(c)) type = OPERATOR_SUB;
+	else if (isEqual(c)) type = OPERATOR_ASSIGN;
+	else if (isDevision(c)) type = OPERATOR_DIV;
+	else if (isMultiplication(c)) type = OPERATOR_MUL;
+
+	int nextCH = nextCharacter(document);
+	if (isEqual(nextCH))
+		appendCharacter(string, nextCH);
+		type += 1;
+	
+	return createToken(string, type); 
+}
+
+void generateIndent(TokenList *list, Document *document) {
 	int sum = 0;
 	int ch;
 	while (isSpace((ch = nextCharacter(document)))) 
@@ -135,20 +162,13 @@ void scan(TokenList *list, Document *document) {
 		bool tokenOccured = true;
 		token = NULL;
 		printf("Current char is: %c\n", current);
-		if (isNumber(current)) token = defineValue(document);
+		if (isNewLine(document) && isSpace(current)) generateIndent(list, document);
+		else if (isNumber(current)) token = defineValue(document);
 		else if (isCharacter(current)) token = defineIdentifier(document);
 		else if (isApostroph(current)) token = defineString(document);
-		else if (isSpace(current) && isNewLine(document)) { tokenOccured = false; countIndent(list, document); }
 		else if (isOpeningParen(current)) { token = createToken(createStringFromChar(current), TOKEN_OPAREN); current = nextCharacter(document); }
 		else if (isClosingParen(current)) { token = createToken(createStringFromChar(current), TOKEN_CPAREN); current = nextCharacter(document); }
 		else if (isColon(current)) { token = createToken(createStringFromChar(current), TOKEN_COLON); current = nextCharacter(document); }
-		else if (isEqual(current)) { token = createToken(createStringFromChar(current), OPERATOR_EQL); current = nextCharacter(document); }
-		else if (isNot(current)) { token = createToken(createStringFromChar(current), OPERATOR_NOT); current = nextCharacter(document); }
-		else if (isGreater(current)) { token = createToken(createStringFromChar(current), OPERATOR_MORE); current = nextCharacter(document); }
-		else if (isLessThan(current)) { token = createToken(createStringFromChar(current), OPERATOR_LESS); current = nextCharacter(document); }
-		else if (isPlus(current)) { token = createToken(createStringFromChar(current), OPERATOR_ADD); current = nextCharacter(document); }
-		else if (isMinus(current)) { token = createToken(createStringFromChar(current), OPERATOR_SUB); current = nextCharacter(document); }
-		else if (isDevision(current)) { token = createToken(createStringFromChar(current), OPERATOR_DIV); current = nextCharacter(document); }
 		else if (isMultiplication(current)) { token = createToken(createStringFromChar(current), OPERATOR_MUL); current = nextCharacter(document); }
 		else if (isTerminator(current)) { tokenOccured = false; current = nextCharacter(document); }
 		else {

@@ -39,6 +39,7 @@ bool isDevision(int c);
 bool isMultiplication(int c);
 bool isSpace(int c);
 bool isTerminator(int c);
+bool isOperator(int c);
 
 Token *defineValue(Document *document);
 Token *defineIdentifier(Document *document);
