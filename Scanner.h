@@ -28,6 +28,7 @@ bool isCharacter(int c);
 bool isOpeningParen(int c);
 bool isClosingParen(int c);
 bool isDot(int c);
+bool isComma(int c);
 bool isColon(int c);
 bool isEqual(int c);
 bool isApostroph(int c);

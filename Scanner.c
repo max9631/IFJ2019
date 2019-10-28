@@ -34,7 +34,8 @@ bool isCharacter(int c) { return (c > 64 && c < 91) || (c > 96 && c < 123); } //
 bool isOpeningParen(int c) { return c == (int) '('; }
 bool isClosingParen(int c) { return c == (int) ')'; }
 bool isDot(int c) { return c == (int) '.'; }
-bool isColon(int c) { return c == (int) ','; }
+bool isComma(int c) { return c == (int) ','; }
+bool isColon(int c) { return c == (int) ':'; }
 bool isEqual(int c) { return c == (int) '='; }
 bool isDoubleQuote(int c) { return c == (int) '"'; }
 bool isApostroph(int c) { return c == (int) '\''; }
