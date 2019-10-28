@@ -46,6 +46,7 @@ bool isMinus(int c) { return c == (int) '-'; }
 bool isDevision(int c) { return c == (int) '/'; }
 bool isMultiplication(int c) { return c == (int) '*'; }
 bool isSpace(int c) { return c == (int) ' '; }
+bool isComment(int c) { return c == (int) '#'; }
 
 bool isString(int c) { 
 	return isDoubleQuote(c) || isApostroph(c);
@@ -168,6 +169,15 @@ Token * defineOneCharToken(Document *document, int ch, TokenType type) {
 	return createToken(string, type);
 }
 
+int skipUntilNewLine(Document *document) {
+	if (inDebugMode)
+		printf("skipping comment\n");
+	int ch = document->currentChar;
+	while (ch != (int) '\n')
+		ch = nextCharacter(document);
+	return nextCharacter(document);
+}
+
 void scan(TokenList *list, Document *document) {
 	struct Token *token = NULL;
 	int current = nextCharacter(document);
@@ -176,6 +186,7 @@ void scan(TokenList *list, Document *document) {
 		token = NULL;
 		printf("Current char is: %c\n", current);
 		if (isNewLine(document) && isSpace(current)) generateIndent(list, document);
+		else if (isComment(current)) skipUntilNewLine(document);
 		else if (isNumber(current)) token = defineValue(document);
 		else if (isCharacter(current)) token = defineIdentifier(document);
 		else if (isString(current)) token = defineString(document);
