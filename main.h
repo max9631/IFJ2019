@@ -10,6 +10,7 @@
 #include "String.h"
 #include "Error.h"
 
+Document *document;
 TokenList *tokenList;
 bool inDebugMode;
 
