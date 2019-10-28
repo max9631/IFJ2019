@@ -9,5 +9,6 @@ extern struct TokenList *tokenList;
 extern bool inDebugMode;
 
 void cleanResources();
+void msg(char *message, ...);
 
 #endif
