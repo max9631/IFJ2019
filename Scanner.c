@@ -172,21 +172,25 @@ Token *defineOperator(Document *document, int c) {
 
 void generateIndent(TokenList *list, Document *document) {
 	int sum = 0;
-	int ch;
-	while (isSpace((ch = nextCharacter(document)))) 
+	int ch = document->currentChar;
+	while (isSpace(ch)) {
 		sum++;
-	if (isEndOfLine(ch)) return;
+		ch = nextCharacter(document);
+	}
+	if (isEndOfLine(ch))
+		return;
 	if (sum == document->lastIndent) 
 		return;
 	if (sum > document->lastIndent + 1) 
 		handleError(SyntaxError, "Wrong number of indents at line %d column %d", document->line, document->column);
-	else if (sum == document->lastIndent + 1)
+	else if (sum == document->lastIndent + 1) {
 		addTokenToList(createToken(NULL, TOKEN_INDENT), list);
-	else if (sum < document->lastIndent) {
+	} else if (sum < document->lastIndent) {
 		int d = document->lastIndent - sum;
 		for (int i = 0; i < d; i++)
 			addTokenToList(createToken(NULL, TOKEN_DEINDENT), list);
 	}
+	document->lastIndent = sum;
 }
 
 Token * defineOneCharToken(Document *document, int ch, TokenType type) {
@@ -206,9 +210,8 @@ void scan(TokenList *list, Document *document) {
 	while (document->currentChar != EOF) {
 		int current = document->currentChar;
 		Token *token = NULL;
-		
-		if (isNewLine(document) && isSpace(current)) generateIndent(list, document);
-		else if (isComment(current)) skipUntilNewLine(document);
+		if (isNewLine(document)) generateIndent(list, document);
+		if (isComment(current)) skipUntilNewLine(document);
 		else if (isNumber(current)) token = defineValue(document);
 		else if (isCharacter(current)) token = defineIdentifier(document);
 		else if (isString(current)) token = defineString(document);
