@@ -47,7 +47,6 @@ bool isDevision(int c) { return c == (int) '/'; }
 bool isMultiplication(int c) { return c == (int) '*'; }
 bool isSpace(int c) { return c == (int) ' '; }
 
-bool isTerminator(int c) { return c == EOF || c == (int) ' ' || c == (int) '\n'; }
 bool isString(int c) { 
 	return isDoubleQuote(c) || isApostroph(c);
 }
@@ -55,6 +54,8 @@ bool isString(int c) {
 bool isOperator(int c) {
 	return isNot(c) || isGreater(c) || isLessThan(c) || isPlus(c) || isMinus(c) || isDevision(c) || isMultiplication(c) || isEqual(c);
 }
+
+bool isTerminator(int c) { return c == EOF || isSpace(c) || isEndOfLine(c); }
 
 Token *defineValue(Document *document) {
 	int c = document->currentChar;
@@ -159,6 +160,14 @@ void generateIndent(TokenList *list, Document *document) {
 	}
 }
 
+Token * defineOneCharToken(Document *document, int ch, TokenType type) {
+	if (inDebugMode)
+		printf("defining token %c\n", ch);
+	String *string = createStringFromChar((char) ch);
+	nextCharacter(document);
+	return createToken(string, type);
+}
+
 void scan(TokenList *list, Document *document) {
 	struct Token *token = NULL;
 	int current = nextCharacter(document);
@@ -169,14 +178,14 @@ void scan(TokenList *list, Document *document) {
 		if (isNewLine(document) && isSpace(current)) generateIndent(list, document);
 		else if (isNumber(current)) token = defineValue(document);
 		else if (isCharacter(current)) token = defineIdentifier(document);
-		else if (isOpeningParen(current)) { token = createToken(createStringFromChar(current), TOKEN_OPAREN); current = nextCharacter(document); }
-		else if (isClosingParen(current)) { token = createToken(createStringFromChar(current), TOKEN_CPAREN); current = nextCharacter(document); }
-		else if (isColon(current)) { token = createToken(createStringFromChar(current), TOKEN_COLON); current = nextCharacter(document); }
-		else if (isTerminator(current)) { tokenOccured = false; current = nextCharacter(document); }
 		else if (isString(current)) token = defineString(document);
 		else if (isOperator(current)) token = defineOperator(document, current);
+		else if (isOpeningParen(current)) token = defineOneCharToken(document, current, TOKEN_OPAREN);
+		else if (isClosingParen(current)) token = defineOneCharToken(document, current, TOKEN_CPAREN);
+		else if (isColon(current)) token = defineOneCharToken(document, current, TOKEN_COLON);
+		else if (isTerminator(current)) nextCharacter(document);
 		else {
-			printf("%c is value %d\n", current, current);
+			printf("%c is value of %d\n", current, current);
 			handleError(SyntaxError, "Invalid number syntax on line %d, column %d", document->line, document->column);
 		}
 		
