@@ -77,16 +77,16 @@ Token *defineValue(Document *document) {
 }
 
 Token *defineIdentifier(Document *document) {
-	int c = document->currentChar;
-	struct String *string = createStringFromChar(c);
-	bool isValid = true;
-	c = nextCharacter(document);
-	while (!isTerminator(c) && !isOpeningParen(c) && !isColon(c)) {
-		appendCharacter(string, c);
-		if (!isCharacter(c) && !isNumber(c)) isValid = false;
-		c = nextCharacter(document);
+	if (inDebugMode)
+		printf("defining identifier\n");
+	int ch = document->currentChar;
+	struct String *string = createStringFromChar(ch);
+	ch = nextCharacter(document);
+	while (isCharacter(ch)) {
+		appendCharacter(string, ch);
+		ch = nextCharacter(document);
 	}
-	if (!isValid) handleError(SyntaxError, "Invalid number syntax near %s", string->value);
+	// TODO: check if identifier is not a keyword
 	return createToken(string, TOKEN_IDENTIFIER);
 }
 
