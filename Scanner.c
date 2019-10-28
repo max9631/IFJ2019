@@ -129,7 +129,7 @@ Token *defineOperator(Document *document, int c) {
 	if (inDebugMode)
 		printf("defining operator\n");
 	String *string = createStringFromChar(c);
-	TokenType *type;
+	TokenType type;
 
 	if (isNot(c)) type = OPERATOR_NOT;
 	else if (isGreater(c)) type = OPERATOR_MORE;
@@ -139,6 +139,7 @@ Token *defineOperator(Document *document, int c) {
 	else if (isEqual(c)) type = OPERATOR_ASSIGN;
 	else if (isDevision(c)) type = OPERATOR_DIV;
 	else if (isMultiplication(c)) type = OPERATOR_MUL;
+	else return NULL;
 
 	int nextCH = nextCharacter(document);
 	if (isEqual(nextCH))
