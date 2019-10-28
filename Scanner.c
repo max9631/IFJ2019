@@ -23,6 +23,8 @@ int nextCharacter(Document *document) {
 		document->column++;
 	}
 	document->currentChar = getc(document->file);
+	if (inDebugMode)
+		printf("Current char: %c\n", document->currentChar);
 	return document->currentChar;
 }
 
@@ -59,6 +61,8 @@ bool isOperator(int c) {
 bool isTerminator(int c) { return c == EOF || isSpace(c) || isEndOfLine(c); }
 
 Token *defineValue(Document *document) {
+	if (inDebugMode)
+		printf("defining value\n");
 	int c = document->currentChar;
 	struct String *string = createStringFromChar(c);
 	bool dotOccured = false;
@@ -97,6 +101,8 @@ Token *defineIdentifier(Document *document) {
 }
 
 Token *defineString(Document *document) {
+	if (inDebugMode)
+		printf("defining string\n");
 	int c = document->currentChar;
 	struct String *string = createStringFromChar(c);
 	c = nextCharacter(document);
@@ -143,6 +149,8 @@ Token *defineOperator(Document *document, int c) {
 }
 
 void generateIndent(TokenList *list, Document *document) {
+	if (inDebugMode)
+		printf("generating indent\n");
 	int sum = 0;
 	int ch;
 	while (isSpace((ch = nextCharacter(document)))) 
