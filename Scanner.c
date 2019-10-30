@@ -158,9 +158,10 @@ Token *defineOperator(Document *document, int c) {
 	else return NULL;
 
 	int nextCH = nextCharacter(document);
-	if (isEqual(nextCH))
+	if (isEqual(nextCH)) {
 		appendCharacter(string, nextCH);
 		type += 1;
+	}
 	
 	return createToken(string, type); 
 }
