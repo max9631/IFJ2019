@@ -10,123 +10,46 @@ Token *createToken(String *string, TokenType type) {
     return token;
 }
 
-char* convertTokenTypeToString(TokenType type) {
-    char *tokenTypeAsString = malloc(sizeof(char) * 500);
+
+String *convertTokenTypeToString(TokenType type) {
     switch (type){
-    case TOKEN_IDENTIFIER:
-        sprintf(tokenTypeAsString, "TOKEN_IDENTIFIER");
-        break;
-    case DATA_TOKEN_INT:
-        sprintf(tokenTypeAsString, "DATA_TOKEN_INT");
-        break;
-    case DATA_TOKEN_FLOAT:
-        sprintf(tokenTypeAsString, "DATA_TOKEN_FLOAT");
-        break;
-    case DATA_TOKEN_STRING:
-        sprintf(tokenTypeAsString, "DATA_TOKEN_STRING");
-        break;
-    case DATA_TOKEN_NONE:
-        sprintf(tokenTypeAsString, "DATA_TOKEN_NONE");
-        break;
-    case OPERATOR_NOT:
-        sprintf(tokenTypeAsString, "OPERATOR_NOT");
-        break;
-    case OPERATOR_NEQL:
-        sprintf(tokenTypeAsString, "OPERATOR_NEQL");
-        break;
-    case OPERATOR_MORE:
-        sprintf(tokenTypeAsString, "OPERATOR_MORE");
-        break;
-    case OPERATOR_MOREEQL:
-        sprintf(tokenTypeAsString, "OPERATOR_MOREEQL");
-        break;
-    case OPERATOR_LESS:
-        sprintf(tokenTypeAsString, "OPERATOR_LESS");
-        break;
-    case OPERATOR_LESSEQL:
-        sprintf(tokenTypeAsString, "OPERATOR_LESSEQL");
-        break;
-    case OPERATOR_ADD:
-        sprintf(tokenTypeAsString, "OPERATOR_ADD");
-        break;
-    case OPERATOR_ADD_ASSIGN:
-        sprintf(tokenTypeAsString, "OPERATOR_ADD_ASSIGN");
-        break;
-    case OPERATOR_SUB:
-        sprintf(tokenTypeAsString, "OPERATOR_SUB");
-        break;
-    case OPERATOR_SUB_ASSIGN:
-        sprintf(tokenTypeAsString, "OPERATOR_SUB_ASSIGN");
-        break;
-    case OPERATOR_ASSIGN:
-        sprintf(tokenTypeAsString, "OPERATOR_ASSIGN");
-        break;
-    case OPERATOR_EQL:
-        sprintf(tokenTypeAsString, "OPERATOR_EQL");
-        break;
-    case OPERATOR_DIV:
-        sprintf(tokenTypeAsString, "OPERATOR_DIV");
-        break;
-    case OPERATOR_DIV_ASSIGN:
-        sprintf(tokenTypeAsString, "OPERATOR_DIV_ASSIGN");
-        break;
-    case OPERATOR_MUL:
-        sprintf(tokenTypeAsString, "OPERATOR_MUL");
-        break;
-    case OPERATOR_MUL_ASSIGN:
-        sprintf(tokenTypeAsString, "OPERATOR_MUL_ASSIGN");
-        break;
-    case TOKEN_OPAREN:
-        sprintf(tokenTypeAsString, "TOKEN_OPAREN");
-        break;
-    case TOKEN_CPAREN:
-        sprintf(tokenTypeAsString, "TOKEN_CPAREN");
-        break;
-    case TOKEN_COMMA:
-        sprintf(tokenTypeAsString, "TOKEN_COMMA");
-        break;
-    case TOKEN_COLON:
-        sprintf(tokenTypeAsString, "TOKEN_COLON");
-        break;
-    case TOKEN_INDENT:
-        sprintf(tokenTypeAsString, "TOKEN_INDENT");
-        break;
-    case TOKEN_DEINDENT:
-        sprintf(tokenTypeAsString, "TOKEN_DEINDENT");
-        break;
-    case TOKEN_EMPTY:
-        sprintf(tokenTypeAsString, "TOKEN_EMPTY");
-        break;
-    case TOKEN_EOL:
-        sprintf(tokenTypeAsString, "TOKEN_EOL");
-        break;
-    case TOKEN_EOF:
-        sprintf(tokenTypeAsString, "TOKEN_EOF");
-        break;
-    case KEYWORD_DEF:
-        sprintf(tokenTypeAsString, "KEYWORD_DEF");
-        break;
-    case KEYWORD_ELSE:
-        sprintf(tokenTypeAsString, "KEYWORD_ELSE");
-        break;
-    case KEYWORD_END:
-        sprintf(tokenTypeAsString, "KEYWORD_END");
-        break;
-    case KEYWORD_IF:
-        sprintf(tokenTypeAsString, "KEYWORD_IF");
-        break;
-    case KEYWORD_NONE:
-        sprintf(tokenTypeAsString, "KEYWORD_NONE");
-        break;
-    case KEYWORD_WHILE:
-        sprintf(tokenTypeAsString, "KEYWORD_WHILE");
-        break;
-    case KEYWORD_PASS:
-        sprintf(tokenTypeAsString, "KEYWORD_PASS");
-        break;
-    default: 
-        sprintf(tokenTypeAsString, "InvalidToken");
-        break;
+    case TOKEN_IDENTIFIER: return createString("TOKEN_IDENTIFIER");
+    case DATA_TOKEN_INT: return createString("DATA_TOKEN_INT");
+    case DATA_TOKEN_FLOAT: return createString("DATA_TOKEN_FLOAT");
+    case DATA_TOKEN_STRING: return createString("DATA_TOKEN_STRING");
+    case DATA_TOKEN_NONE: return createString("DATA_TOKEN_NONE");
+    case OPERATOR_NOT: return createString("OPERATOR_NOT");
+    case OPERATOR_NEQL: return createString("OPERATOR_NEQL");
+    case OPERATOR_MORE: return createString("OPERATOR_MORE");
+    case OPERATOR_MOREEQL: return createString("OPERATOR_MOREEQL");
+    case OPERATOR_LESS: return createString("OPERATOR_LESS");
+    case OPERATOR_LESSEQL: return createString("OPERATOR_LESSEQL");
+    case OPERATOR_ADD: return createString("OPERATOR_ADD");
+    case OPERATOR_ADD_ASSIGN: return createString("OPERATOR_ADD_ASSIGN");
+    case OPERATOR_SUB: return createString("OPERATOR_SUB");
+    case OPERATOR_SUB_ASSIGN: return createString("OPERATOR_SUB_ASSIGN");
+    case OPERATOR_ASSIGN: return createString("OPERATOR_ASSIGN");
+    case OPERATOR_EQL: return createString("OPERATOR_EQL");
+    case OPERATOR_DIV: return createString("OPERATOR_DIV");
+    case OPERATOR_DIV_ASSIGN: return createString("OPERATOR_DIV_ASSIGN");
+    case OPERATOR_MUL: return createString("OPERATOR_MUL");
+    case OPERATOR_MUL_ASSIGN: return createString("OPERATOR_MUL_ASSIGN");
+    case TOKEN_OPAREN: return createString("TOKEN_OPAREN");
+    case TOKEN_CPAREN: return createString("TOKEN_CPAREN");
+    case TOKEN_COMMA: return createString("TOKEN_COMMA");
+    case TOKEN_COLON: return createString("TOKEN_COLON");
+    case TOKEN_INDENT: return createString("TOKEN_INDENT");
+    case TOKEN_DEINDENT: return createString("TOKEN_DEINDENT");
+    case TOKEN_EMPTY: return createString("TOKEN_EMPTY");
+    case TOKEN_EOL: return createString("TOKEN_EOL");
+    case TOKEN_EOF: return createString("TOKEN_EOF");
+    case KEYWORD_DEF: return createString("KEYWORD_DEF");
+    case KEYWORD_ELSE: return createString("KEYWORD_ELSE");
+    case KEYWORD_END: return createString("KEYWORD_END");
+    case KEYWORD_IF: return createString("KEYWORD_IF");
+    case KEYWORD_NONE: return createString("KEYWORD_NONE");
+    case KEYWORD_WHILE: return createString("KEYWORD_WHILE");
+    case KEYWORD_PASS: return createString("KEYWORD_PASS");
+    default: handleError(InternalError, "Unkown token type");
     }
-    return tokenTypeAsString;
 }

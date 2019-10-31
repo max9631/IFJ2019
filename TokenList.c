@@ -81,19 +81,19 @@ Token *peekNext(TokenList *list, int offset) {
 void printTokenList(TokenList *list) {
     if(!inDebugMode) return;
 
-    if (list == NULL) {
-        printf("Token list is not initialized.\n");
-        return;
-    }
+    if (list == NULL) handleError(InternalError, "TokenList not initialized");
 
     TokenListItem *item = list->first;
     printf("<TokenList>\n");
     while(item != NULL) {
         Token *token = item->token;
+        String *type = convertTokenTypeToString(token->type);
         printf("  <Token Type=\"%s\" Value=\"%s\" />\n",
-            convertTokenTypeToString(token->type),
+            type->value,
             token->value == NULL ? "NULL" : token->value->value
         );
+        free(type->value);
+        free(type);
         item = item->nextItem;
     }
     printf("</TokenList>\n");

@@ -1,7 +1,7 @@
 #include "String.h"
 
 String *createStringFromChar(char ch){
-	String *str = (struct String *) malloc(sizeof(struct String));
+	String *str = (String *) malloc(sizeof(String));
 	if (str == NULL) handleError(InternalError, "String Error: Could not initialize memory");
 	str->value = (char *) malloc(sizeof(char*));
 	if (str->value == NULL) handleError(InternalError, "String Error: Could not initialize memory");
@@ -10,13 +10,13 @@ String *createStringFromChar(char ch){
 	return str;
 }
 
-String *createString(char **chars){
-	String *str = (struct String *) malloc(sizeof(struct String));
+String *createString(char *chars){
+	String *str = (String *) malloc(sizeof(String));
 	if (str == NULL) handleError(InternalError, "String Error: Could not initialize memory");
 	str->value = (char *) malloc(sizeof(char*));
 	if (str->value == NULL) handleError(InternalError, "String Error: Could not initialize memory");
-	strcpy(str->value, *chars);
-	str->lenght = stringLength(*chars);
+	strcpy(str->value, chars);
+	str->lenght = stringLength(chars);
 	return str;
 }
 
