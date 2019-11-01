@@ -23,8 +23,6 @@ int nextCharacter(Document *document) {
 		document->column++;
 	}
 	document->currentChar = getc(document->file);
-	if (inDebugMode)
-		printf("Current char: %c\n", document->currentChar);
 	return document->currentChar;
 }
 
@@ -36,7 +34,8 @@ bool isCharacter(int c) { return (c > 64 && c < 91) || (c > 96 && c < 123); } //
 bool isOpeningParen(int c) { return c == (int) '('; }
 bool isClosingParen(int c) { return c == (int) ')'; }
 bool isDot(int c) { return c == (int) '.'; }
-bool isColon(int c) { return c == (int) ','; }
+bool isComma(int c) { return c == (int) ','; }
+bool isColon(int c) { return c == (int) ':'; }
 bool isEqual(int c) { return c == (int) '='; }
 bool isDoubleQuote(int c) { return c == (int) '"'; }
 bool isApostroph(int c) { return c == (int) '\''; }
@@ -61,25 +60,18 @@ bool isOperator(int c) {
 bool isTerminator(int c) { return c == EOF || isSpace(c) || isEndOfLine(c); }
 
 Token *defineValue(Document *document) {
-	if (inDebugMode)
-		printf("defining value\n");
 	int c = document->currentChar;
 	struct String *string = createStringFromChar(c);
 	bool dotOccured = false;
-	bool isValid = true;
 	c = nextCharacter(document);
-	while (!isTerminator(c)) {
-		int ch = c;
-		appendCharacter(string, ch);
-		if (isNumber(ch)) {}
-		else if (isDot(ch)) {
-			if (!dotOccured) dotOccured = true;
-			else isValid = false;
-		} 
-		else isValid = false;
+	while (isNumber(c) || isDot(c)) {
+		if ((isDot(c) && dotOccured)) {
+			handleError(LexError, "Invalid number syntax");
+		}
+		dotOccured = dotOccured || isDot(c);
+		appendCharacter(string, c);
 		c = nextCharacter(document);
 	}
-	if (!isValid) handleError(LexError, "Invalid number syntax near %s", string->value);
 	TokenType type = DATA_TOKEN_INT;
 	if (dotOccured) 
 		type = DATA_TOKEN_FLOAT; 
@@ -87,8 +79,6 @@ Token *defineValue(Document *document) {
 }
 
 Token *defineIdentifier(Document *document) {
-	if (inDebugMode)
-		printf("defining identifier\n");
 	int ch = document->currentChar;
 	struct String *string = createStringFromChar(ch);
 	ch = nextCharacter(document);
@@ -101,33 +91,59 @@ Token *defineIdentifier(Document *document) {
 }
 
 Token *defineString(Document *document) {
-	if (inDebugMode)
-		printf("defining string\n");
-	int c = document->currentChar;
-	struct String *string = createStringFromChar(c);
-	c = nextCharacter(document);
-	if (isApostroph(c)) {
-		appendCharacter(string, c);
-		c = nextCharacter(document);
+	if (isDoubleQuote((document->currentChar)))
+		return defineDoubleQuoteString(document);
+	else if (isApostroph((document->currentChar)))
+		return defineApostrophString(document);
+	return NULL;
+}
+
+Token *defineDoubleQuoteString(Document *document) {
+	int ch = nextCharacter(document);
+	bool isMultilineString = false;
+	if (isDoubleQuote(ch)) {
+		ch = nextCharacter(document);
+		if (isDoubleQuote(ch)) {
+			isMultilineString = true;
+			ch = nextCharacter(document);
+		} else {
+			return createToken(NULL, DATA_TOKEN_STRING);
+		}
 	}
-	while (!isApostroph(c)) {
-		appendCharacter(string, c);
-		c = nextCharacter(document);
+	String *string = recordStringUntilChar(document, (int) '"');
+	if (isMultilineString) {
+		for (int i = 0; i < 2; i++) {
+			ch = nextCharacter(document);
+			if (!isDoubleQuote(ch)) {
+				handleError(LexError, "Incorrect string end");
+			}
+		}
 	}
-	if (c == EOF){
-		printf("Invalid String: %s\n", string->value); 
-		handleError(SyntaxError, "Invalid String: %s", string->value);
-	}
-	if (c == (int)'"') {
-		appendCharacter(string, c);
-		c = nextCharacter(document);
-	}
+	nextCharacter(document);
 	return createToken(string, DATA_TOKEN_STRING);
 }
 
+Token *defineApostrophString(Document *document) {
+	nextCharacter(document);
+	String *string = recordStringUntilChar(document, (int) '\'');
+	nextCharacter(document);
+	return createToken(string, DATA_TOKEN_STRING);
+}
+
+String *recordStringUntilChar(Document *document, int endChar) {
+	int ch = document->currentChar;
+	String *string = createStringFromChar(ch);
+	bool isEscaping = false;
+	ch = nextCharacter(document);
+	while (ch != endChar || isEscaping) {
+		isEscaping = (isEscaping) ? false : ch == (int) '\\';
+		if (!isEscaping) appendCharacter(string, ch);
+		ch = nextCharacter(document);
+	}
+	return string;
+}
+
 Token *defineOperator(Document *document, int c) {
-	if (inDebugMode)
-		printf("defining operator\n");
 	String *string = createStringFromChar(c);
 	TokenType type;
 
@@ -142,45 +158,44 @@ Token *defineOperator(Document *document, int c) {
 	else return NULL;
 
 	int nextCH = nextCharacter(document);
-	if (isEqual(nextCH))
+	if (isEqual(nextCH)) {
 		appendCharacter(string, nextCH);
 		type += 1;
+	}
 	
 	return createToken(string, type); 
 }
 
 void generateIndent(TokenList *list, Document *document) {
-	if (inDebugMode)
-		printf("generating indent\n");
 	int sum = 0;
-	int ch;
-	while (isSpace((ch = nextCharacter(document)))) 
+	int ch = document->currentChar;
+	while (isSpace(ch)) {
 		sum++;
-	if (isEndOfLine(ch)) return;
+		ch = nextCharacter(document);
+	}
+	if (isEndOfLine(ch))
+		return;
 	if (sum == document->lastIndent) 
 		return;
 	if (sum > document->lastIndent + 1) 
 		handleError(SyntaxError, "Wrong number of indents at line %d column %d", document->line, document->column);
-	else if (sum == document->lastIndent + 1)
+	else if (sum == document->lastIndent + 1) {
 		addTokenToList(createToken(NULL, TOKEN_INDENT), list);
-	else if (sum < document->lastIndent) {
+	} else if (sum < document->lastIndent) {
 		int d = document->lastIndent - sum;
 		for (int i = 0; i < d; i++)
 			addTokenToList(createToken(NULL, TOKEN_DEINDENT), list);
 	}
+	document->lastIndent = sum;
 }
 
 Token * defineOneCharToken(Document *document, int ch, TokenType type) {
-	if (inDebugMode)
-		printf("defining token %c\n", ch);
 	String *string = createStringFromChar((char) ch);
 	nextCharacter(document);
 	return createToken(string, type);
 }
 
 int skipUntilNewLine(Document *document) {
-	if (inDebugMode)
-		printf("skipping comment\n");
 	int ch = document->currentChar;
 	while (ch != (int) '\n')
 		ch = nextCharacter(document);
@@ -191,9 +206,8 @@ void scan(TokenList *list, Document *document) {
 	while (document->currentChar != EOF) {
 		int current = document->currentChar;
 		Token *token = NULL;
-		
-		if (isNewLine(document) && isSpace(current)) generateIndent(list, document);
-		else if (isComment(current)) skipUntilNewLine(document);
+		if (isNewLine(document)) generateIndent(list, document);
+		if (isComment(current)) skipUntilNewLine(document);
 		else if (isNumber(current)) token = defineValue(document);
 		else if (isCharacter(current)) token = defineIdentifier(document);
 		else if (isString(current)) token = defineString(document);
@@ -201,15 +215,14 @@ void scan(TokenList *list, Document *document) {
 		else if (isOpeningParen(current)) token = defineOneCharToken(document, current, TOKEN_OPAREN);
 		else if (isClosingParen(current)) token = defineOneCharToken(document, current, TOKEN_CPAREN);
 		else if (isColon(current)) token = defineOneCharToken(document, current, TOKEN_COLON);
+		else if (isComma(current)) token = defineOneCharToken(document, current, TOKEN_COMMA);
 		else if (isTerminator(current)) nextCharacter(document);
 		else {
-			printf("%c is value of %d\n", current, current);
+			msg("%c is value of %d\n", current, current);
 			handleError(SyntaxError, "Invalid number syntax on line %d, column %d", document->line, document->column);
 		}
-
 		if (token != NULL) {
-			if (inDebugMode)
-				printf("new token: %s\n", token->value->value);
+			msg("new token: %s\n", token->value->value);
 			addTokenToList(token, list);
 		}
 	}
