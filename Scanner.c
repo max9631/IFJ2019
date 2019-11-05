@@ -88,10 +88,9 @@ Token *defineIdentifier(Document *document) {
 	}
 	TokenType type;  
 	if(stdcmp("DEF",string->value)) type = KEYWORD_DEF;
-	else if(stdcmp("DEF",string->value)) type = KEYWORD_DEF;
 	else if(stdcmp("ELSE",string->value)) type = KEYWORD_ELSE;
 	else if(stdcmp("RETURN",string->value)) type = KEYWORD_RETURN;
-	else if(stdcmp("FF",string->value)) type = KEYWORD_IF;
+	else if(stdcmp("IF",string->value)) type = KEYWORD_IF;
 	else if(stdcmp("NONE",string->value)) type = KEYWORD_NONE;
 	else if(stdcmp("WHILE",string->value)) type = KEYWORD_WHILE;
 	else if(stdcmp("PASS",string->value)) type = KEYWORD_PASS;
