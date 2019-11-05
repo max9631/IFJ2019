@@ -87,14 +87,14 @@ Token *defineIdentifier(Document *document) {
 		ch = nextCharacter(document);
 	}
 	TokenType type;  
-	if(strcmp("DEF",string->value)) type = KEYWORD_DEF;
-	else if(strcmp("ELSE",string->value)) type = KEYWORD_ELSE;
-	else if(strcmp("RETURN",string->value)) type = KEYWORD_RETURN;
-	else if(strcmp("IF",string->value)) type = KEYWORD_IF;
-	else if(strcmp("NONE",string->value)) type = KEYWORD_NONE;
-	else if(strcmp("WHILE",string->value)) type = KEYWORD_WHILE;
-	else if(strcmp("PASS",string->value)) type = KEYWORD_PASS;
-	else return NULL;
+	if(strcmp("DEF",string->value) == 0) type = KEYWORD_DEF;
+	else if(strcmp("ELSE",string->value) == 0) type = KEYWORD_ELSE;
+	else if(strcmp("RETURN",string->value) == 0) type = KEYWORD_RETURN;
+	else if(strcmp("IF",string->value) == 0) type = KEYWORD_IF;
+	else if(strcmp("NONE",string->value) == 0) type = KEYWORD_NONE;
+	else if(strcmp("WHILE",string->value) == 0) type = KEYWORD_WHILE;
+	else if(strcmp("PASS",string->value) == 0) type = KEYWORD_PASS;
+	else return createToken(string, TOKEN_IDENTIFIER);
 	return createToken(string, type);
 	// TODO: check if identifier is not a keyword
 	// return createToken(string, TOKEN_IDENTIFIER);
