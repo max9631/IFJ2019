@@ -86,8 +86,19 @@ Token *defineIdentifier(Document *document) {
 		appendCharacter(string, ch);
 		ch = nextCharacter(document);
 	}
+	TokenType type;  
+	if(stdcmp("DEF",string->value)) type = KEYWORD_DEF;
+	else if(stdcmp("DEF",string->value)) type = KEYWORD_DEF;
+	else if(stdcmp("ELSE",string->value)) type = KEYWORD_ELSE;
+	else if(stdcmp("RETURN",string->value)) type = KEYWORD_RETURN;
+	else if(stdcmp("FF",string->value)) type = KEYWORD_IF;
+	else if(stdcmp("NONE",string->value)) type = KEYWORD_NONE;
+	else if(stdcmp("WHILE",string->value)) type = KEYWORD_WHILE;
+	else if(stdcmp("PASS",string->value)) type = KEYWORD_PASS;
+	else return NULL;
+	return createToken(string, type);
 	// TODO: check if identifier is not a keyword
-	return createToken(string, TOKEN_IDENTIFIER);
+	// return createToken(string, TOKEN_IDENTIFIER);
 }
 
 Token *defineString(Document *document) {
