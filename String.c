@@ -3,10 +3,9 @@
 String *createStringFromChar(char ch){
 	String *str = (String *) malloc(sizeof(String));
 	if (str == NULL) handleError(InternalError, "String Error: Could not initialize memory");
-	str->value = (char *) malloc(sizeof(char*));
-	if (str->value == NULL) handleError(InternalError, "String Error: Could not initialize memory");
-	strcpy (str->value, &ch);
-	str->lenght = 1;
+	str->value = NULL;
+	str->lenght = 0;
+	appendCharacter(str, ch);
 	return str;
 }
 

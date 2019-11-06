@@ -206,7 +206,10 @@ void scan(TokenList *list, Document *document) {
 	while (document->currentChar != EOF) {
 		int current = document->currentChar;
 		Token *token = NULL;
-		if (isNewLine(document)) generateIndent(list, document);
+		if (isNewLine(document)) {
+			generateIndent(list, document);
+			current = document->currentChar;
+		}
 		if (isComment(current)) skipUntilNewLine(document);
 		else if (isNumber(current)) token = defineValue(document);
 		else if (isCharacter(current)) token = defineIdentifier(document);
