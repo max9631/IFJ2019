@@ -30,6 +30,13 @@ StatementNode *craeteStatementNode(void *statement, StatementType type) {
     return node;
 }
 
+ExpressionNode *createExpressionNode(void *expression, ExpressionType type) {
+    ExpressionNode *node = (ExpressionNode *) malloc(sizeof(ExpressionNode));
+    node->expression = expression;
+    node->type = type;
+    return node;
+}
+
 void destroyFuncNode(FuncNode *node) {
     free(node->name->value);
     free(node->name);
@@ -56,6 +63,11 @@ void destroyWhileNode(WhileNode *node) {
 
 void destroyStatementNode(StatementNode *node) {
     // TODO: Destroy Statements for each type
+    free(node);
+}
+
+void destroyExpressionNode(ExpressionNode *node) {
+    // TODO: Destroy Expressions for each type
     free(node);
 }
 
