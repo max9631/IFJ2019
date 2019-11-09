@@ -68,12 +68,17 @@ typedef struct _WhileNode {
     BodyNode *body;
 } WhileNode;
 
+typedef struct _MainNode {
+    BodyNode *body;
+} MainNode;
+
 FuncNode *createFuncNode(String *name, BodyNode *body);
 CondNode *createCondNode(ExpressionNode *condition, BodyNode *trueBody, BodyNode *falseBody);
 WhileNode *createWhileNode(ExpressionNode *condition, BodyNode *body);
 StatementNode *craeteStatementNode(void *statement, StatementType type);
 ExpressionNode *createExpressionNode(void *expressions, ExpressionType type);
 BodyNode *createBodyNode();
+MainNode *createMainNode(BodyNode *body);
 
 void addBodyStatement(BodyNode *body, StatementNode *statement);
 
@@ -83,4 +88,6 @@ void destroyWhileNode(WhileNode *node);
 void destroyStatementNode(StatementNode *node);
 void destroyExpressionNode(ExpressionNode *node);
 void destroyBodyNode(BodyNode *node);
+void destroyMainNode(MainNode *node);
+
 #endif

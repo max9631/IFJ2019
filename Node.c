@@ -42,6 +42,12 @@ BodyNode *createBodyNode() {
     return node;
 }
 
+MainNode *createMainNode(BodyNode *body) {
+    MainNode *node = (MainNode *) malloc(sizeof(MainNode));
+    node->body = body;
+    return node;
+}
+
 void addBodyStatement(BodyNode *body, StatementNode *statement) {
 	if (body == NULL) handleError(InternalError, "Error while adding StatementNode to BodyNode");
 	body->statementsCount++;
@@ -90,3 +96,7 @@ void destroyBodyNode(BodyNode *node) {
     free(node);
 }
 
+void destroyMainNode(MainNode *node) {
+    destroyBodyNode(node->body);
+    free(node);
+}
