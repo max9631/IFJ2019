@@ -16,6 +16,13 @@ CondNode *createCondNode(ExpressionNode *condition, BodyNode *trueBody, BodyNode
     return node;
 }
 
+WhileNode *createWhileNode(ExpressionNode *condition, BodyNode *body) {
+    WhileNode *node = (WhileNode *) malloc(sizeof(WhileNode));
+    node->condition = condition;
+    node->body = body;
+    return node;
+}
+
 void destroyFuncNode(FuncNode *node) {
     free(node->name->value);
     free(node->name);
@@ -31,6 +38,12 @@ void destroyCondNode(CondNode *node) {
     destroyExpressionNode(node->condition);
     destroyBodyNode(node->trueBody);
     destroyBodyNode(node->falseBody);
+    free(node);
+}
+
+void destroyWhileNode(WhileNode *node) {
+    destroyExpressionNode(node->condition);
+    destroyBodyNode(node->body);
     free(node);
 }
 
