@@ -56,6 +56,14 @@ void addBodyStatement(BodyNode *body, StatementNode *statement) {
 	body->statements[body->statementsCount - 1] = statement;
 }
 
+void addFunctionArgument(FuncNode *function, String *argument) {
+	if (function == NULL) handleError(InternalError, "Error while adding StatementNode to BodyNode");
+	function->argsCount++;
+	function->args = (String **) realloc(function->args, function->argsCount * sizeof(String *));
+	if (function->args == NULL) handleError(InternalError, "Error while adding StatementNode to BodyNode");
+	function->args[function->argsCount - 1] = argument;
+}
+
 void destroyFuncNode(FuncNode *node) {
     free(node->name->value);
     free(node->name);

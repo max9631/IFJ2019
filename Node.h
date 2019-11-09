@@ -81,6 +81,7 @@ BodyNode *createBodyNode();
 MainNode *createMainNode(BodyNode *body);
 
 void addBodyStatement(BodyNode *body, StatementNode *statement);
+void addFunctionArgument(FuncNode *function, String *argument);
 
 void destroyFuncNode(FuncNode *node);
 void destroyCondNode(CondNode *node);
