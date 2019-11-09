@@ -8,6 +8,14 @@ FuncNode *createFuncNode(String *name, BodyNode *body) {
     return node;
 }
 
+CondNode *createCondNode(ExpressionNode *condition, BodyNode *trueBody, BodyNode *falseBody) {
+    CondNode *node = (CondNode *) malloc(sizeof(CondNode));
+    node->condition = condition;
+    node->trueBody = trueBody;    
+    node->falseBody = falseBody;    
+    return node;
+}
+
 void destroyFuncNode(FuncNode *node) {
     free(node->name->value);
     free(node->name);
@@ -16,6 +24,13 @@ void destroyFuncNode(FuncNode *node) {
         free(node->args[i]);
     }
     destroyBodyNode(node->body);
+    free(node);
+}
+
+void destroyCondNode(CondNode *node) {
+    destroyExpressionNode(node->condition);
+    destroyBodyNode(node->trueBody);
+    destroyBodyNode(node->falseBody);
     free(node);
 }
 
