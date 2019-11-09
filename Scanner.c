@@ -48,27 +48,49 @@ bool isDevision(int c) { return c == (int) '/'; }
 bool isMultiplication(int c) { return c == (int) '*'; }
 bool isSpace(int c) { return c == (int) ' '; }
 bool isComment(int c) { return c == (int) '#'; }
+bool isUnderscore(int c) { return c == (int) '_'; }
+bool isExp(int c){ return (c == (int) 'E' || c == (int) 'e'); }
 
-bool isString(int c) { 
-	return isDoubleQuote(c) || isApostroph(c);
-}
-
+bool isTerminator(int c) { return c == EOF || isSpace(c) || isEndOfLine(c); }
+bool isValidIdentifierCharacter(int c) { return isCharacter(c) || isNumber(c) || isUnderscore(c); }
+bool isString(int c) { return isDoubleQuote(c) || isApostroph(c); }
 bool isOperator(int c) {
 	return isNot(c) || isGreater(c) || isLessThan(c) || isPlus(c) || isMinus(c) || isDevision(c) || isMultiplication(c) || isEqual(c);
 }
 
-bool isTerminator(int c) { return c == EOF || isSpace(c) || isEndOfLine(c); }
+
+int skipUntilNewLine(Document *document) {
+	int ch = document->currentChar;
+	while (ch != (int) '\n')
+		ch = nextCharacter(document);
+	return nextCharacter(document);
+}
 
 Token *defineValue(Document *document) {
 	int c = document->currentChar;
 	struct String *string = createStringFromChar(c);
-	bool dotOccured = false;
+	bool dotOccured = false, expOccured = false, dotOccuredLast = false;
+	int i = 0;
 	c = nextCharacter(document);
-	while (isNumber(c) || isDot(c)) {
-		if ((isDot(c) && dotOccured)) {
+
+	while (isNumber(c) || isDot(c) || isExp(c)) {
+		if(isNumber(c)){}
+		else if(isDot(c) && !dotOccured && !expOccured){
+			dotOccured = dotOccured || isDot(c);
+			dotOccuredLast = dotOccured;
+		}
+		else if(isExp(c) && !expOccured && !dotOccuredLast){
+			expOccured = expOccured || isExp(c);
+		}
+		else{
 			handleError(LexError, "Invalid number syntax");
 		}
-		dotOccured = dotOccured || isDot(c);
+		if(dotOccuredLast){
+			i++;
+			if(i > 1){
+				dotOccuredLast = false, i = 0;
+			}
+		}
 		appendCharacter(string, c);
 		c = nextCharacter(document);
 	}
@@ -82,7 +104,7 @@ Token *defineIdentifier(Document *document) {
 	int ch = document->currentChar;
 	struct String *string = createStringFromChar(ch);
 	ch = nextCharacter(document);
-	while (isCharacter(ch)) {
+	while (isValidIdentifierCharacter(ch)) {
 		appendCharacter(string, ch);
 		ch = nextCharacter(document);
 	}
@@ -173,6 +195,10 @@ void generateIndent(TokenList *list, Document *document) {
 		sum++;
 		ch = nextCharacter(document);
 	}
+	if(isComment(ch)){
+		skipUntilNewLine(document);
+		return;
+	}
 	if (isEndOfLine(ch))
 		return;
 	if (sum == document->lastIndent) 
@@ -195,13 +221,6 @@ Token * defineOneCharToken(Document *document, int ch, TokenType type) {
 	return createToken(string, type);
 }
 
-int skipUntilNewLine(Document *document) {
-	int ch = document->currentChar;
-	while (ch != (int) '\n')
-		ch = nextCharacter(document);
-	return nextCharacter(document);
-}
-
 void scan(TokenList *list, Document *document) {
 	while (document->currentChar != EOF) {
 		int current = document->currentChar;
@@ -212,7 +231,7 @@ void scan(TokenList *list, Document *document) {
 		}
 		if (isComment(current)) skipUntilNewLine(document);
 		else if (isNumber(current)) token = defineValue(document);
-		else if (isCharacter(current)) token = defineIdentifier(document);
+		else if (isCharacter(current) || isUnderscore(current)) token = defineIdentifier(document);
 		else if (isString(current)) token = defineString(document);
 		else if (isOperator(current)) token = defineOperator(document, current);
 		else if (isOpeningParen(current)) token = defineOneCharToken(document, current, TOKEN_OPAREN);
