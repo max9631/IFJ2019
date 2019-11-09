@@ -1,5 +1,9 @@
 #include "Parser.h"
 
+MainNode *parseTokens(TokenList *list) {
+    return NULL;
+}
+
 BodyNode *parseBody() {
     return NULL;
 }
