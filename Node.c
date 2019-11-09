@@ -23,6 +23,13 @@ WhileNode *createWhileNode(ExpressionNode *condition, BodyNode *body) {
     return node;
 }
 
+StatementNode *craeteStatementNode(void *statement, StatementType type) {
+    StatementNode *node = (StatementNode *) malloc(sizeof(StatementNode));
+    node->statement = statement;
+    node->type = type;
+    return node;
+}
+
 void destroyFuncNode(FuncNode *node) {
     free(node->name->value);
     free(node->name);
@@ -44,6 +51,11 @@ void destroyCondNode(CondNode *node) {
 void destroyWhileNode(WhileNode *node) {
     destroyExpressionNode(node->condition);
     destroyBodyNode(node->body);
+    free(node);
+}
+
+void destroyStatementNode(StatementNode *node) {
+    // TODO: Destroy Statements for each type
     free(node);
 }
 
