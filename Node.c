@@ -37,6 +37,19 @@ ExpressionNode *createExpressionNode(void *expression, ExpressionType type) {
     return node;
 }
 
+BodyNode *createBodyNode() {
+    BodyNode *node = (BodyNode *) malloc(sizeof(BodyNode));
+    return node;
+}
+
+void addBodyStatement(BodyNode *body, StatementNode *statement) {
+	if (body == NULL) handleError(InternalError, "Error while adding StatementNode to BodyNode");
+	body->statementsCount++;
+	body->statements = (StatementNode **) realloc(body->statements, body->statementsCount * sizeof(StatementNode *));
+	if (body->statements == NULL) handleError(InternalError, "Error while adding StatementNode to BodyNode");
+	body->statements[body->statementsCount - 1] = statement;
+}
+
 void destroyFuncNode(FuncNode *node) {
     free(node->name->value);
     free(node->name);
@@ -68,6 +81,12 @@ void destroyStatementNode(StatementNode *node) {
 
 void destroyExpressionNode(ExpressionNode *node) {
     // TODO: Destroy Expressions for each type
+    free(node);
+}
+
+void destroyBodyNode(BodyNode *node) {
+    for (int i = 0; i < node->statementsCount; i++)
+        destroyStatementNode(node->statements[i]);
     free(node);
 }
 

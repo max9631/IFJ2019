@@ -17,6 +17,11 @@ typedef struct _StatementNode {
     StatementType type;
 } StatementNode;
 
+typedef struct _BodyNode {
+    int statementsCount;
+    StatementNode **statements;
+} BodyNode;
+
 typedef struct _FuncNode {
     String *name;
     int argsCount;
@@ -68,10 +73,14 @@ CondNode *createCondNode(ExpressionNode *condition, BodyNode *trueBody, BodyNode
 WhileNode *createWhileNode(ExpressionNode *condition, BodyNode *body);
 StatementNode *craeteStatementNode(void *statement, StatementType type);
 ExpressionNode *createExpressionNode(void *expressions, ExpressionType type);
+BodyNode *createBodyNode();
+
+void addBodyStatement(BodyNode *body, StatementNode *statement);
 
 void destroyFuncNode(FuncNode *node);
 void destroyCondNode(CondNode *node);
 void destroyWhileNode(WhileNode *node);
 void destroyStatementNode(StatementNode *node);
 void destroyExpressionNode(ExpressionNode *node);
+void destroyBodyNode(BodyNode *node);
 #endif
