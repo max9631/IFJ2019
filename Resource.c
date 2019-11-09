@@ -6,12 +6,12 @@ void cleanResources() {
         destroyList(tokenList);
 }
 
-
 void msg(char *message, ...) {
     if (!inDebugMode)
         return;
-	va_list argList;
-	va_start(argList, message);
-	vfprintf(stderr, message, argList);
-	va_end(argList);
+
+    va_list argList;
+    va_start(argList, message);
+    vfprintf(stderr, message, argList);
+    va_end(argList);
 }
