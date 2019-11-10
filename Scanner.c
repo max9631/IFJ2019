@@ -118,8 +118,6 @@ Token *defineIdentifier(Document *document) {
 	else if(strcmp("pass",string->value) == 0) type = KEYWORD_PASS;
 	else return createToken(string, TOKEN_IDENTIFIER);
 	return createToken(string, type);
-	// TODO: check if identifier is not a keyword
-	// return createToken(string, TOKEN_IDENTIFIER);
 }
 
 Token *defineString(Document *document) {
