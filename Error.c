@@ -4,6 +4,9 @@
 void handleError(ErrorCodes code, char *message, ...) {
 	if (!inDebugMode) 
 		return;
+
+	fflush(stderr);
+	fflush(stdout);
 	
 	va_list argList;
 	va_start(argList, message);
