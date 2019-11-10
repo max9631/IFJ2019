@@ -45,7 +45,7 @@ String *convertTokenTypeToString(TokenType type) {
     case TOKEN_EOF: return createString("TOKEN_EOF");
     case KEYWORD_DEF: return createString("KEYWORD_DEF");
     case KEYWORD_ELSE: return createString("KEYWORD_ELSE");
-    case KEYWORD_END: return createString("KEYWORD_END");
+    case KEYWORD_RETURN: return createString("KEYWORD_RETURN");
     case KEYWORD_IF: return createString("KEYWORD_IF");
     case KEYWORD_NONE: return createString("KEYWORD_NONE");
     case KEYWORD_WHILE: return createString("KEYWORD_WHILE");

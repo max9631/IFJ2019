@@ -2,6 +2,7 @@
 #define SCANNER_H
 
 #include <stdio.h>
+#include <string.h>
 
 #include "TokenList.h"
 #include "String.h"
