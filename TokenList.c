@@ -98,3 +98,11 @@ void printTokenList(TokenList *list) {
     }
     printf("</TokenList>\n");
 }
+
+Token *consume(TokenList *list, TokenType expectedType) {
+    Token *token = pop(list);
+    if (token->type == expectedType)
+        return token;
+    handleError(SyntaxError, "Expected token type of %s, but got %s", convertTokenTypeToString(expectedType), convertTokenTypeToString(token->type));
+    return NULL;
+}

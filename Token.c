@@ -52,4 +52,5 @@ String *convertTokenTypeToString(TokenType type) {
     case KEYWORD_PASS: return createString("KEYWORD_PASS");
     default: handleError(InternalError, "Unkown token type");
     }
+    return NULL;
 }
