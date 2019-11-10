@@ -62,4 +62,9 @@ Token *peekNext(TokenList *list, int offset);
 */
 void printTokenList(TokenList *list);
 
+/**
+ * checks if next token is expected type and returns it, or raises an error
+ */
+Token *consume(TokenList *list, TokenType expectedType);
+
 #endif
