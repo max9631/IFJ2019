@@ -45,7 +45,7 @@ typedef enum {
     /* Keywords */
     KEYWORD_DEF, //def
     KEYWORD_ELSE, //else
-    KEYWORD_END, //end
+    KEYWORD_RETURN, //return
     KEYWORD_IF, //if
     KEYWORD_NONE, //none
     KEYWORD_WHILE, //while
