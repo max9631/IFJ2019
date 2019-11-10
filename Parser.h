@@ -8,11 +8,14 @@ typedef struct _ParserState {
 } ParserState;
 
 MainNode *parseTokens(TokenList *list);
-BodyNode *parseBody();
-FuncNode *parseFunc();
+BodyNode *parseBody(TokenList *list);
+FuncNode *parseFunc(TokenList *list);
 CondNode *parseCond();
 WhileNode *parseWhile();
 StatementNode *parseStatement();
 ExpressionNode *parseExpression();
+
+/*DEBUG functions*/
+void printFuncNode(FuncNode *node);
 
 #endif
