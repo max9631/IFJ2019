@@ -9,7 +9,7 @@ BodyNode *parseBody(TokenList *list) {
 }
 
 FuncNode *parseFunc(TokenList *list) {
-    consume(list, TOKEN_IDENTIFIER); //TODO switch to KEYWORD_DEF
+    consume(list, KEYWORD_DEF);
     
     Token *name = consume(list, TOKEN_IDENTIFIER);
     consume(list, TOKEN_OPAREN);
