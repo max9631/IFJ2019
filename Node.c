@@ -65,11 +65,9 @@ void addFunctionArgument(FuncNode *function, String *argument) {
 }
 
 void destroyFuncNode(FuncNode *node) {
-    free(node->name->value);
-    free(node->name);
+    destroyString(node->name);
     for (int i = 0; i < node->argsCount; i++) {
-        free(node->args[i]->value);
-        free(node->args[i]);
+        destroyString(node->args[i]);
     }
     destroyBodyNode(node->body);
     free(node);

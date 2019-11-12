@@ -92,8 +92,7 @@ void printTokenList(TokenList *list) {
             type->value,
             token->value == NULL ? "NULL" : token->value->value
         );
-        free(type->value);
-        free(type);
+        destroyString(type);
         item = item->nextItem;
     }
     printf("</TokenList>\n");
