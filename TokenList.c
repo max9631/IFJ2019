@@ -92,8 +92,7 @@ void printTokenList(TokenList *list) {
             type->value,
             token->value == NULL ? "NULL" : token->value->value
         );
-        free(type->value);
-        free(type);
+        destroyString(type);
         item = item->nextItem;
     }
     printf("</TokenList>\n");
@@ -105,4 +104,9 @@ Token *consume(TokenList *list, TokenType expectedType) {
         return token;
     handleError(SyntaxError, "Expected token type of %s, but got %s", convertTokenTypeToString(expectedType)->value, convertTokenTypeToString(token->type)->value);
     return NULL;
+}
+
+bool isNextTokenOfType(TokenList *list, TokenType type) {
+    Token *token = peek(list);
+    return token->type == type;
 }

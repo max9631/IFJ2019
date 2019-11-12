@@ -67,4 +67,9 @@ void printTokenList(TokenList *list);
  */
 Token *consume(TokenList *list, TokenType expectedType);
 
+/**
+ * Retuns if next token is same type as provided TokenType
+ */
+bool isNextTokenOfType(TokenList *list, TokenType type);
+
 #endif
