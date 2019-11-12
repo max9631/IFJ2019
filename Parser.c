@@ -25,7 +25,7 @@ void DestroyParserState(ParserState *state) {
     free(state);
 }
 
-BodyNode *parseBody() {
+BodyNode *parseBody(TokenList *list) {
     return NULL;
 }
 
@@ -33,19 +33,51 @@ FuncNode *parseFunc() {
     return NULL;
 }
 
-CondNode *parseCond() {
-    return NULL;
+CondNode *parseCond(TokenList *list) {
+    consume(list, KEYWORD_IF);
+
+    ExpressionNode *condition = parseExpression(list);
+
+    consume(list, TOKEN_COLON);
+    consume(list, TOKEN_EOL);
+    consume(list, TOKEN_INDENT);
+
+    BodyNode *trueBody = parseBody(list);
+
+    consume(list, TOKEN_DEINDENT);
+    consume(list, KEYWORD_ELSE);
+    consume(list, TOKEN_COLON);
+    consume(list, TOKEN_EOL);
+    consume(list, TOKEN_INDENT);
+
+    BodyNode *falseBody = parseBody(list);
+
+    consume(list, TOKEN_DEINDENT);
+
+    return createCondNode(condition, trueBody, falseBody);
 }
 
-WhileNode *parseWhile() {
-    return NULL;
+WhileNode *parseWhile(TokenList *list) {
+    consume(list, KEYWORD_WHILE);
+
+    ExpressionNode *condition = parseExpression(list);
+
+    consume(list, TOKEN_COLON);
+    consume(list, TOKEN_EOL);
+    consume(list, TOKEN_INDENT);
+
+    BodyNode *body = parseBody(list);
+
+    consume(list, TOKEN_DEINDENT);
+
+    return createWhileNode(condition, body);
 }
 
 StatementNode *parseStatement() {
     return NULL;
 }
 
-ExpressionNode *parseExpression() {
+ExpressionNode *parseExpression(TokenList *list) {
     return NULL;
 }
 
