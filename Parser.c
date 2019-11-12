@@ -41,7 +41,35 @@ WhileNode *parseWhile() {
     return NULL;
 }
 
-StatementNode *parseStatement() {
+AssignNode *parseAssign(ParserState *state) {
+    Token *identifier = consume(state->list, TOKEN_IDENTIFIER);
+    AssignOperator operator = ASSIGN_NONE;
+    TokenType type = pop(state->list)->type;
+    switch (type) {
+    case OPERATOR_ASSIGN: return createAssignNode(identifier->value, ASSIGN_NONE, parseExpression());
+    case OPERATOR_DIV_ASSIGN: return createAssignNode(identifier->value, ASSIGN_DIV, parseExpression());
+    case OPERATOR_MUL_ASSIGN: return createAssignNode(identifier->value, ASSIGN_MUL, parseExpression());
+    case OPERATOR_ADD_ASSIGN: return createAssignNode(identifier->value, ASSIGN_ADD, parseExpression());
+    case OPERATOR_SUB_ASSIGN: return createAssignNode(identifier->value, ASSIGN_SUB, parseExpression());
+    default: handleError(SyntaxError, "Expected assign operator, but got %s", convertTokenTypeToString(type));
+    }
+    return NULL;
+}
+
+
+StatementNode *parseStatement(ParserState *state) {
+    switch (peek(state->list)->type) {
+    case TOKEN_IDENTIFIER: 
+        if (peekNext(state->list, 1)->type == TOKEN_OPAREN)
+            return craeteStatementNode(parseExpression(), STATEMENT_EXPRESSION);
+        else
+            return craeteStatementNode(parseAssign(state), STATEMENT_ASSIGN);
+    case KEYWORD_WHILE: return craeteStatementNode(parseWhile(), STATEMENT_WHILE);
+    case KEYWORD_IF: return craeteStatementNode(parseCond(), STATEMENT_IF);
+    case KEYWORD_PASS: return craeteStatementNode(NULL, STATEMENT_PASS);
+    case KEYWORD_RETURN: return craeteStatementNode(NULL, STATEMENT_RETURN);
+    default: return craeteStatementNode(parseExpression(), STATEMENT_EXPRESSION);
+    }
     return NULL;
 }
 

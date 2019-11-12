@@ -20,7 +20,8 @@ BodyNode *parseBody();
 FuncNode *parseFunc();
 CondNode *parseCond();
 WhileNode *parseWhile();
-StatementNode *parseStatement();
+AssignNode *parseAssign(ParserState *state);
+StatementNode *parseStatement(ParserState *state);
 ExpressionNode *parseExpression();
 
 #endif

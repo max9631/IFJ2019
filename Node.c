@@ -23,6 +23,14 @@ WhileNode *createWhileNode(ExpressionNode *condition, BodyNode *body) {
     return node;
 }
 
+AssignNode *createAssignNode(String *identifier, AssignOperator operator, ExpressionNode *expression) {
+    AssignNode *node = (WhileNode *)malloc(sizeof(AssignNode));
+    node->identifier = createString(identifier->value);
+    node->expression = expression;
+    node->operator = operator;
+    return node;
+}
+
 StatementNode *craeteStatementNode(void *statement, StatementType type) {
     StatementNode *node = (StatementNode *) malloc(sizeof(StatementNode));
     node->statement = statement;
@@ -39,6 +47,7 @@ ExpressionNode *createExpressionNode(void *expression, ExpressionType type) {
 
 BodyNode *createBodyNode() {
     BodyNode *node = (BodyNode *) malloc(sizeof(BodyNode));
+    node->symTable = createHashTable();
     return node;
 }
 
@@ -99,6 +108,7 @@ void destroyExpressionNode(ExpressionNode *node) {
 void destroyBodyNode(BodyNode *node) {
     for (int i = 0; i < node->statementsCount; i++)
         destroyStatementNode(node->statements[i]);
+    destroyHashTable(node->symTable);
     free(node);
 }
 
