@@ -257,4 +257,5 @@ void scan(TokenList *list, Document *document) {
 			addTokenToList(token, list);
 		}
 	}
+	addTokenToList(createToken(NULL, TOKEN_EOF), list);
 }

@@ -9,6 +9,7 @@
 #include "Scanner.h"
 #include "String.h"
 #include "Error.h"
+#include "Parser.h"
 
 Document *document;
 TokenList *tokenList;
