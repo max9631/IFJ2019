@@ -61,7 +61,7 @@ void addFunctionArgument(FuncNode *function, String *argument) {
 	function->argsCount++;
 	function->args = (String **) realloc(function->args, function->argsCount * sizeof(String *));
 	if (function->args == NULL) handleError(InternalError, "Error while adding StatementNode to BodyNode");
-	function->args[function->argsCount - 1] = argument;
+	function->args[function->argsCount - 1] = createString(argument->value);
 }
 
 void destroyFuncNode(FuncNode *node) {
