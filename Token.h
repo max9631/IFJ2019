@@ -59,5 +59,6 @@ typedef struct Token {
 
 Token *createToken(String *string, TokenType type);
 String *convertTokenTypeToString(TokenType type);
+void destroyToken(Token *token);
 
 #endif
