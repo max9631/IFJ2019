@@ -19,6 +19,8 @@ void addPraserFunction(ParserState *state, FuncNode *func) {
 void DestroyParserState(ParserState *state) {
     if (state->main != NULL) destroyMainNode(state->main);
     if (state->funcTable != NULL) destroyHashTable(state->funcTable);
+    for (int i = 0; i < state->functionsCount; i++)
+        destroyFuncNode(state->functions[i]);
     if (state->functions != NULL) free(state->functions);
     free(state);
 }
