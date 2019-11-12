@@ -68,3 +68,8 @@ void destroyHashTable(HashTable *table) {
 		(*table)[i] = NULL;
 	}
 }
+
+String *getString(HashTable *table, char *key) {
+    HashTableItem *item = getItem(table, key);
+    return (String *)item->data;
+}

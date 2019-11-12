@@ -24,4 +24,6 @@ void insertItem(HashTable *table, char *key, void *data);
 void deleteItem(HashTable *table, char *key);
 void destroyHashTable(HashTable *table);
 
+String *getString(HashTable *table, char *key);
+
 #endif
