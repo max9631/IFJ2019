@@ -25,6 +25,18 @@ void DestroyParserState(ParserState *state) {
     free(state);
 }
 
+MainNode *parseTokens(ParserState *state) {
+    state->main = createMainNode(createBodyNode());
+    BodyNode *body = state->main->body;
+    while (peek(state->list)->type != TOKEN_EOF) {
+        if (peek(state->list)->type == KEYWORD_DEF)
+            addPraserFunction(state, parseFunc());
+        else
+            addBodyStatement(body, parseStatement());
+        consume(state->list, TOKEN_EOL);
+    }
+    return body;
+}
 BodyNode *parseBody() {
     return NULL;
 }

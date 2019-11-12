@@ -17,6 +17,7 @@ void addPraserFunction(ParserState *state, FuncNode *func);
 void DestroyParserState(ParserState *state);
 
 BodyNode *parseBody();
+MainNode *parseTokens(ParserState *state);
 FuncNode *parseFunc();
 CondNode *parseCond();
 WhileNode *parseWhile();
