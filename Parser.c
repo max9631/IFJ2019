@@ -1,7 +1,26 @@
 #include "Parser.h"
 
-MainNode *parseTokens(TokenList *list) {
-    return NULL;
+ParserState *createParserState(TokenList *list) {
+    ParserState *state = (ParserState *)malloc(sizeof(ParserState));
+    state->list = list;
+    state->main = NULL;
+    state->funcTable = createHashTable();
+    state->functionsCount = 0;
+    state->functions = NULL;
+    return state;
+}
+
+void addPraserFunction(ParserState *state, FuncNode *func) {
+    state->functionsCount++;
+    state->functions = (FuncNode **)realloc(state->functions, state->functionsCount * sizeof(FuncNode *));
+    state->functions[state->functionsCount - 1] = func;
+}
+
+void DestroyParserState(ParserState *state) {
+    if (state->main != NULL) destroyMainNode(state->main);
+    if (state->funcTable != NULL) destroyHashTable(state->funcTable);
+    if (state->functions != NULL) free(state->functions);
+    free(state);
 }
 
 BodyNode *parseBody() {
