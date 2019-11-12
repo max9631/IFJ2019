@@ -20,15 +20,14 @@ FuncNode *parseFunc(TokenList *list) {
         Token *variable = consume(list, TOKEN_IDENTIFIER);
         addFunctionArgument(node, variable->value);
 
-        Token *tempToken = peek(list);
-        if(tempToken->type == TOKEN_CPAREN) {
+        if(isNextTokenOfType(list, TOKEN_CPAREN)) {
             consume(list, TOKEN_CPAREN);
             break;
-        } else if (tempToken->type == TOKEN_COMMA) {
+        } else if (isNextTokenOfType(list, TOKEN_COMMA)) {
             consume(list, TOKEN_COMMA);
             continue;
         } else {
-            handleError(SyntaxError, "Syntax error. Expected ')' or ',', but got '%s'", tempToken->value->value);
+            handleError(SyntaxError, "Syntax error. Expected ')' or ',', in function %s", name->value->value);
         }
     }
 
