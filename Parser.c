@@ -25,6 +25,7 @@ void DestroyParserState(ParserState *state) {
     free(state);
 }
 
+
 MainNode *parseTokens(ParserState *state) {
     state->main = createMainNode(createBodyNode());
     BodyNode *body = state->main->body;
@@ -37,8 +38,12 @@ MainNode *parseTokens(ParserState *state) {
     }
     return body;
 }
-BodyNode *parseBody() {
-    return NULL;
+
+BodyNode *parseBody(ParserState *state) {
+    BodyNode *node = createBodyNode();
+    while (peek(state->list)->type != TOKEN_DEINDENT) 
+        addBodyStatement(node, parseStatement(state->list));
+    return node;
 }
 
 FuncNode *parseFunc() {
