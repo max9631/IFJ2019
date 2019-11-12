@@ -43,7 +43,6 @@ WhileNode *parseWhile() {
 
 AssignNode *parseAssign(ParserState *state) {
     Token *identifier = consume(state->list, TOKEN_IDENTIFIER);
-    AssignOperator operator = ASSIGN_NONE;
     TokenType type = pop(state->list)->type;
     switch (type) {
     case OPERATOR_ASSIGN: return createAssignNode(identifier->value, ASSIGN_NONE, parseExpression());

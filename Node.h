@@ -56,7 +56,7 @@ typedef enum _AssignOperator {
 typedef struct _AssignNode {
     String *identifier;
     ExpressionNode *expression;
-    AssignOperator *operator;
+    AssignOperator operator;
 } AssignNode;
 
 typedef struct _BodyNode {

@@ -24,7 +24,7 @@ WhileNode *createWhileNode(ExpressionNode *condition, BodyNode *body) {
 }
 
 AssignNode *createAssignNode(String *identifier, AssignOperator operator, ExpressionNode *expression) {
-    AssignNode *node = (WhileNode *)malloc(sizeof(AssignNode));
+    AssignNode *node = (AssignNode *)malloc(sizeof(AssignNode));
     node->identifier = createString(identifier->value);
     node->expression = expression;
     node->operator = operator;
