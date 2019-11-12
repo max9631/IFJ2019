@@ -14,5 +14,6 @@ int main(int argc, char *argv[]) {
 	scan(tokenList, document);
     
     printTokenList(tokenList);
+	parseTokens(tokenList);
 }
 
