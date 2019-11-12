@@ -33,7 +33,7 @@ void insertItem(HashTable *table, char *key, void *data) {
 	}
 	HashTableItem *newItem = (HashTableItem *) malloc(sizeof(HashTableItem));
 	if (newItem == NULL) return;
-	newItem->key = key;
+	newItem->key = strcpy(newItem->key, key);
 	newItem->data = data;
 	newItem->ptrnext = (*table)[indexForKey(key)];
 	(*table)[indexForKey(key)] = newItem;
@@ -53,6 +53,8 @@ void deleteItem(HashTable *table, char *key) {
 		lastItem->ptrnext = item->ptrnext;
 	else 
 		(*table)[index] = item->ptrnext;
+    free(item->key);
+    free(item->data);
 	free(item);
 }
 
@@ -62,6 +64,8 @@ void destroyHashTable(HashTable *table) {
 		HashTableItem *item = (*table)[i];
 		while (item != NULL) {
 			HashTableItem *tmp = item->ptrnext;
+            free(item->key);
+            free(item->data);
 			free(item);
 			item = tmp;
 		}
