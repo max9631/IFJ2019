@@ -106,3 +106,8 @@ Token *consume(TokenList *list, TokenType expectedType) {
     handleError(SyntaxError, "Expected token type of %s, but got %s", convertTokenTypeToString(expectedType), convertTokenTypeToString(token->type));
     return NULL;
 }
+
+bool isNextTokenOfType(TokenList *list, TokenType type) {
+    Token *token = peek(list);
+    return token->type == type;
+}
