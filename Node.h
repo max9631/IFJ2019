@@ -99,6 +99,7 @@ MainNode *createMainNode(BodyNode *body);
 void addBodyStatement(BodyNode *body, StatementNode *statement);
 void addFunctionArgument(FuncNode *function, String *argument);
 
+void destoyAssignNode(AssignNode *node);
 void destroyFuncNode(FuncNode *node);
 void destroyCondNode(CondNode *node);
 void destroyWhileNode(WhileNode *node);

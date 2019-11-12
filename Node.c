@@ -73,6 +73,12 @@ void addFunctionArgument(FuncNode *function, String *argument) {
 	function->args[function->argsCount - 1] = createString(argument->value);
 }
 
+void destoyAssignNode(AssignNode *node) {
+    destroyString(node->identifier);
+    destroyExpressionNode(node->expression);
+    free(node);
+}
+
 void destroyFuncNode(FuncNode *node) {
     destroyString(node->name);
     for (int i = 0; i < node->argsCount; i++) {
