@@ -18,10 +18,13 @@ void DestroyParserState(ParserState *state);
 
 MainNode *parseTokens(ParserState *state);
 BodyNode *parseBody(ParserState *state);
-FuncNode *parseFunc();
+FuncNode *parseFunc(ParserState *state);
 CondNode *parseCond(ParserState *state);
 WhileNode *parseWhile(ParserState *state);
 StatementNode *parseStatement();
 ExpressionNode *parseExpression(ParserState *state);
+
+/*DEBUG functions*/
+void printFuncNode(FuncNode *node);
 
 #endif
