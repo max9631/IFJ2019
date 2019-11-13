@@ -25,7 +25,6 @@ void DestroyParserState(ParserState *state) {
     free(state);
 }
 
-
 MainNode *parseTokens(ParserState *state) {
     state->main = createMainNode(createBodyNode());
     BodyNode *body = state->main->body;
@@ -36,13 +35,13 @@ MainNode *parseTokens(ParserState *state) {
             addBodyStatement(body, parseStatement());
         consume(state->list, TOKEN_EOL);
     }
-    return body;
+    return state->main;
 }
 
 BodyNode *parseBody(ParserState *state) {
     BodyNode *node = createBodyNode();
     while (peek(state->list)->type != TOKEN_DEINDENT) 
-        addBodyStatement(node, parseStatement(state->list));
+        addBodyStatement(node, parseStatement(state));
     return node;
 }
 
@@ -80,19 +79,53 @@ FuncNode *parseFunc(ParserState *state) {
     return node;
 }
 
-CondNode *parseCond() {
-    return NULL;
+CondNode *parseCond(ParserState *state) {
+    TokenList *list = state->list;
+    consume(list, KEYWORD_IF);
+
+    ExpressionNode *condition = parseExpression(state);
+
+    consume(list, TOKEN_COLON);
+    consume(list, TOKEN_EOL);
+    consume(list, TOKEN_INDENT);
+
+    BodyNode *trueBody = parseBody(state);
+
+    consume(list, TOKEN_DEINDENT);
+    consume(list, KEYWORD_ELSE);
+    consume(list, TOKEN_COLON);
+    consume(list, TOKEN_EOL);
+    consume(list, TOKEN_INDENT);
+
+    BodyNode *falseBody = parseBody(state);
+
+    consume(list, TOKEN_DEINDENT);
+
+    return createCondNode(condition, trueBody, falseBody);
 }
 
-WhileNode *parseWhile() {
-    return NULL;
+WhileNode *parseWhile(ParserState *state) {
+    TokenList *list = state->list;
+    consume(list, KEYWORD_WHILE);
+
+    ExpressionNode *condition = parseExpression(state);
+
+    consume(list, TOKEN_COLON);
+    consume(list, TOKEN_EOL);
+    consume(list, TOKEN_INDENT);
+
+    BodyNode *body = parseBody(state);
+
+    consume(list, TOKEN_DEINDENT);
+
+    return createWhileNode(condition, body);
 }
 
 StatementNode *parseStatement() {
     return NULL;
 }
 
-ExpressionNode *parseExpression() {
+ExpressionNode *parseExpression(ParserState *state) {
     return NULL;
 }
 
