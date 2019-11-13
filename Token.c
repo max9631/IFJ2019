@@ -47,7 +47,6 @@ String *convertTokenTypeToString(TokenType type) {
     case KEYWORD_ELSE: return createString("KEYWORD_ELSE");
     case KEYWORD_RETURN: return createString("KEYWORD_RETURN");
     case KEYWORD_IF: return createString("KEYWORD_IF");
-    case KEYWORD_NONE: return createString("KEYWORD_NONE");
     case KEYWORD_WHILE: return createString("KEYWORD_WHILE");
     case KEYWORD_PASS: return createString("KEYWORD_PASS");
     default: handleError(InternalError, "Unkown token type");

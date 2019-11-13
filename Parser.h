@@ -16,12 +16,16 @@ ParserState *createParserState(TokenList *list);
 void addPraserFunction(ParserState *state, FuncNode *func);
 void DestroyParserState(ParserState *state);
 
-BodyNode *parseBody();
-FuncNode *parseFunc();
-CondNode *parseCond();
-WhileNode *parseWhile();
+MainNode *parseTokens(ParserState *state);
+BodyNode *parseBody(ParserState *state);
+FuncNode *parseFunc(ParserState *state);
+CondNode *parseCond(ParserState *state);
+WhileNode *parseWhile(ParserState *state);
 AssignNode *parseAssign(ParserState *state);
 StatementNode *parseStatement(ParserState *state);
-ExpressionNode *parseExpression();
+ExpressionNode *parseExpression(ParserState *state);
+
+/*DEBUG functions*/
+void printFuncNode(FuncNode *node);
 
 #endif

@@ -113,7 +113,7 @@ Token *defineIdentifier(Document *document) {
 	else if(strcmp("else",string->value) == 0) type = KEYWORD_ELSE;
 	else if(strcmp("return",string->value) == 0) type = KEYWORD_RETURN;
 	else if(strcmp("if",string->value) == 0) type = KEYWORD_IF;
-	else if(strcmp("None",string->value) == 0) type = KEYWORD_NONE;
+	else if(strcmp("None",string->value) == 0) type = DATA_TOKEN_NONE;
 	else if(strcmp("while",string->value) == 0) type = KEYWORD_WHILE;
 	else if(strcmp("pass",string->value) == 0) type = KEYWORD_PASS;
 	else return createToken(string, TOKEN_IDENTIFIER);
@@ -246,8 +246,11 @@ void scan(TokenList *list, Document *document) {
 		else if (isClosingParen(current)) token = defineOneCharToken(document, current, TOKEN_CPAREN);
 		else if (isColon(current)) token = defineOneCharToken(document, current, TOKEN_COLON);
 		else if (isComma(current)) token = defineOneCharToken(document, current, TOKEN_COMMA);
+		else if (isEndOfLine(current)) {
+			token = createToken(createStringFromChar('\n'), TOKEN_EOL);
+			nextCharacter(document);
+		} 
 		else if (isTerminator(current)) nextCharacter(document);
-		else if (isEndOfLine(current)) token = createToken(NULL, TOKEN_EOL);
 		else {
 			msg("%c is value of %d\n", current, current);
 			handleError(SyntaxError, "Invalid number syntax on line %d, column %d", document->line, document->column);
@@ -257,4 +260,5 @@ void scan(TokenList *list, Document *document) {
 			addTokenToList(token, list);
 		}
 	}
+	addTokenToList(createToken(NULL, TOKEN_EOF), list);
 }
