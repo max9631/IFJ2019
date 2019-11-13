@@ -21,7 +21,8 @@ BodyNode *parseBody(ParserState *state);
 FuncNode *parseFunc(ParserState *state);
 CondNode *parseCond(ParserState *state);
 WhileNode *parseWhile(ParserState *state);
-StatementNode *parseStatement();
+AssignNode *parseAssign(ParserState *state);
+StatementNode *parseStatement(ParserState *state);
 ExpressionNode *parseExpression(ParserState *state);
 
 /*DEBUG functions*/

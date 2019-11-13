@@ -1,33 +1,7 @@
 #ifndef NODE_H
 #define NODE_H
 #include "String.h"
-
-typedef enum _StatementType { 
-    STATEMENT_ASSIGN, 
-    STATEMENT_EXPRESSION, 
-    STATEMENT_WHILE,
-    STATEMENT_IF,
-    STATEMENT_RETURN,
-    STATEMENT_PASS,
-    STATEMENT_BREAK
-} StatementType;
-
-typedef struct _StatementNode {
-    void *statement;
-    StatementType type;
-} StatementNode;
-
-typedef struct _BodyNode {
-    int statementsCount;
-    StatementNode **statements;
-} BodyNode;
-
-typedef struct _FuncNode {
-    String *name;
-    int argsCount;
-    String **args;
-    BodyNode *body;
-} FuncNode;
+#include "HashTable.h"
 
 typedef enum _ExpressionType { 
     EXPRESSION_CALL,
@@ -57,6 +31,47 @@ typedef struct _ExpressionNode {
     ExpressionType type;
 } ExpressionNode;
 
+typedef enum _StatementType { 
+    STATEMENT_ASSIGN,
+    STATEMENT_ASSIGN_MUL,
+    STATEMENT_ASSIGN_DIV,
+    STATEMENT_ASSIGN_ADD,
+    STATEMENT_ASSIGN_SUB,
+    STATEMENT_EXPRESSION, 
+    STATEMENT_WHILE,
+    STATEMENT_IF,
+    STATEMENT_RETURN,
+    STATEMENT_PASS
+} StatementType;
+
+typedef struct _StatementNode {
+    void *statement;
+    StatementType type;
+} StatementNode;
+
+typedef enum _AssignOperator {
+    ASSIGN_NONE, ASSIGN_ADD, ASSIGN_SUB, ASSIGN_DIV, ASSIGN_MUL
+} AssignOperator;
+
+typedef struct _AssignNode {
+    String *identifier;
+    ExpressionNode *expression;
+    AssignOperator operator;
+} AssignNode;
+
+typedef struct _BodyNode {
+    HashTable *symTable;
+    int statementsCount;
+    StatementNode **statements;
+} BodyNode;
+
+typedef struct _FuncNode {
+    String *name;
+    int argsCount;
+    String **args;
+    BodyNode *body;
+} FuncNode;
+
 typedef struct _CondNode {
     ExpressionNode *condition;
     BodyNode *trueBody;
@@ -75,6 +90,7 @@ typedef struct _MainNode {
 FuncNode *createFuncNode(String *name, BodyNode *body);
 CondNode *createCondNode(ExpressionNode *condition, BodyNode *trueBody, BodyNode *falseBody);
 WhileNode *createWhileNode(ExpressionNode *condition, BodyNode *body);
+AssignNode *createAssignNode(String *identifier, AssignOperator operator, ExpressionNode *expression);
 StatementNode *craeteStatementNode(void *statement, StatementType type);
 ExpressionNode *createExpressionNode(void *expressions, ExpressionType type);
 BodyNode *createBodyNode();
@@ -83,6 +99,7 @@ MainNode *createMainNode(BodyNode *body);
 void addBodyStatement(BodyNode *body, StatementNode *statement);
 void addFunctionArgument(FuncNode *function, String *argument);
 
+void destoyAssignNode(AssignNode *node);
 void destroyFuncNode(FuncNode *node);
 void destroyCondNode(CondNode *node);
 void destroyWhileNode(WhileNode *node);

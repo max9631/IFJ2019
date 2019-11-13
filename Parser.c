@@ -32,7 +32,7 @@ MainNode *parseTokens(ParserState *state) {
         if (peek(state->list)->type == KEYWORD_DEF)
             addPraserFunction(state, parseFunc(state));
         else
-            addBodyStatement(body, parseStatement());
+            addBodyStatement(body, parseStatement(state));
         consume(state->list, TOKEN_EOL);
     }
     return state->main;
@@ -121,7 +121,34 @@ WhileNode *parseWhile(ParserState *state) {
     return createWhileNode(condition, body);
 }
 
-StatementNode *parseStatement() {
+AssignNode *parseAssign(ParserState *state) {
+    Token *identifier = consume(state->list, TOKEN_IDENTIFIER);
+    TokenType type = pop(state->list)->type;
+    switch (type) {
+    case OPERATOR_ASSIGN: return createAssignNode(identifier->value, ASSIGN_NONE, parseExpression(state));
+    case OPERATOR_DIV_ASSIGN: return createAssignNode(identifier->value, ASSIGN_DIV, parseExpression(state));
+    case OPERATOR_MUL_ASSIGN: return createAssignNode(identifier->value, ASSIGN_MUL, parseExpression(state));
+    case OPERATOR_ADD_ASSIGN: return createAssignNode(identifier->value, ASSIGN_ADD, parseExpression(state));
+    case OPERATOR_SUB_ASSIGN: return createAssignNode(identifier->value, ASSIGN_SUB, parseExpression(state));
+    default: handleError(SyntaxError, "Expected assign operator, but got %s", convertTokenTypeToString(type));
+    }
+    return NULL;
+}
+
+
+StatementNode *parseStatement(ParserState *state) {
+    switch (peek(state->list)->type) {
+    case TOKEN_IDENTIFIER: 
+        if (peekNext(state->list, 1)->type == TOKEN_OPAREN)
+            return craeteStatementNode(parseExpression(state), STATEMENT_EXPRESSION);
+        else
+            return craeteStatementNode(parseAssign(state), STATEMENT_ASSIGN);
+    case KEYWORD_WHILE: return craeteStatementNode(parseWhile(state), STATEMENT_WHILE);
+    case KEYWORD_IF: return craeteStatementNode(parseCond(state), STATEMENT_IF);
+    case KEYWORD_PASS: return craeteStatementNode(NULL, STATEMENT_PASS);
+    case KEYWORD_RETURN: return craeteStatementNode(NULL, STATEMENT_RETURN);
+    default: return craeteStatementNode(parseExpression(state), STATEMENT_EXPRESSION);
+    }
     return NULL;
 }
 

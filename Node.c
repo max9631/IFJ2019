@@ -23,6 +23,14 @@ WhileNode *createWhileNode(ExpressionNode *condition, BodyNode *body) {
     return node;
 }
 
+AssignNode *createAssignNode(String *identifier, AssignOperator operator, ExpressionNode *expression) {
+    AssignNode *node = (AssignNode *)malloc(sizeof(AssignNode));
+    node->identifier = createString(identifier->value);
+    node->expression = expression;
+    node->operator = operator;
+    return node;
+}
+
 StatementNode *craeteStatementNode(void *statement, StatementType type) {
     StatementNode *node = (StatementNode *) malloc(sizeof(StatementNode));
     node->statement = statement;
@@ -39,6 +47,7 @@ ExpressionNode *createExpressionNode(void *expression, ExpressionType type) {
 
 BodyNode *createBodyNode() {
     BodyNode *node = (BodyNode *) malloc(sizeof(BodyNode));
+    node->symTable = createHashTable();
     return node;
 }
 
@@ -62,6 +71,12 @@ void addFunctionArgument(FuncNode *function, String *argument) {
 	function->args = (String **) realloc(function->args, function->argsCount * sizeof(String *));
 	if (function->args == NULL) handleError(InternalError, "Error while adding StatementNode to BodyNode");
 	function->args[function->argsCount - 1] = createString(argument->value);
+}
+
+void destoyAssignNode(AssignNode *node) {
+    destroyString(node->identifier);
+    destroyExpressionNode(node->expression);
+    free(node);
 }
 
 void destroyFuncNode(FuncNode *node) {
@@ -99,6 +114,7 @@ void destroyExpressionNode(ExpressionNode *node) {
 void destroyBodyNode(BodyNode *node) {
     for (int i = 0; i < node->statementsCount; i++)
         destroyStatementNode(node->statements[i]);
+    destroyHashTable(node->symTable);
     free(node);
 }
 
