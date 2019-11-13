@@ -47,7 +47,6 @@ typedef enum {
     KEYWORD_ELSE, //else
     KEYWORD_RETURN, //return
     KEYWORD_IF, //if
-    KEYWORD_NONE, //none
     KEYWORD_WHILE, //while
     KEYWORD_PASS //pass
  } TokenType;

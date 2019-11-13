@@ -1,14 +1,53 @@
 #include "Parser.h"
 
-MainNode *parseTokens(TokenList *list) {
-    return NULL;
+ParserState *createParserState(TokenList *list) {
+    ParserState *state = (ParserState *)malloc(sizeof(ParserState));
+    state->list = list;
+    state->main = NULL;
+    state->funcTable = createHashTable();
+    state->functionsCount = 0;
+    state->functions = NULL;
+    return state;
 }
 
-BodyNode *parseBody(TokenList *list) {
-    return createBodyNode(); //TODO Implement
+void addPraserFunction(ParserState *state, FuncNode *func) {
+    state->functionsCount++;
+    state->functions = (FuncNode **)realloc(state->functions, state->functionsCount * sizeof(FuncNode *));
+    state->functions[state->functionsCount - 1] = func;
 }
 
-FuncNode *parseFunc(TokenList *list) {
+void DestroyParserState(ParserState *state) {
+    if (state->main != NULL) destroyMainNode(state->main);
+    if (state->funcTable != NULL) destroyHashTable(state->funcTable);
+    for (int i = 0; i < state->functionsCount; i++)
+        destroyFuncNode(state->functions[i]);
+    if (state->functions != NULL) free(state->functions);
+    free(state);
+}
+
+
+MainNode *parseTokens(ParserState *state) {
+    state->main = createMainNode(createBodyNode());
+    BodyNode *body = state->main->body;
+    while (peek(state->list)->type != TOKEN_EOF) {
+        if (peek(state->list)->type == KEYWORD_DEF)
+            addPraserFunction(state, parseFunc(state));
+        else
+            addBodyStatement(body, parseStatement());
+        consume(state->list, TOKEN_EOL);
+    }
+    return body;
+}
+
+BodyNode *parseBody(ParserState *state) {
+    BodyNode *node = createBodyNode();
+    while (peek(state->list)->type != TOKEN_DEINDENT) 
+        addBodyStatement(node, parseStatement(state->list));
+    return node;
+}
+
+FuncNode *parseFunc(ParserState *state) {
+    TokenList *list = state->list;
     consume(list, KEYWORD_DEF);
     
     Token *name = consume(list, TOKEN_IDENTIFIER);
@@ -35,7 +74,7 @@ FuncNode *parseFunc(TokenList *list) {
     consume(list, TOKEN_EOL);
     consume(list, TOKEN_INDENT);
 
-    node->body = parseBody(list);
+    node->body = parseBody(state);
     consume(list, TOKEN_DEINDENT);
 
     return node;
