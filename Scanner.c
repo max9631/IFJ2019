@@ -246,8 +246,11 @@ void scan(TokenList *list, Document *document) {
 		else if (isClosingParen(current)) token = defineOneCharToken(document, current, TOKEN_CPAREN);
 		else if (isColon(current)) token = defineOneCharToken(document, current, TOKEN_COLON);
 		else if (isComma(current)) token = defineOneCharToken(document, current, TOKEN_COMMA);
+		else if (isEndOfLine(current)) {
+			token = createToken(createStringFromChar('\n'), TOKEN_EOL);
+			nextCharacter(document);
+		} 
 		else if (isTerminator(current)) nextCharacter(document);
-		else if (isEndOfLine(current)) token = createToken(NULL, TOKEN_EOL);
 		else {
 			msg("%c is value of %d\n", current, current);
 			handleError(SyntaxError, "Invalid number syntax on line %d, column %d", document->line, document->column);
