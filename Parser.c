@@ -25,24 +25,41 @@ void DestroyParserState(ParserState *state) {
     free(state);
 }
 
-BodyNode *parseBody(TokenList *list) {
-    return NULL;
+MainNode *parseTokens(ParserState *state) {
+    state->main = createMainNode(createBodyNode());
+    BodyNode *body = state->main->body;
+    while (peek(state->list)->type != TOKEN_EOF) {
+        if (peek(state->list)->type == KEYWORD_DEF)
+            addPraserFunction(state, parseFunc());
+        else
+            addBodyStatement(body, parseStatement());
+        consume(state->list, TOKEN_EOL);
+    }
+    return state->main;
+}
+
+BodyNode *parseBody(ParserState *state) {
+    BodyNode *node = createBodyNode();
+    while (peek(state->list)->type != TOKEN_DEINDENT) 
+        addBodyStatement(node, parseStatement(state));
+    return node;
 }
 
 FuncNode *parseFunc() {
     return NULL;
 }
 
-CondNode *parseCond(TokenList *list) {
+CondNode *parseCond(ParserState *state) {
+    TokenList *list = state->list;
     consume(list, KEYWORD_IF);
 
-    ExpressionNode *condition = parseExpression(list);
+    ExpressionNode *condition = parseExpression(state);
 
     consume(list, TOKEN_COLON);
     consume(list, TOKEN_EOL);
     consume(list, TOKEN_INDENT);
 
-    BodyNode *trueBody = parseBody(list);
+    BodyNode *trueBody = parseBody(state);
 
     consume(list, TOKEN_DEINDENT);
     consume(list, KEYWORD_ELSE);
@@ -50,23 +67,24 @@ CondNode *parseCond(TokenList *list) {
     consume(list, TOKEN_EOL);
     consume(list, TOKEN_INDENT);
 
-    BodyNode *falseBody = parseBody(list);
+    BodyNode *falseBody = parseBody(state);
 
     consume(list, TOKEN_DEINDENT);
 
     return createCondNode(condition, trueBody, falseBody);
 }
 
-WhileNode *parseWhile(TokenList *list) {
+WhileNode *parseWhile(ParserState *state) {
+    TokenList *list = state->list;
     consume(list, KEYWORD_WHILE);
 
-    ExpressionNode *condition = parseExpression(list);
+    ExpressionNode *condition = parseExpression(state);
 
     consume(list, TOKEN_COLON);
     consume(list, TOKEN_EOL);
     consume(list, TOKEN_INDENT);
 
-    BodyNode *body = parseBody(list);
+    BodyNode *body = parseBody(state);
 
     consume(list, TOKEN_DEINDENT);
 
@@ -77,7 +95,7 @@ StatementNode *parseStatement() {
     return NULL;
 }
 
-ExpressionNode *parseExpression(TokenList *list) {
+ExpressionNode *parseExpression(ParserState *state) {
     return NULL;
 }
 
