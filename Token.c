@@ -68,3 +68,11 @@ void destroyToken(Token *token) {
     if (token->value != NULL) destroyString(token->value);
     free(token);
 }
+
+bool isTokenAsignOperator(Token *token) {
+    return token->type == OPERATOR_ASSIGN || 
+        token->type == OPERATOR_DIV_ASSIGN || 
+        token->type == OPERATOR_MUL_ASSIGN || 
+        token->type == OPERATOR_ADD_ASSIGN || 
+        token->type == OPERATOR_SUB_ASSIGN;
+}

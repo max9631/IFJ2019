@@ -66,4 +66,6 @@ Token *createTokenWithLine(String *string, TokenType type, int line);
 String *convertTokenTypeToString(TokenType type);
 void destroyToken(Token *token);
 
+bool isTokenAsignOperator(Token *token);
+
 #endif

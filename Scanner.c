@@ -59,11 +59,12 @@ bool isOperator(int c) {
 }
 
 
-int skipUntilNewLine(Document *document) {
+Token *skipUntilNewLine(Document *document) {
 	int ch = document->currentChar;
 	while (ch != (int) '\n')
 		ch = nextCharacter(document);
-	return nextCharacter(document);
+    nextCharacter(document);
+	return createToken(createStringFromChar(ch), TOKEN_EOL);
 }
 
 Token *defineValue(Document *document) {
@@ -264,5 +265,9 @@ void scan(List *list, Document *document) {
 			addTokenToList(token, list);
 		}
 	}
+    for (int i = 0; i < document->lastIndent; i++) {
         addTokenToList(createTokenWithLine(NULL, TOKEN_DEINDENT, document->line), list);
+    }
+    addToList(createTokenWithLine(NULL, TOKEN_EOL, document->line), list);
+	addTokenToList(createTokenWithLine(NULL, TOKEN_EOF, document->line), list);
 }
