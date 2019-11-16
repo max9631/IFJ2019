@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "Error.h"
 #include "String.h"
 
@@ -25,5 +26,6 @@ void deleteItem(HashTable *table, char *key);
 void destroyHashTable(HashTable *table);
 
 String *getString(HashTable *table, char *key);
+bool contains(HashTable *table, char *key);
 
 #endif

@@ -80,3 +80,7 @@ String *getString(HashTable *table, char *key) {
     HashTableItem *item = getItem(table, key);
     return (String *)item->data;
 }
+
+bool contains(HashTable *table, char *key) {
+	return getItem(table, key) != NULL;
+}
