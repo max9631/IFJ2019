@@ -4,17 +4,16 @@
 void handleError(ErrorCodes code, char *message, ...) {
 	if (!inDebugMode) 
 		return;
-
 	fflush(stderr);
 	fflush(stdout);
-	
 	va_list argList;
 	va_start(argList, message);
-
-	vfprintf(stderr, message, argList);
-
+	char *lineMsg = malloc(strlen(message) + 2);
+	strcpy(lineMsg, message);
+	strcat(lineMsg, "\n");
+	vfprintf(stderr, lineMsg, argList);
+	if (lineMsg != NULL) free(lineMsg);
 	cleanResources();
-
 	va_end(argList);
 	exit(code);
 }
