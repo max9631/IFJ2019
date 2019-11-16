@@ -206,9 +206,8 @@ void generateIndent(List *list, Document *document) {
 		sum++;
 		ch = nextCharacter(document);
 	}
-	if(isComment(ch)){
+	if(isComment(ch))
 		return;
-	}
 	if (isEndOfLine(ch))
 		return;
 	if (sum == document->lastIndent) 
@@ -232,10 +231,32 @@ Token * defineOneCharToken(Document *document, int ch, TokenType type) {
 	return createToken(string, type);
 }
 
+void removeDuplicitEOLsFromList(List *list) {
+    ListItem *lastItem = NULL;
+    ListItem *item = list->first;
+    bool lastWasEOL = false;
+    while (item != NULL) {
+        Token *token = (Token *) item->value;
+        if (token->type == TOKEN_EOL) {
+            if (lastWasEOL) {
+                lastItem->nextItem = item->nextItem;
+                Token *lastManStanding = (Token *)item->value;
+                destroyToken(lastManStanding);
+                destroyListItem(item);
+                item = lastItem;
+            }
+            lastWasEOL = true;
+        } else {
+            lastWasEOL = false;
+        }
+        lastItem = item;
+        item = item->nextItem;
+    }
+}
+
 void scan(List *list, Document *document) {
 	while (document->currentChar != EOF) {
 		int current = document->currentChar;
-        char ch = (char)current;
 		int line = document->line;
 		Token *token = NULL;
 		if (isNewLine(document)) {
@@ -273,4 +294,5 @@ void scan(List *list, Document *document) {
     }
     addToList(createTokenWithLine(NULL, TOKEN_EOL, document->line), list);
 	addTokenToList(createTokenWithLine(NULL, TOKEN_EOF, document->line), list);
+    removeDuplicitEOLsFromList(list);
 }

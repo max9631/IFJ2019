@@ -154,9 +154,12 @@ StatementNode *parseStatement(ParserState *state) {
             return craeteStatementNode(parseExpression(state), STATEMENT_EXPRESSION);
     case KEYWORD_WHILE: return craeteStatementNode(parseWhile(state), STATEMENT_WHILE);
     case KEYWORD_IF: return craeteStatementNode(parseCond(state), STATEMENT_IF);
-    case TOKEN_EOL:
-    case KEYWORD_PASS: return craeteStatementNode(NULL, STATEMENT_PASS);
-    case KEYWORD_RETURN: return craeteStatementNode(NULL, STATEMENT_RETURN);
+    case KEYWORD_PASS: return craeteStatementNode(consume(state->list, KEYWORD_PASS), STATEMENT_PASS);
+    case KEYWORD_RETURN:
+            consume(state->list, KEYWORD_RETURN);
+            if (peek(state->list)->type != TOKEN_EOL)
+                return craeteStatementNode(parseExpression(state), STATEMENT_RETURN);
+            return craeteStatementNode(NULL, STATEMENT_RETURN);
     default: return craeteStatementNode(parseExpression(state), STATEMENT_EXPRESSION);
     }
 }
@@ -276,7 +279,7 @@ ExpressionNode *parseExpression(ParserState *state) {
     destroyStack(operators);
     PrefixItem *item = (PrefixItem *) pop(prefix);
     if (item == NULL)
-        handleError(SyntaxError, "Invalid expression.");
+        handleError(SyntaxError, "Invalid expression on line %d", line);
     if(item->type == PREFIX_OPERATOR_TOKEN) {
         ExpressionNode *node = createExpressionNode(parseOperation(state, prefix, operationTypeForToken(item->prefix.operator), line), EXPRESSION_OPERATION);
         if (prefix->count > 0) handleError(SyntaxError, "Invalid expression on line %d", line);

@@ -59,7 +59,7 @@ String *convertTokenTypeToString(TokenType type) {
     case KEYWORD_IF: return createString("KEYWORD_IF");
     case KEYWORD_WHILE: return createString("KEYWORD_WHILE");
     case KEYWORD_PASS: return createString("KEYWORD_PASS");
-    default: handleError(InternalError, "Unkown token type");
+    default: return createString("UKNOWN_TOKEN");
     }
     return NULL;
 }
