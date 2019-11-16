@@ -116,6 +116,8 @@ Token *defineIdentifier(Document *document) {
 	else if(strcmp("None",string->value) == 0) type = DATA_TOKEN_NONE;
 	else if(strcmp("while",string->value) == 0) type = KEYWORD_WHILE;
 	else if(strcmp("pass",string->value) == 0) type = KEYWORD_PASS;
+	else if(strcmp("True",string->value) == 0) type = DATA_TOKEN_BOOL;
+	else if(strcmp("False",string->value) == 0) type = DATA_TOKEN_BOOL;
 	else return createToken(string, TOKEN_IDENTIFIER);
 	return createToken(string, type);
 }
