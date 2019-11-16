@@ -18,7 +18,7 @@ typedef HashTableItem* HashTable[HTSIZE];
 
 int indexForKey(char *key);
 
-HashTable *createHashTable();
+HashTable *createHashTable(void);
 HashTableItem *getItem(HashTable *table, char *key);
 void insertItem(HashTable *table, char *key, void *data);
 void deleteItem(HashTable *table, char *key);

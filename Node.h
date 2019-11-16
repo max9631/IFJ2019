@@ -93,7 +93,7 @@ WhileNode *createWhileNode(ExpressionNode *condition, BodyNode *body);
 AssignNode *createAssignNode(String *identifier, AssignOperator operator, ExpressionNode *expression);
 StatementNode *craeteStatementNode(void *statement, StatementType type);
 ExpressionNode *createExpressionNode(void *expressions, ExpressionType type);
-BodyNode *createBodyNode();
+BodyNode *createBodyNode(void);
 MainNode *createMainNode(BodyNode *body);
 
 void addBodyStatement(BodyNode *body, StatementNode *statement);
