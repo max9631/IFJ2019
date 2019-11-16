@@ -7,9 +7,19 @@ Token *createToken(String *string, TokenType type) {
     token->value = NULL;
     token->value = string;
     token->type = type;
+    token->line = 0;
     return token;
 }
 
+Token *createTokenWithLine(String *string, TokenType type, int line) {
+    Token *token = (Token *) malloc(sizeof(Token));
+    if (token == NULL)
+        handleError(InternalError, "Could not initialize Token");
+    token->value = string;
+    token->type = type;
+    token->line = line;
+    return token;
+}
 
 String *convertTokenTypeToString(TokenType type) {
     switch (type){

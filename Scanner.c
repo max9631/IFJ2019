@@ -214,11 +214,11 @@ void generateIndent(List *list, Document *document) {
 	if (sum > document->lastIndent + 1) 
 		handleError(SyntaxError, "Wrong number of indents at line %d column %d", document->line, document->column);
 	else if (sum == document->lastIndent + 1) {
-		addTokenToList(createToken(NULL, TOKEN_INDENT), list);
+		addTokenToList(createTokenWithLine(NULL, TOKEN_INDENT, document->line), list);
 	} else if (sum < document->lastIndent) {
 		int d = document->lastIndent - sum;
 		for (int i = 0; i < d; i++)
-			addTokenToList(createToken(NULL, TOKEN_DEINDENT), list);
+			addTokenToList(createTokenWithLine(NULL, TOKEN_DEINDENT, document->line), list);
 	}
 	document->lastIndent = sum;
 }
@@ -258,6 +258,7 @@ void scan(List *list, Document *document) {
 		}
 		if (token != NULL) {
 			msg("new token: %s\n", token->value->value);
+			token->line = line;
 			addTokenToList(token, list);
 		}
 	}
