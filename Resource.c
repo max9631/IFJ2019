@@ -1,5 +1,5 @@
 #include "Resource.h"
-#include "TokenList.h"
+#include "List.h"
 
 void cleanResources() {
     if(tokenList != NULL)

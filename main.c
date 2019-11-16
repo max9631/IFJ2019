@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
 	document = createDocument(file);
 	tokenList = createList();
 	scan(tokenList, document);
-    printTokenList(tokenList);
+    printList(tokenList);
 	
 	ParserState *state = createParserState(tokenList);
 	MainNode *tree = parseTokens(state);

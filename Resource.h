@@ -3,12 +3,12 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-struct TokenList;
+struct List;
 
-extern struct TokenList *tokenList;
+extern struct List *tokenList;
 extern bool inDebugMode;
 
-void cleanResources();
+void cleanResources(void);
 void msg(char *message, ...);
 
 #endif

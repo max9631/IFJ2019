@@ -1,6 +1,6 @@
 #include "Parser.h"
 
-ParserState *createParserState(TokenList *list) {
+ParserState *createParserState(List *list) {
     ParserState *state = (ParserState *)malloc(sizeof(ParserState));
     state->list = list;
     state->main = NULL;
@@ -46,7 +46,7 @@ BodyNode *parseBody(ParserState *state) {
 }
 
 FuncNode *parseFunc(ParserState *state) {
-    TokenList *list = state->list;
+    List *list = state->list;
     consume(list, KEYWORD_DEF);
     
     Token *name = consume(list, TOKEN_IDENTIFIER);
@@ -80,7 +80,7 @@ FuncNode *parseFunc(ParserState *state) {
 }
 
 CondNode *parseCond(ParserState *state) {
-    TokenList *list = state->list;
+    List *list = state->list;
     consume(list, KEYWORD_IF);
 
     ExpressionNode *condition = parseExpression(state);
@@ -105,7 +105,7 @@ CondNode *parseCond(ParserState *state) {
 }
 
 WhileNode *parseWhile(ParserState *state) {
-    TokenList *list = state->list;
+    List *list = state->list;
     consume(list, KEYWORD_WHILE);
 
     ExpressionNode *condition = parseExpression(state);
@@ -123,7 +123,7 @@ WhileNode *parseWhile(ParserState *state) {
 
 AssignNode *parseAssign(ParserState *state) {
     Token *identifier = consume(state->list, TOKEN_IDENTIFIER);
-    TokenType type = pop(state->list)->type;
+    TokenType type = popToken(state->list)->type;
     switch (type) {
     case OPERATOR_ASSIGN: return createAssignNode(identifier->value, ASSIGN_NONE, parseExpression(state));
     case OPERATOR_DIV_ASSIGN: return createAssignNode(identifier->value, ASSIGN_DIV, parseExpression(state));

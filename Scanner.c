@@ -196,7 +196,7 @@ Token *defineOperator(Document *document, int c) {
 	return createToken(string, type); 
 }
 
-void generateIndent(TokenList *list, Document *document) {
+void generateIndent(List *list, Document *document) {
 	int sum = 0;
 	int ch = document->currentChar;
 	while (isSpace(ch)) {
@@ -229,15 +229,16 @@ Token * defineOneCharToken(Document *document, int ch, TokenType type) {
 	return createToken(string, type);
 }
 
-void scan(TokenList *list, Document *document) {
+void scan(List *list, Document *document) {
 	while (document->currentChar != EOF) {
 		int current = document->currentChar;
+		int line = document->line;
 		Token *token = NULL;
 		if (isNewLine(document)) {
 			generateIndent(list, document);
 			current = document->currentChar;
 		}
-		if (isComment(current)) skipUntilNewLine(document);
+		if (isComment(current)) token = skipUntilNewLine(document);
 		else if (isNumber(current)) token = defineValue(document);
 		else if (isCharacter(current) || isUnderscore(current)) token = defineIdentifier(document);
 		else if (isString(current)) token = defineString(document);
@@ -260,5 +261,5 @@ void scan(TokenList *list, Document *document) {
 			addTokenToList(token, list);
 		}
 	}
-	addTokenToList(createToken(NULL, TOKEN_EOF), list);
+        addTokenToList(createTokenWithLine(NULL, TOKEN_DEINDENT, document->line), list);
 }
