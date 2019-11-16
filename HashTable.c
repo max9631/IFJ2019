@@ -2,8 +2,8 @@
 
 int indexForKey(char *key){
 	int retval = 1;
-	int keylen = strlen(key);
-	for ( int i=0; i<keylen; i++ )
+	unsigned long keylen = strlen(key);
+	for (unsigned long i=0; i<keylen; i++ )
 		retval += key[i];
 	return ( retval % HTSIZE );
 }
