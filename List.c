@@ -95,10 +95,10 @@ void printList(List *list) {
     while(item != NULL) {
         Token *token = item->value;
         String *type = convertTokenTypeToString(token->type);
-        printf("%d: %s ( %s )\n",
+        printf("%d: %s \t %s\n",
            token->line,
-           type->value,
-           token->value == NULL ? "NULL" : ( token->type != TOKEN_EOL ? token->value->value : "\\n")
+           token->value == NULL ? "NULL" : ( token->type != TOKEN_EOL ? token->value->value : "\\n"),
+           type->value
         );
 //        destroyString(type);
         item = item->nextItem;

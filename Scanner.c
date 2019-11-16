@@ -207,7 +207,6 @@ void generateIndent(List *list, Document *document) {
 		ch = nextCharacter(document);
 	}
 	if(isComment(ch)){
-		skipUntilNewLine(document);
 		return;
 	}
 	if (isEndOfLine(ch))
@@ -222,6 +221,7 @@ void generateIndent(List *list, Document *document) {
 		int d = document->lastIndent - sum;
 		for (int i = 0; i < d; i++)
 			addTokenToList(createTokenWithLine(NULL, TOKEN_DEINDENT, document->line), list);
+            addToList(createTokenWithLine(NULL, TOKEN_EOL, document->line), list);
 	}
 	document->lastIndent = sum;
 }
@@ -235,13 +235,15 @@ Token * defineOneCharToken(Document *document, int ch, TokenType type) {
 void scan(List *list, Document *document) {
 	while (document->currentChar != EOF) {
 		int current = document->currentChar;
+        char ch = (char)current;
 		int line = document->line;
 		Token *token = NULL;
 		if (isNewLine(document)) {
 			generateIndent(list, document);
 			current = document->currentChar;
 		}
-		if (isComment(current)) token = skipUntilNewLine(document);
+		if (isComment(current))
+            token = skipUntilNewLine(document);
 		else if (isNumber(current)) token = defineValue(document);
 		else if (isCharacter(current) || isUnderscore(current)) token = defineIdentifier(document);
 		else if (isString(current)) token = defineString(document);
@@ -267,6 +269,7 @@ void scan(List *list, Document *document) {
 	}
     for (int i = 0; i < document->lastIndent; i++) {
         addTokenToList(createTokenWithLine(NULL, TOKEN_DEINDENT, document->line), list);
+        addToList(createTokenWithLine(NULL, TOKEN_EOL, document->line), list);
     }
     addToList(createTokenWithLine(NULL, TOKEN_EOL, document->line), list);
 	addTokenToList(createTokenWithLine(NULL, TOKEN_EOF, document->line), list);

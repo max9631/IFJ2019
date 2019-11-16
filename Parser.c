@@ -29,10 +29,12 @@ MainNode *parseTokens(ParserState *state) {
     state->main = createMainNode(createBodyNode());
     BodyNode *body = state->main->body;
     while (peek(state->list)->type != TOKEN_EOF) {
-        if (peek(state->list)->type == KEYWORD_DEF)
-            addPraserFunction(state, parseFunc(state));
-        else
-            addBodyStatement(body, parseStatement(state));
+        if (peek(state->list)->type != TOKEN_EOL) {
+            if (peek(state->list)->type == KEYWORD_DEF)
+                addPraserFunction(state, parseFunc(state));
+            else
+                addBodyStatement(body, parseStatement(state));
+        }
         consume(state->list, TOKEN_EOL);
     }
     return state->main;
@@ -41,7 +43,9 @@ MainNode *parseTokens(ParserState *state) {
 BodyNode *parseBody(ParserState *state) {
     BodyNode *node = createBodyNode();
     while (peek(state->list)->type != TOKEN_DEINDENT) {
-        addBodyStatement(node, parseStatement(state));
+        if (peek(state->list)->type != TOKEN_EOL) {
+            addBodyStatement(node, parseStatement(state));
+        }
         Token *token = peek(state->list);
         consume(state->list, TOKEN_EOL);
     }
@@ -95,6 +99,7 @@ CondNode *parseCond(ParserState *state) {
     BodyNode *trueBody = parseBody(state);
 
     consume(list, TOKEN_DEINDENT);
+    consume(list, TOKEN_EOL);
     consume(list, KEYWORD_ELSE);
     consume(list, TOKEN_COLON);
     consume(list, TOKEN_EOL);
@@ -149,6 +154,7 @@ StatementNode *parseStatement(ParserState *state) {
             return craeteStatementNode(parseExpression(state), STATEMENT_EXPRESSION);
     case KEYWORD_WHILE: return craeteStatementNode(parseWhile(state), STATEMENT_WHILE);
     case KEYWORD_IF: return craeteStatementNode(parseCond(state), STATEMENT_IF);
+    case TOKEN_EOL:
     case KEYWORD_PASS: return craeteStatementNode(NULL, STATEMENT_PASS);
     case KEYWORD_RETURN: return craeteStatementNode(NULL, STATEMENT_RETURN);
     default: return craeteStatementNode(parseExpression(state), STATEMENT_EXPRESSION);
