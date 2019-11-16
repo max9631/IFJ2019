@@ -76,7 +76,7 @@ void addFunctionArgument(FuncNode *function, String *argument) {
 void destoyAssignNode(AssignNode *node) {
     destroyString(node->identifier);
     destroyExpressionNode(node->expression);
-    free(node);
+    if (node != NULL) free(node);
 }
 
 void destroyFuncNode(FuncNode *node) {
@@ -85,40 +85,40 @@ void destroyFuncNode(FuncNode *node) {
         destroyString(node->args[i]);
     }
     destroyBodyNode(node->body);
-    free(node);
+    if (node != NULL) free(node);
 }
 
 void destroyCondNode(CondNode *node) {
     destroyExpressionNode(node->condition);
     destroyBodyNode(node->trueBody);
     destroyBodyNode(node->falseBody);
-    free(node);
+    if (node != NULL) free(node);
 }
 
 void destroyWhileNode(WhileNode *node) {
     destroyExpressionNode(node->condition);
     destroyBodyNode(node->body);
-    free(node);
+    if (node != NULL) free(node);
 }
 
 void destroyStatementNode(StatementNode *node) {
     // TODO: Destroy Statements for each type
-    free(node);
+    if (node != NULL) free(node);
 }
 
 void destroyExpressionNode(ExpressionNode *node) {
     // TODO: Destroy Expressions for each type
-    free(node);
+    if (node != NULL) free(node);
 }
 
 void destroyBodyNode(BodyNode *node) {
     for (int i = 0; i < node->statementsCount; i++)
         destroyStatementNode(node->statements[i]);
     destroyHashTable(node->symTable);
-    free(node);
+    if (node != NULL) free(node);
 }
 
 void destroyMainNode(MainNode *node) {
     destroyBodyNode(node->body);
-    free(node);
+    if (node != NULL) free(node);
 }

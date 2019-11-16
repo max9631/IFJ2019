@@ -37,7 +37,8 @@ bool stringEquals(String *str1, String *str2){
 }
 
 void destroyString(String *str) {
-	free(str->value);
+    if (str == NULL) return;
+	if (str->value != NULL) free(str->value);
 	free(str);
 }
 

@@ -55,6 +55,6 @@ String *convertTokenTypeToString(TokenType type) {
 }
 
 void destroyToken(Token *token) {
-    destroyString(token->value);
+    if (token->value != NULL) destroyString(token->value);
     free(token);
 }

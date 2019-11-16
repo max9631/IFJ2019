@@ -12,7 +12,7 @@ Document *createDocument(FILE *file) {
 }
 
 void destroyDocument(Document *document) {
-	free(document);
+	if (document != NULL) free(document);
 }
 
 int nextCharacter(Document *document) {

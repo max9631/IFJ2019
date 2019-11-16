@@ -53,9 +53,10 @@ void deleteItem(HashTable *table, char *key) {
 		lastItem->ptrnext = item->ptrnext;
 	else 
 		(*table)[index] = item->ptrnext;
-    free(item->key);
-    free(item->data);
-	free(item);
+    if (item == NULL) return;
+    if (item->key != NULL) free(item->key);
+    if (item->data != NULL) free(item->data);
+    free(item);
 }
 
 void destroyHashTable(HashTable *table) {
@@ -64,9 +65,11 @@ void destroyHashTable(HashTable *table) {
 		HashTableItem *item = (*table)[i];
 		while (item != NULL) {
 			HashTableItem *tmp = item->ptrnext;
-            free(item->key);
-            free(item->data);
-			free(item);
+            if (item != NULL) {
+                if (item->key != NULL) free(item->key);
+                if (item->data != NULL) free(item->data);
+                free(item);
+            }
 			item = tmp;
 		}
 		(*table)[i] = NULL;
