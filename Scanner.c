@@ -194,6 +194,7 @@ Token *defineOperator(Document *document, int c) {
 	if (isEqual(nextCH)) {
 		appendCharacter(string, nextCH);
 		type += 1;
+        nextCharacter(document);
 	}
 	
 	return createToken(string, type); 
@@ -218,9 +219,10 @@ void generateIndent(List *list, Document *document) {
 		addTokenToList(createTokenWithLine(NULL, TOKEN_INDENT, document->line), list);
 	} else if (sum < document->lastIndent) {
 		int d = document->lastIndent - sum;
-		for (int i = 0; i < d; i++)
+        for (int i = 0; i < d; i++) {
 			addTokenToList(createTokenWithLine(NULL, TOKEN_DEINDENT, document->line), list);
-            addToList(createTokenWithLine(NULL, TOKEN_EOL, document->line), list);
+            addTokenToList(createTokenWithLine(NULL, TOKEN_EOL, document->line), list);
+        }
 	}
 	document->lastIndent = sum;
 }
@@ -290,9 +292,9 @@ void scan(List *list, Document *document) {
 	}
     for (int i = 0; i < document->lastIndent; i++) {
         addTokenToList(createTokenWithLine(NULL, TOKEN_DEINDENT, document->line), list);
-        addToList(createTokenWithLine(NULL, TOKEN_EOL, document->line), list);
+        addTokenToList(createTokenWithLine(NULL, TOKEN_EOL, document->line), list);
     }
-    addToList(createTokenWithLine(NULL, TOKEN_EOL, document->line), list);
+    addTokenToList(createTokenWithLine(NULL, TOKEN_EOL, document->line), list);
 	addTokenToList(createTokenWithLine(NULL, TOKEN_EOF, document->line), list);
     removeDuplicitEOLsFromList(list);
 }

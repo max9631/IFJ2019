@@ -46,7 +46,6 @@ BodyNode *parseBody(ParserState *state) {
         if (peek(state->list)->type != TOKEN_EOL) {
             addBodyStatement(node, parseStatement(state));
         }
-        Token *token = peek(state->list);
         consume(state->list, TOKEN_EOL);
     }
     return node;
