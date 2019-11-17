@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "Error.h"
 #include "String.h"
 
@@ -18,12 +19,13 @@ typedef HashTableItem* HashTable[HTSIZE];
 
 int indexForKey(char *key);
 
-HashTable *createHashTable();
+HashTable *createHashTable(void);
 HashTableItem *getItem(HashTable *table, char *key);
 void insertItem(HashTable *table, char *key, void *data);
 void deleteItem(HashTable *table, char *key);
 void destroyHashTable(HashTable *table);
 
 String *getString(HashTable *table, char *key);
+bool contains(HashTable *table, char *key);
 
 #endif

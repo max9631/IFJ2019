@@ -2,8 +2,8 @@
 
 int indexForKey(char *key){
 	int retval = 1;
-	int keylen = strlen(key);
-	for ( int i=0; i<keylen; i++ )
+	unsigned long keylen = strlen(key);
+	for (unsigned long i=0; i<keylen; i++ )
 		retval += key[i];
 	return ( retval % HTSIZE );
 }
@@ -53,9 +53,10 @@ void deleteItem(HashTable *table, char *key) {
 		lastItem->ptrnext = item->ptrnext;
 	else 
 		(*table)[index] = item->ptrnext;
-    free(item->key);
-    free(item->data);
-	free(item);
+    if (item == NULL) return;
+    if (item->key != NULL) free(item->key);
+    if (item->data != NULL) free(item->data);
+    free(item);
 }
 
 void destroyHashTable(HashTable *table) {
@@ -64,9 +65,11 @@ void destroyHashTable(HashTable *table) {
 		HashTableItem *item = (*table)[i];
 		while (item != NULL) {
 			HashTableItem *tmp = item->ptrnext;
-            free(item->key);
-            free(item->data);
-			free(item);
+            if (item != NULL) {
+                if (item->key != NULL) free(item->key);
+                if (item->data != NULL) free(item->data);
+                free(item);
+            }
 			item = tmp;
 		}
 		(*table)[i] = NULL;
@@ -76,4 +79,8 @@ void destroyHashTable(HashTable *table) {
 String *getString(HashTable *table, char *key) {
     HashTableItem *item = getItem(table, key);
     return (String *)item->data;
+}
+
+bool contains(HashTable *table, char *key) {
+	return getItem(table, key) != NULL;
 }

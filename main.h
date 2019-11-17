@@ -5,14 +5,14 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "TokenList.h"
+#include "List.h"
 #include "Scanner.h"
 #include "String.h"
 #include "Error.h"
 #include "Parser.h"
 
 Document *document;
-TokenList *tokenList;
+List *tokenList;
 bool inDebugMode;
 
 #endif

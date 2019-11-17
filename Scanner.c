@@ -12,7 +12,7 @@ Document *createDocument(FILE *file) {
 }
 
 void destroyDocument(Document *document) {
-	free(document);
+	if (document != NULL) free(document);
 }
 
 int nextCharacter(Document *document) {
@@ -59,11 +59,12 @@ bool isOperator(int c) {
 }
 
 
-int skipUntilNewLine(Document *document) {
+Token *skipUntilNewLine(Document *document) {
 	int ch = document->currentChar;
 	while (ch != (int) '\n')
 		ch = nextCharacter(document);
-	return nextCharacter(document);
+    nextCharacter(document);
+	return createToken(createStringFromChar(ch), TOKEN_EOL);
 }
 
 Token *defineValue(Document *document) {
@@ -116,6 +117,8 @@ Token *defineIdentifier(Document *document) {
 	else if(strcmp("None",string->value) == 0) type = DATA_TOKEN_NONE;
 	else if(strcmp("while",string->value) == 0) type = KEYWORD_WHILE;
 	else if(strcmp("pass",string->value) == 0) type = KEYWORD_PASS;
+	else if(strcmp("True",string->value) == 0) type = DATA_TOKEN_BOOL;
+	else if(strcmp("False",string->value) == 0) type = DATA_TOKEN_BOOL;
 	else return createToken(string, TOKEN_IDENTIFIER);
 	return createToken(string, type);
 }
@@ -191,22 +194,21 @@ Token *defineOperator(Document *document, int c) {
 	if (isEqual(nextCH)) {
 		appendCharacter(string, nextCH);
 		type += 1;
+        nextCharacter(document);
 	}
 	
 	return createToken(string, type); 
 }
 
-void generateIndent(TokenList *list, Document *document) {
+void generateIndent(List *list, Document *document) {
 	int sum = 0;
 	int ch = document->currentChar;
 	while (isSpace(ch)) {
 		sum++;
 		ch = nextCharacter(document);
 	}
-	if(isComment(ch)){
-		skipUntilNewLine(document);
+	if(isComment(ch))
 		return;
-	}
 	if (isEndOfLine(ch))
 		return;
 	if (sum == document->lastIndent) 
@@ -214,11 +216,13 @@ void generateIndent(TokenList *list, Document *document) {
 	if (sum > document->lastIndent + 1) 
 		handleError(SyntaxError, "Wrong number of indents at line %d column %d", document->line, document->column);
 	else if (sum == document->lastIndent + 1) {
-		addTokenToList(createToken(NULL, TOKEN_INDENT), list);
+		addTokenToList(createTokenWithLine(NULL, TOKEN_INDENT, document->line), list);
 	} else if (sum < document->lastIndent) {
 		int d = document->lastIndent - sum;
-		for (int i = 0; i < d; i++)
-			addTokenToList(createToken(NULL, TOKEN_DEINDENT), list);
+        for (int i = 0; i < d; i++) {
+			addTokenToList(createTokenWithLine(NULL, TOKEN_DEINDENT, document->line), list);
+            addTokenToList(createTokenWithLine(NULL, TOKEN_EOL, document->line), list);
+        }
 	}
 	document->lastIndent = sum;
 }
@@ -229,15 +233,40 @@ Token * defineOneCharToken(Document *document, int ch, TokenType type) {
 	return createToken(string, type);
 }
 
-void scan(TokenList *list, Document *document) {
+void removeDuplicitEOLsFromList(List *list) {
+    ListItem *lastItem = NULL;
+    ListItem *item = list->first;
+    bool lastWasEOL = false;
+    while (item != NULL) {
+        Token *token = (Token *) item->value;
+        if (token->type == TOKEN_EOL) {
+            if (lastWasEOL) {
+                lastItem->nextItem = item->nextItem;
+                Token *lastManStanding = (Token *)item->value;
+                destroyToken(lastManStanding);
+                destroyListItem(item);
+                item = lastItem;
+            }
+            lastWasEOL = true;
+        } else {
+            lastWasEOL = false;
+        }
+        lastItem = item;
+        item = item->nextItem;
+    }
+}
+
+void scan(List *list, Document *document) {
 	while (document->currentChar != EOF) {
 		int current = document->currentChar;
+		int line = document->line;
 		Token *token = NULL;
 		if (isNewLine(document)) {
 			generateIndent(list, document);
 			current = document->currentChar;
 		}
-		if (isComment(current)) skipUntilNewLine(document);
+		if (isComment(current))
+            token = skipUntilNewLine(document);
 		else if (isNumber(current)) token = defineValue(document);
 		else if (isCharacter(current) || isUnderscore(current)) token = defineIdentifier(document);
 		else if (isString(current)) token = defineString(document);
@@ -257,8 +286,15 @@ void scan(TokenList *list, Document *document) {
 		}
 		if (token != NULL) {
 			msg("new token: %s\n", token->value->value);
+			token->line = line;
 			addTokenToList(token, list);
 		}
 	}
-	addTokenToList(createToken(NULL, TOKEN_EOF), list);
+    for (int i = 0; i < document->lastIndent; i++) {
+        addTokenToList(createTokenWithLine(NULL, TOKEN_DEINDENT, document->line), list);
+        addTokenToList(createTokenWithLine(NULL, TOKEN_EOL, document->line), list);
+    }
+    addTokenToList(createTokenWithLine(NULL, TOKEN_EOL, document->line), list);
+	addTokenToList(createTokenWithLine(NULL, TOKEN_EOF, document->line), list);
+    removeDuplicitEOLsFromList(list);
 }

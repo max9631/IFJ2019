@@ -7,9 +7,19 @@ Token *createToken(String *string, TokenType type) {
     token->value = NULL;
     token->value = string;
     token->type = type;
+    token->line = 0;
     return token;
 }
 
+Token *createTokenWithLine(String *string, TokenType type, int line) {
+    Token *token = (Token *) malloc(sizeof(Token));
+    if (token == NULL)
+        handleError(InternalError, "Could not initialize Token");
+    token->value = string;
+    token->type = type;
+    token->line = line;
+    return token;
+}
 
 String *convertTokenTypeToString(TokenType type) {
     switch (type){
@@ -49,12 +59,20 @@ String *convertTokenTypeToString(TokenType type) {
     case KEYWORD_IF: return createString("KEYWORD_IF");
     case KEYWORD_WHILE: return createString("KEYWORD_WHILE");
     case KEYWORD_PASS: return createString("KEYWORD_PASS");
-    default: handleError(InternalError, "Unkown token type");
+    default: return createString("UKNOWN_TOKEN");
     }
     return NULL;
 }
 
 void destroyToken(Token *token) {
-    destroyString(token->value);
+    if (token->value != NULL) destroyString(token->value);
     free(token);
+}
+
+bool isTokenAsignOperator(Token *token) {
+    return token->type == OPERATOR_ASSIGN || 
+        token->type == OPERATOR_DIV_ASSIGN || 
+        token->type == OPERATOR_MUL_ASSIGN || 
+        token->type == OPERATOR_ADD_ASSIGN || 
+        token->type == OPERATOR_SUB_ASSIGN;
 }

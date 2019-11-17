@@ -1,35 +1,85 @@
 #ifndef NODE_H
 #define NODE_H
 #include "String.h"
+#include "Token.h"
 #include "HashTable.h"
+
+typedef union _Value {
+    String *intVal;
+    String *floatVal;
+    String *stringVal;
+    String *identifier;
+    String *boolVal;
+    String *isNone;
+} Value;
+
+typedef enum _ValueType {
+    VALUE_INT,
+    VALUE_FLOAT,
+    VALUE_STRING,
+    VALUE_IDENTIFIER,
+    VALUE_BOOL,
+    VALUE_NONE
+} ValueType;
+
+
+typedef struct _ValueNode {
+    Value value;
+    ValueType type;
+} ValueNode;
 
 typedef enum _ExpressionType { 
     EXPRESSION_CALL,
-    EXPRESSION_PARREN,
-    EXPRESSION_ADD,
-    EXPRESSION_SUB,
-    EXPRESSION_MUL,
-    EXPRESSION_DIV,
-    EXPRESSION_EQUALS,
-    EXPRESSION_NOTEQUALS,
-    EXPRESSION_GREATER,
-    EXPRESSION_GREATEROREQUALS,
-    EXPRESSION_LESS,
-    EXPRESSION_LESSOREQUALS,
-    EXPRESSION_AND,
-    EXPRESSION_OR,
-    EXPRESSION_VAR,
-    EXPRESSION_INT,
-    EXPRESSION_FLOAT,
-    EXPRESSION_BOOL,
-    EXPRESSION_STRING,
-    EXPRESSION_NONE
+    EXPRESSION_VALUE,
+    EXPRESSION_OPERATION
 } ExpressionType;
 
 typedef struct _ExpressionNode {
     void *expression;
     ExpressionType type;
 } ExpressionNode;
+
+typedef enum _PrefixType {
+    PREFIX_VALUE_EXPRESSION,
+    PREFIX_OPERATOR_TOKEN
+} PrefixType;
+
+typedef union _Prefix {
+    ExpressionNode *value;
+    Token *operator;
+} Prefix;
+
+typedef struct _PrefixItem {
+    Prefix prefix;
+    PrefixType type;
+} PrefixItem;
+
+typedef struct _CallNode {
+    String *identifier;
+    int argsCount;
+    ExpressionNode **expressions;
+} CallNode;
+
+typedef enum _OperationType {
+    OPERATION_ADD,
+    OPERATION_SUB,
+    OPERATION_MUL,
+    OPERATION_DIV,
+    OPERATION_EQUALS,
+    OPERATION_NOTEQUALS,
+    OPERATION_GREATER,
+    OPERATION_GREATEROREQUALS,
+    OPERATION_LESS,
+    OPERATION_LESSOREQUALS,
+    OPERATION_AND,
+    OPERATION_OR
+} OperationType;
+
+typedef struct _OperationNode {
+    ExpressionNode *value1;
+    ExpressionNode *value2;
+    OperationType type;
+} OperationNode;
 
 typedef enum _StatementType { 
     STATEMENT_ASSIGN,
@@ -87,18 +137,29 @@ typedef struct _MainNode {
     BodyNode *body;
 } MainNode;
 
+PrefixItem *createPrefixItem(void *value, PrefixType type);
+OperationNode *createOperationNode(OperationType type);
+ValueNode *createValueNode(String *str, ValueType type);
+CallNode *createCallNode(String *identifier);
 FuncNode *createFuncNode(String *name, BodyNode *body);
 CondNode *createCondNode(ExpressionNode *condition, BodyNode *trueBody, BodyNode *falseBody);
 WhileNode *createWhileNode(ExpressionNode *condition, BodyNode *body);
 AssignNode *createAssignNode(String *identifier, AssignOperator operator, ExpressionNode *expression);
 StatementNode *craeteStatementNode(void *statement, StatementType type);
 ExpressionNode *createExpressionNode(void *expressions, ExpressionType type);
-BodyNode *createBodyNode();
+BodyNode *createBodyNode(void);
 MainNode *createMainNode(BodyNode *body);
+
+OperationType operationTypeForToken(Token *token);
 
 void addBodyStatement(BodyNode *body, StatementNode *statement);
 void addFunctionArgument(FuncNode *function, String *argument);
+void addCallArgument(CallNode *call, ExpressionNode *expression);
 
+void destroyPrefixItem(PrefixItem *item);
+void destroyOperationNode(OperationNode *node);
+void destroyValueNode(ValueNode *node);
+void destroyCallNode(CallNode *node);
 void destoyAssignNode(AssignNode *node);
 void destroyFuncNode(FuncNode *node);
 void destroyCondNode(CondNode *node);

@@ -1,5 +1,6 @@
 #ifndef TOKEN_H
 #define TOKEN_H
+#include <stdbool.h>
 #include "String.h"
 
 typedef enum {
@@ -10,6 +11,7 @@ typedef enum {
     DATA_TOKEN_FLOAT, //Float
     DATA_TOKEN_STRING, //String
     DATA_TOKEN_NONE, //NULL
+    DATA_TOKEN_BOOL, //BOOL
 
     /* Operators */
     OPERATOR_NOT, //!
@@ -28,6 +30,8 @@ typedef enum {
     OPERATOR_DIV_ASSIGN, // /=
     OPERATOR_MUL, //*
     OPERATOR_MUL_ASSIGN, //*=
+    OPERATOR_AND, // TODO and
+    OPERATOR_OR, // TODO or
 
     /* Misc */
     TOKEN_OPAREN, //(
@@ -54,10 +58,14 @@ typedef enum {
 typedef struct Token {
     String *value;
     TokenType type;
+    int line;
 } Token;
 
 Token *createToken(String *string, TokenType type);
+Token *createTokenWithLine(String *string, TokenType type, int line);
 String *convertTokenTypeToString(TokenType type);
 void destroyToken(Token *token);
+
+bool isTokenAsignOperator(Token *token);
 
 #endif

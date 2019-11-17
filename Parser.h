@@ -1,18 +1,19 @@
 #ifndef PARSER_H
 #define PARSER_H
-#include "TokenList.h"
+#include "List.h"
 #include "Node.h"
 #include "HashTable.h"
+#include "Stack.h"
 
 typedef struct _ParserState {
-    TokenList *list;
+    List *list;
     MainNode *main;
     HashTable *funcTable;
     int functionsCount;
     FuncNode **functions;
 } ParserState;
 
-ParserState *createParserState(TokenList *list);
+ParserState *createParserState(List *list);
 void addPraserFunction(ParserState *state, FuncNode *func);
 void DestroyParserState(ParserState *state);
 
@@ -23,7 +24,15 @@ CondNode *parseCond(ParserState *state);
 WhileNode *parseWhile(ParserState *state);
 AssignNode *parseAssign(ParserState *state);
 StatementNode *parseStatement(ParserState *state);
+CallNode *parseCall(ParserState *state);
+ExpressionNode *parseValue(ParserState *state) ;
 ExpressionNode *parseExpression(ParserState *state);
+OperationNode *parseOperation(ParserState *state, Stack *prefix, OperationType type, int line);
+
+bool isTokenValue(Token *token);
+bool isTokenOperator(Token *token);
+bool isTokenExpression(Token *token);
+bool hasStackHigherOrEqualPrecedence(Stack *operators, TokenType type);
 
 /*DEBUG functions*/
 void printFuncNode(FuncNode *node);

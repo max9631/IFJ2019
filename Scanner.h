@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "TokenList.h"
+#include "List.h"
 #include "String.h"
 #include "Token.h"
 #include "Error.h"
@@ -51,8 +51,8 @@ Token *defineString(Document *document);
 Token *defineDoubleQuoteString(Document *document);
 Token *defineApostrophString(Document *document);
 String *recordStringUntilChar(Document *document, int endChar);
-void countIndent(TokenList *list, Document *document);
+void countIndent(List *list, Document *document);
 
-void scan(TokenList *list, Document *document);
+void scan(List *list, Document *document);
 
 #endif
