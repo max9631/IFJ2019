@@ -2,8 +2,9 @@
 #define GENERATOR_H
 #include "Node.h"
 
-    
 typedef struct _Generator {
+    int condCount;
+    int whileCount;
 } Generator;
 
 Generator *createGenerator(void);

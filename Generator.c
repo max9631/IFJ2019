@@ -1,7 +1,10 @@
 #include "Generator.h"
 
 Generator *createGenerator() {
-    return NULL;
+    Generator *generator = (Generator *)malloc(sizeof(Generator));
+    generator->condCount = 0;
+    generator->whileCount = 0;
+    return generator;
 }
 
 void generateMain(Generator *generator, MainNode *main) {
