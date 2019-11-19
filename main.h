@@ -10,6 +10,7 @@
 #include "String.h"
 #include "Error.h"
 #include "Parser.h"
+#include "Generator.h"
 
 Document *document;
 List *tokenList;
