@@ -1,6 +1,6 @@
 #ifndef ASSEMBLYDEFS_H
 #define ASSEMBLYDEFS_H
-#include "string.h"
+#include "String.h"
 
 // Prace s ramci, volani funkci
 void instrutionMove();

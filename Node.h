@@ -2,7 +2,7 @@
 #define NODE_H
 #include "String.h"
 #include "Token.h"
-#include "HashTable.h"
+#include "symtable.h"
 
 typedef union _Value {
     String *intVal;
