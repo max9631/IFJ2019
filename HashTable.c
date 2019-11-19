@@ -33,7 +33,7 @@ HashTable *createSymTable() {
 	return createHashTable();
 }
 
-HashTableItem* getItem(HashTable *table, char *key) {
+HashTableItem* getHashTableItem(HashTable *table, char *key) {
 	if (table == NULL) return NULL;
 	HashTableItem *item = (*table)[indexForKey(key)];
 	while (item != NULL && strcmp(item->key, key) != 0) item = item->ptrnext;
@@ -43,7 +43,7 @@ HashTableItem* getItem(HashTable *table, char *key) {
 
 void insertHashTableItem(HashTable *table, char *key, void *data) {
 	if (table == NULL) return;
-	HashTableItem *item = getItem(table, key);
+	HashTableItem *item = getHashTableItem(table, key);
 	if (item != NULL) {
 		item->data = data;
 		return;
@@ -95,10 +95,10 @@ void destroyHashTable(HashTable *table) {
 }
 
 String *getString(HashTable *table, char *key) {
-    HashTableItem *item = getItem(table, key);
+    HashTableItem *item = getHashTableItem(table, key);
     return (String *)item->data;
 }
 
 bool contains(HashTable *table, char *key) {
-	return getItem(table, key) != NULL;
+	return getHashTableItem(table, key) != NULL;
 }

@@ -22,7 +22,7 @@ int indexForKey(char *key);
 HashTable *createHashTable(void);
 HashTable *createFuncTable(void);
 HashTable *createSymTable(void);
-HashTableItem *getItem(HashTable *table, char *key);
+HashTableItem *getHashTableItem(HashTable *table, char *key);
 void insertHashTableItem(HashTable *table, char *key, void *data);
 void removeHashTableItem(HashTable *table, char *key);
 void destroyHashTable(HashTable *table);
