@@ -54,11 +54,8 @@ BodyNode *parseBody(ParserState *state, BodyNode *parrentBody, String **argument
 FuncNode *parseFunc(ParserState *state, BodyNode *body) {
     List *list = state->list;
     consume(list, KEYWORD_DEF);
-    
     Token *name = consume(list, TOKEN_IDENTIFIER);
     consume(list, TOKEN_OPAREN);
-
-
     FuncNode *function = createFuncNode(name->value, NULL);
     while(true) {
         Token *variable = consume(list, TOKEN_IDENTIFIER);
@@ -74,28 +71,21 @@ FuncNode *parseFunc(ParserState *state, BodyNode *body) {
             handleError(SyntaxError, "Expected ')' or ',' in function declaration %s on line %d", name->value->value, variable->line);
         }
     }
-
     consume(list, TOKEN_COLON);
     consume(list, TOKEN_EOL);
     consume(list, TOKEN_INDENT);
-
     function->body = parseBody(state, body, function->args, function->argsCount);
     consume(list, TOKEN_DEINDENT);
-
     return function;
 }
 
 CondNode *parseCond(ParserState *state, BodyNode *body) {
     List *list = state->list;
     consume(list, KEYWORD_IF);
-
-
     ExpressionNode *condition = parseExpression(state, body);
     consume(list, TOKEN_COLON);
     consume(list, TOKEN_EOL);
     consume(list, TOKEN_INDENT);
-
-
     BodyNode *trueBody = parseBody(state, body, NULL, 0);
     consume(list, TOKEN_DEINDENT);
     consume(list, TOKEN_EOL);
@@ -103,28 +93,20 @@ CondNode *parseCond(ParserState *state, BodyNode *body) {
     consume(list, TOKEN_COLON);
     consume(list, TOKEN_EOL);
     consume(list, TOKEN_INDENT);
-
-
     BodyNode *falseBody = parseBody(state, body, NULL, 0);
     consume(list, TOKEN_DEINDENT);
-
     return createCondNode(condition, trueBody, falseBody);
 }
 
 WhileNode *parseWhile(ParserState *state, BodyNode *parrentBody) {
     List *list = state->list;
     consume(list, KEYWORD_WHILE);
-
-
     ExpressionNode *condition = parseExpression(state, parrentBody);
     consume(list, TOKEN_COLON);
     consume(list, TOKEN_EOL);
     consume(list, TOKEN_INDENT);
-
-
     BodyNode *body = parseBody(state, parrentBody, NULL, 0);
     consume(list, TOKEN_DEINDENT);
-
     return createWhileNode(condition, body);
 }
 
