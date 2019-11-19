@@ -4,7 +4,7 @@ GeneratorState *createGenerator() {
     return NULL;
 }
 
-void generateMain(GeneratorState *state, MainNode *main) {
+void generateMain(GeneratorState *state, MainNode *main) {
     
 }
 
