@@ -38,7 +38,8 @@ bool hasStackHigherOrEqualPrecedence(Stack *operators, TokenType type);
 bool containsFunction(ParserState *state, String *identifier);
 bool containsSymbol(BodyNode *body, String *identifier);
 void registerSymbol(BodyNode *body, String *identifier);
-void registerFunction(ParserState *state, String *identifier);
+void registerFunction(ParserState *state, String *identifier, int argsCount);
+long getArgumentsCountForFuntion(ParserState *state, String *functionName);
 
 /*DEBUG functions*/
 void printFuncNode(FuncNode *node);

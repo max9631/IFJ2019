@@ -60,13 +60,13 @@ FuncNode *parseFunc(ParserState *state, BodyNode *body) {
     if (containsFunction(state, name->value)) {
         handleError(SemanticIdentifierError, "Invalid redeclaration of a function '%s' on line %d", name->value->value, name->line);
     }
-    registerFunction(state, name->value);
     consume(list, TOKEN_OPAREN);
     FuncNode *function = createFuncNode(name->value, NULL);
+    int argsCount = 0;
     while(true) {
         Token *variable = consume(list, TOKEN_IDENTIFIER);
         addFunctionArgument(function, variable->value);
-
+        argsCount++;
         if(isNextTokenOfType(list, TOKEN_CPAREN)) {
             consume(list, TOKEN_CPAREN);
             break;
@@ -77,6 +77,7 @@ FuncNode *parseFunc(ParserState *state, BodyNode *body) {
             handleError(SyntaxError, "Expected ')' or ',' in function declaration %s on line %d", name->value->value, variable->line);
         }
     }
+    registerFunction(state, name->value, argsCount);
     consume(list, TOKEN_COLON);
     consume(list, TOKEN_EOL);
     consume(list, TOKEN_INDENT);
@@ -152,23 +153,27 @@ StatementNode *parseStatement(ParserState *state, BodyNode *body) {
 }
 
 CallNode *parseCall(ParserState *state, BodyNode *body) {
-    Token* name = consume(state->list, TOKEN_IDENTIFIER);
-    if (!containsFunction(state, name->value)) {
-        handleError(SemanticIdentifierError, "Unknown function name '%s' on line %d", name->value, name->line);
+    Token* identifier = consume(state->list, TOKEN_IDENTIFIER);
+    if (!containsFunction(state, identifier->value)) {
+        handleError(SemanticIdentifierError, "Unknown function identifier '%s' on line %d", identifier->value, identifier->line);
     }
-    CallNode *call = createCallNode(name->value);
+    CallNode *call = createCallNode(identifier->value);
     consume(state->list, TOKEN_OPAREN);
+    long argsCount = 0;
     if (peek(state->list)->type != TOKEN_CPAREN) {
         while(true) {
-            Token *token = peek(state->list);
             if (!isTokenExpression(peek(state->list)))
                 handleError(SyntaxError, "Invalid call syntax on line %d", peek(state->list)->line);
             addCallArgument(call, parseExpression(state, body));
+            argsCount++;
             if (peek(state->list)->type == TOKEN_CPAREN)
                 break;
             consume(state->list, TOKEN_COMMA);
         }
     }
+    long correctNumberOfArguments = getArgumentsCountForFuntion(state, identifier->value);
+    if (argsCount != correctNumberOfArguments)
+        handleError(SemanticArgumentError, "Wrong number of arguments one line %d. Should be %d, but got %d", identifier->line, correctNumberOfArguments, argsCount);
     consume(state->list, TOKEN_CPAREN);
     return call;
 }
@@ -295,13 +300,21 @@ bool containsSymbol(BodyNode *body, String *identifier) {
     return false;
 }
 
+long getArgumentsCountForFuntion(ParserState *state, String *functionName) {
+    HashTableItem *item = getHashTableItem(state->funcTable, functionName->value);
+    long currentCount = (long) item->data;
+    return currentCount;
+}
+
 
 void registerSymbol(BodyNode *body, String *identifier) {
     insertHashTableItem(body->symTable, identifier->value, NULL);
 }
 
-void registerFunction(ParserState *state, String *identifier) {
-    insertHashTableItem(state->funcTable, identifier->value, NULL);
+void registerFunction(ParserState *state, String *identifier, int argsCount) {
+    long bigCount = (long)argsCount;
+    void *data = (void *)bigCount;
+    insertHashTableItem(state->funcTable, identifier->value, data);
 }
 
 /* --------------- DEBUG Functions ----------------- */
