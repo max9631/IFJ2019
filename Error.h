@@ -12,10 +12,10 @@ typedef enum ErrorCodes {
     OK = 0,
     LexError = 1,
     SyntaxError = 2,
-    SEM_UndefinedVariable = 3,
-    SEM_TypeError = 4,
-    SEM_InvalidParamsCount = 5,
-    SEM_Other = 6,
+    SemanticIdentifierError = 3,
+    SemanticTypeError = 4,
+    SemanticArgumentError = 5,
+    SemanticGeneralError = 6,
     ZeroDivision = 9,
     InternalError = 99
 } ErrorCodes;

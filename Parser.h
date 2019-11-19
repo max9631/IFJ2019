@@ -35,6 +35,10 @@ bool isTokenValue(Token *token);
 bool isTokenOperator(Token *token);
 bool isTokenExpression(Token *token);
 bool hasStackHigherOrEqualPrecedence(Stack *operators, TokenType type);
+bool containsFunction(ParserState *state, String *identifier);
+bool containsSymbol(BodyNode *body, String *identifier);
+void registerSymbol(BodyNode *body, String *identifier);
+void registerFunction(ParserState *state, String *identifier);
 
 /*DEBUG functions*/
 void printFuncNode(FuncNode *node);

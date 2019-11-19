@@ -20,9 +20,11 @@ typedef HashTableItem* HashTable[HTSIZE];
 int indexForKey(char *key);
 
 HashTable *createHashTable(void);
+HashTable *createFuncTable(void);
+HashTable *createSymTable(void);
 HashTableItem *getItem(HashTable *table, char *key);
-void insertItem(HashTable *table, char *key, void *data);
-void deleteItem(HashTable *table, char *key);
+void insertHashTableItem(HashTable *table, char *key, void *data);
+void removeHashTableItem(HashTable *table, char *key);
 void destroyHashTable(HashTable *table);
 
 String *getString(HashTable *table, char *key);

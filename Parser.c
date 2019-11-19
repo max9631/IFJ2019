@@ -42,6 +42,8 @@ MainNode *parseTokens(ParserState *state) {
 
 BodyNode *parseBody(ParserState *state, BodyNode *parrentBody, String **arguments, int argCount) {
     BodyNode *body = createBodyNode(parrentBody);
+    for (int i = 0; i < argCount; i++)
+        registerSymbol(body, arguments[i]);
     while (peek(state->list)->type != TOKEN_DEINDENT) {
         if (peek(state->list)->type != TOKEN_EOL) {
             addBodyStatement(body, parseStatement(state, body));
@@ -55,6 +57,10 @@ FuncNode *parseFunc(ParserState *state, BodyNode *body) {
     List *list = state->list;
     consume(list, KEYWORD_DEF);
     Token *name = consume(list, TOKEN_IDENTIFIER);
+    if (containsFunction(state, name->value)) {
+        handleError(SemanticIdentifierError, "Invalid redeclaration of a function '%s' on line %d", name->value->value, name->line);
+    }
+    registerFunction(state, name->value);
     consume(list, TOKEN_OPAREN);
     FuncNode *function = createFuncNode(name->value, NULL);
     while(true) {
@@ -112,6 +118,7 @@ WhileNode *parseWhile(ParserState *state, BodyNode *parrentBody) {
 
 AssignNode *parseAssign(ParserState *state, BodyNode *body) {
     Token *identifier = consume(state->list, TOKEN_IDENTIFIER);
+    registerSymbol(body, identifier->value);
     TokenType type = popToken(state->list)->type;
     switch (type) {
     case OPERATOR_ASSIGN: return createAssignNode(identifier->value, ASSIGN_NONE, parseExpression(state, body));
@@ -146,6 +153,9 @@ StatementNode *parseStatement(ParserState *state, BodyNode *body) {
 
 CallNode *parseCall(ParserState *state, BodyNode *body) {
     Token* name = consume(state->list, TOKEN_IDENTIFIER);
+    if (!containsFunction(state, name->value)) {
+        handleError(SemanticIdentifierError, "Unknown function name '%s' on line %d", name->value, name->line);
+    }
     CallNode *call = createCallNode(name->value);
     consume(state->list, TOKEN_OPAREN);
     if (peek(state->list)->type != TOKEN_CPAREN) {
@@ -165,9 +175,9 @@ ExpressionNode *parseValue(ParserState *state, BodyNode *body) {
     switch(token->type) {
     case TOKEN_IDENTIFIER:
         if (peekNext(state->list, 1)->type == TOKEN_OPAREN)
-//        if (!contains(state->main->body->symTable, token->value->value))
-//            handleError(SyntaxError, "Uknown identier %s on line %d", token->value->value, token->line);
             return createExpressionNode(parseCall(state, body), EXPRESSION_CALL);
+        if (!containsSymbol(body, token->value))
+            handleError(SemanticIdentifierError, "Uknown identier '%s' on line %d", token->value->value, token->line);
         return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_IDENTIFIER), EXPRESSION_VALUE);
     case DATA_TOKEN_INT: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_INT), EXPRESSION_VALUE);
     case DATA_TOKEN_FLOAT: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_FLOAT), EXPRESSION_VALUE);
@@ -267,6 +277,28 @@ ExpressionNode *parseExpression(ParserState *state, BodyNode *body) {
     } else if (prefix->count == 0) return item->prefix.value;
     handleError(SyntaxError, "Invalid expression on line %d", line);
     return NULL;
+}
+
+bool containsFunction(ParserState *state, String *identifier) {
+    return contains(state->funcTable, identifier->value);
+}
+
+bool containsSymbol(BodyNode *body, String *identifier) {
+    while (body != NULL) {
+        if (contains(body->symTable, identifier->value))
+            return true;
+        body = body->parrentBody;
+    }
+    return false;
+}
+
+
+void registerSymbol(BodyNode *body, String *identifier) {
+    insertHashTableItem(body->symTable, identifier->value, NULL);
+}
+
+void registerFunction(ParserState *state, String *identifier) {
+    insertHashTableItem(state->funcTable, identifier->value, NULL);
 }
 
 /* --------------- DEBUG Functions ----------------- */
