@@ -5,16 +5,16 @@ void move()
 {
 }
 
-void createFrame() { printf("CREATEFRAME"); }
-void pushFrame() { printf("PUSHFRAME"); }
-void popFrame() { printf("POPRFRAME"); }
+void createFrame() { printf("CREATEFRAME\n"); }
+void pushFrame() { printf("PUSHFRAME\n"); }
+void popFrame() { printf("POPRFRAME\n"); }
 
 void defvar()
 {
 }
 
-void call(String *label) { printf("CALL %s", label->value); }
-void return_instr() { printf("RETURN"); }
+void call(String *label) { printf("CALL %s\n", label->value); }
+void return_instr() { printf("RETURN\n"); }
 
 // Prace s datovym zasobnikem
 void pushs()
@@ -25,7 +25,7 @@ void pops()
 {
 }
 
-void clears() { printf("CLEARS"); }
+void clears() { printf("CLEARS\n"); }
 
 // Aritmeticke, relacni, booleovske a konverzni instrukce
 void add()
@@ -180,8 +180,8 @@ void type()
 }
 
 // Instrukce pro rizeni toku programu
-void label(String *label) { printf("LABEL %s", label->value); }
-void jump(String *label) { printf("JUMP %s", label->value); }
+void label(String *label) { printf("LABEL %s\n", label->value); }
+void jump(String *label) { printf("JUMP %s\n", label->value); }
 
 void jumpifeq()
 {
@@ -191,15 +191,15 @@ void jumpifneq()
 {
 }
 
-void jumpifeqs(String *label) { printf("JUMPIFEQS %s", label->value); }
-void jumpifneqs(String *label) { printf("JUMPIFNEQS %s", label->value); }
+void jumpifeqs(String *label) { printf("JUMPIFEQS %s\n", label->value); }
+void jumpifneqs(String *label) { printf("JUMPIFNEQS %s\n", label->value); }
 
 void exit_instr()
 {
 }
 
 // Ladici instrukce
-void break_instr() { printf("BREAK"); }
+void break_instr() { printf("BREAK\n"); }
 
 void dprint()
 {
