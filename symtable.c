@@ -1,4 +1,4 @@
-#include "HashTable.h"
+#include "symtable.h"
 
 int indexForKey(char *key){
 	int retval = 1;
