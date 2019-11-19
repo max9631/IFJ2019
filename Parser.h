@@ -18,16 +18,18 @@ void addPraserFunction(ParserState *state, FuncNode *func);
 void DestroyParserState(ParserState *state);
 
 MainNode *parseTokens(ParserState *state);
-BodyNode *parseBody(ParserState *state);
-FuncNode *parseFunc(ParserState *state);
-CondNode *parseCond(ParserState *state);
-WhileNode *parseWhile(ParserState *state);
-AssignNode *parseAssign(ParserState *state);
-StatementNode *parseStatement(ParserState *state);
-CallNode *parseCall(ParserState *state);
-ExpressionNode *parseValue(ParserState *state) ;
-ExpressionNode *parseExpression(ParserState *state);
-OperationNode *parseOperation(ParserState *state, Stack *prefix, OperationType type, int line);
+
+BodyNode *parseBody(ParserState *state, BodyNode *body, String **arguments, int argCount);
+FuncNode *parseFunc(ParserState *state, BodyNode *body);
+CondNode *parseCond(ParserState *state, BodyNode *body);
+WhileNode *parseWhile(ParserState *state, BodyNode *body);
+AssignNode *parseAssign(ParserState *state, BodyNode *body);
+StatementNode *parseStatement(ParserState *state, BodyNode *body);
+CallNode *parseCall(ParserState *state, BodyNode *body);
+ExpressionNode *parseExpression(ParserState *state, BodyNode *body);
+
+ExpressionNode *parseValue(ParserState *state, BodyNode *body) ;
+OperationNode *parseOperation(ParserState *state, Stack *prefix, OperationType type, int line, BodyNode *body);
 
 bool isTokenValue(Token *token);
 bool isTokenOperator(Token *token);

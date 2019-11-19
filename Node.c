@@ -75,9 +75,10 @@ ExpressionNode *createExpressionNode(void *expression, ExpressionType type) {
     return node;
 }
 
-BodyNode *createBodyNode() {
+BodyNode *createBodyNode(BodyNode *parrentBody) {
     BodyNode *node = (BodyNode *) malloc(sizeof(BodyNode));
     node->symTable = createHashTable();
+    node->parrentBody = parrentBody;
     return node;
 }
 

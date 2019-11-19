@@ -111,6 +111,7 @@ typedef struct _AssignNode {
 
 typedef struct _BodyNode {
     HashTable *symTable;
+    struct _BodyNode *parrentBody;
     int statementsCount;
     StatementNode **statements;
 } BodyNode;
@@ -147,7 +148,7 @@ WhileNode *createWhileNode(ExpressionNode *condition, BodyNode *body);
 AssignNode *createAssignNode(String *identifier, AssignOperator operator, ExpressionNode *expression);
 StatementNode *craeteStatementNode(void *statement, StatementType type);
 ExpressionNode *createExpressionNode(void *expressions, ExpressionType type);
-BodyNode *createBodyNode(void);
+BodyNode *createBodyNode(BodyNode *parrentBody);
 MainNode *createMainNode(BodyNode *body);
 
 OperationType operationTypeForToken(Token *token);
