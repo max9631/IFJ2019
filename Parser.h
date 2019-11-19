@@ -19,7 +19,7 @@ void DestroyParserState(ParserState *state);
 
 MainNode *parseTokens(ParserState *state);
 
-BodyNode *parseBody(ParserState *state, BodyNode *body, String **arguments, int argCount);
+BodyNode *parseBody(ParserState *state, BodyNode *body, String **arguments, int argCount, HashTable *symtable);
 FuncNode *parseFunc(ParserState *state, BodyNode *body);
 CondNode *parseCond(ParserState *state, BodyNode *body);
 WhileNode *parseWhile(ParserState *state, BodyNode *body);

@@ -4,7 +4,7 @@ ParserState *createParserState(List *list) {
     ParserState *state = (ParserState *)malloc(sizeof(ParserState));
     state->list = list;
     state->main = NULL;
-    state->funcTable = createHashTable();
+    state->funcTable = createFuncTable();
     state->functionsCount = 0;
     state->functions = NULL;
     return state;
@@ -26,7 +26,7 @@ void DestroyParserState(ParserState *state) {
 }
 
 MainNode *parseTokens(ParserState *state) {
-    state->main = createMainNode(createBodyNode(NULL));
+    state->main = createMainNode(createBodyNode(NULL, createSymTable()));
     BodyNode *body = state->main->body;
     while (peek(state->list)->type != TOKEN_EOF) {
         if (peek(state->list)->type != TOKEN_EOL) {
@@ -40,8 +40,8 @@ MainNode *parseTokens(ParserState *state) {
     return state->main;
 }
 
-BodyNode *parseBody(ParserState *state, BodyNode *parrentBody, String **arguments, int argCount) {
-    BodyNode *body = createBodyNode(parrentBody);
+BodyNode *parseBody(ParserState *state, BodyNode *parrentBody, String **arguments, int argCount, HashTable *symtable) {
+    BodyNode *body = createBodyNode(parrentBody, symtable);
     for (int i = 0; i < argCount; i++)
         registerSymbol(body, arguments[i]);
     while (peek(state->list)->type != TOKEN_DEINDENT) {
@@ -80,7 +80,7 @@ FuncNode *parseFunc(ParserState *state, BodyNode *body) {
     consume(list, TOKEN_COLON);
     consume(list, TOKEN_EOL);
     consume(list, TOKEN_INDENT);
-    function->body = parseBody(state, body, function->args, function->argsCount);
+    function->body = parseBody(state, body, function->args, function->argsCount, createSymTable());
     consume(list, TOKEN_DEINDENT);
     return function;
 }
@@ -92,14 +92,14 @@ CondNode *parseCond(ParserState *state, BodyNode *body) {
     consume(list, TOKEN_COLON);
     consume(list, TOKEN_EOL);
     consume(list, TOKEN_INDENT);
-    BodyNode *trueBody = parseBody(state, body, NULL, 0);
+    BodyNode *trueBody = parseBody(state, body, NULL, 0, body->symTable);
     consume(list, TOKEN_DEINDENT);
     consume(list, TOKEN_EOL);
     consume(list, KEYWORD_ELSE);
     consume(list, TOKEN_COLON);
     consume(list, TOKEN_EOL);
     consume(list, TOKEN_INDENT);
-    BodyNode *falseBody = parseBody(state, body, NULL, 0);
+    BodyNode *falseBody = parseBody(state, body, NULL, 0, body->symTable);
     consume(list, TOKEN_DEINDENT);
     return createCondNode(condition, trueBody, falseBody);
 }
@@ -111,7 +111,7 @@ WhileNode *parseWhile(ParserState *state, BodyNode *parrentBody) {
     consume(list, TOKEN_COLON);
     consume(list, TOKEN_EOL);
     consume(list, TOKEN_INDENT);
-    BodyNode *body = parseBody(state, parrentBody, NULL, 0);
+    BodyNode *body = parseBody(state, parrentBody, NULL, 0, parrentBody->symTable);
     consume(list, TOKEN_DEINDENT);
     return createWhileNode(condition, body);
 }
@@ -160,6 +160,9 @@ CallNode *parseCall(ParserState *state, BodyNode *body) {
     consume(state->list, TOKEN_OPAREN);
     if (peek(state->list)->type != TOKEN_CPAREN) {
         while(true) {
+            Token *token = peek(state->list);
+            if (!isTokenExpression(peek(state->list)))
+                handleError(SyntaxError, "Invalid call syntax on line %d", peek(state->list)->line);
             addCallArgument(call, parseExpression(state, body));
             if (peek(state->list)->type == TOKEN_CPAREN)
                 break;

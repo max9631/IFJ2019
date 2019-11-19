@@ -148,7 +148,7 @@ WhileNode *createWhileNode(ExpressionNode *condition, BodyNode *body);
 AssignNode *createAssignNode(String *identifier, AssignOperator operator, ExpressionNode *expression);
 StatementNode *craeteStatementNode(void *statement, StatementType type);
 ExpressionNode *createExpressionNode(void *expressions, ExpressionType type);
-BodyNode *createBodyNode(BodyNode *parrentBody);
+BodyNode *createBodyNode(BodyNode *parrentBody, HashTable *symtable);
 MainNode *createMainNode(BodyNode *body);
 
 OperationType operationTypeForToken(Token *token);
