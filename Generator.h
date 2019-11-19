@@ -2,21 +2,20 @@
 #define GENERATOR_H
 #include "Node.h"
 
-typedef struct _GeneratorState {
     
-} GeneratorState;
+typedef struct _Generator {
+} Generator;
 
-GeneratorState *createGenerator(void);
+Generator *createGenerator(void);
 
-void generateMain(GeneratorState *state, MainNode *main);
-void generateBody(GeneratorState *state);
-void generateFunc(GeneratorState *state);
-void generateCond(GeneratorState *state);
-void generateWhile(GeneratorState *state);
-void generateAssign(GeneratorState *state);
-void generateStatement(GeneratorState *state);
-void generateCall(GeneratorState *state);
-void generateValue(GeneratorState *state) ;
-void generateExpression(GeneratorState *state);
+void generateMain(Generator *generator, MainNode *main);
+void generateBody(Generator *generator, BodyNode *body);
+void generateFunc(Generator *generator, FuncNode *function);
+void generateCond(Generator *generator, CondNode *condition);
+void generateWhile(Generator *generator, WhileNode *whileNode);
+void generateAssign(Generator *generator, AssignNode *assign);
+void generateStatement(Generator *generator, StatementNode *statement);
+void generateCall(Generator *generator, CallNode *call);
+void generateExpression(Generator *generator, ExpressionNode *expression);
 
 #endif

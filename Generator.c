@@ -1,46 +1,42 @@
 #include "Generator.h"
 
-GeneratorState *createGenerator() {
+Generator *createGenerator() {
     return NULL;
 }
 
-void generateMain(GeneratorState *state, MainNode *main) {
+void generateMain(Generator *generator, MainNode *main) {
     
 }
 
-void generateBody(GeneratorState *state) {
+void generateBody(Generator *generator, BodyNode *body) {
     
 }
 
-void generateFunc(GeneratorState *state) {
+void generateFunc(Generator *generator, FuncNode *function) {
     
 }
 
-void generateCond(GeneratorState *state) {
+void generateCond(Generator *generator, CondNode *condition) {
     
 }
 
-void generateWhile(GeneratorState *state) {
+void generateWhile(Generator *generator, WhileNode *whileNode) {
     
 }
 
-void generateAssign(GeneratorState *state) {
+void generateAssign(Generator *generator, AssignNode *assign) {
     
 }
 
-void generateStatement(GeneratorState *state) {
+void generateStatement(Generator *generator, StatementNode *statement) {
     
 }
 
-void generateCall(GeneratorState *state) {
+void generateCall(Generator *generator, CallNode *call) {
     
 }
 
-void generateValue(GeneratorState *state)  {
-    
-}
-
-void generateExpression(GeneratorState *state) {
+void generateExpression(Generator *generator, ExpressionNode *expression) {
     
 }
 
