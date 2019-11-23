@@ -157,7 +157,6 @@ CondNode *createCondNode(ExpressionNode *condition, BodyNode *trueBody, BodyNode
 WhileNode *createWhileNode(ExpressionNode *condition, BodyNode *body);
 AssignNode *createAssignNode(String *identifier, AssignOperator operator, ExpressionNode *expression);
 StatementNode *craeteStatementNode(void *statement, StatementType type);
-ExpressionNode *createExpressionNode(void *expressions, ExpressionType type);
 ExpressionNode *createExpressionNode(void *expressions, ExpressionType type, ExpressionDataType dataType);
 BodyNode *createBodyNode(BodyNode *parrentBody, HashTable *symtable);
 MainNode *createMainNode(BodyNode *body);
