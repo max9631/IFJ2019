@@ -3,75 +3,75 @@
 #include "String.h"
 
 // Prace s ramci, volani funkci
-void instrutionMove(String *var);
-void instrutionCreateFrame();
-void instrutionPushFrame();
-void instrutionPopFrame();
-void instrutionDefVar(String *var);
-void instrutionCall(String *label);
-void instrutionReturn();
+void instructionMove(String *var);
+void instructionCreateFrame();
+void instructionPushFrame();
+void instructionPopFrame();
+void instructionDefVar(String *var);
+void instructionCall(String *label);
+void instructionReturn();
 
 // Prace s datovym zasobnikem
-void instrutionPushStack();
-void instrutionPopStack(String *var);
-void instrutionClearStack();
+void instructionPushStack();
+void instructionPopStack(String *var);
+void instructionClearStack();
 
 // Aritmeticke, relacni, booleovske a konverzni instrukce
-void instrutionAdd(String *var);
-void instrutionSub(String *var);
-void instrutionMul(String *var);
-void instrutionDiv(String *var);
-void instrutionIDiv(String *var);
-void instrutionAddStack();
-void instrutionSubStack();
-void instrutionMulStack();
-void instrutionDivStack();
-void instrutionIDivStack();
-void instrutionLessThan(String *var);
-void instrutionGreaterThan(String *var);
-void instrutionEquals(String *var);
-void instrutionLessThanStack();
+void instructionAdd(String *var);
+void instructionSub(String *var);
+void instructionMul(String *var);
+void instructionDiv(String *var);
+void instructionIDiv(String *var);
+void instructionAddStack();
+void instructionSubStack();
+void instructionMulStack();
+void instructionDivStack();
+void instructionIDivStack();
+void instructionLessThan(String *var);
+void instructionGreaterThanStack(String *var);
+void instructionEqualsStack(String *var);
+void instructionLessThanStack();
 void instrutionGreaterThanStack();
 void instrutionEqualsStack();
-void instrutionAnd(String *var);
-void instrutionOr(String *var);
-void instrutionNot(String *var);
-void instrutionAndStack();
-void instrutionOrStack();
-void instrutionNotStack();
-void instrutionIntToFloat(String *var);
-void instrutionFloatToInt(String *var);
-void instrutionIntToChar(String *var);
-void instrutionStringToInt(String *var);
-void instrutionIntToFloats();
-void instrutionFloatToInts();
-void instrutionIntToChars();
-void instrutionStriToInts();
+void instructionAnd(String *var);
+void instructionOr(String *var);
+void instructionNot(String *var);
+void instructionAndStack();
+void instructionOrStack();
+void instructionNotStack();
+void instructionIntToFloat(String *var);
+void instructionFloatToInt(String *var);
+void instructionIntToChar(String *var);
+void instructionStringToInt(String *var);
+void instructionIntToFloats();
+void instructionFloatToInts();
+void instructionIntToChars();
+void instructionStriToInts();
 
 // Vstupne-Vystupni instrukce
-void instrutionRead(String *var);
-void instrutionWrite();
+void instructionRead(String *var);
+void instructionWrite();
 
 // Prace s reteci
-void instrutionConcat(String *var);
-void instrutionStrLen(String *var);
-void instrutionGetChar(String *var);
-void instrutionSetChar(String *var);
+void instructionConcat(String *var);
+void instructionStrLen(String *var);
+void instructionGetChar(String *var);
+void instructionSetChar(String *var);
 
 // Prace s typy
-void instrutionType(String *var);
+void instructionType(String *var);
 
 // Instrukce pro rizeni toku programu
-void instrutionLabel(String *label);
-void instrutionJump(String *label);
-void instrutionJumpIfEquls(String *label);
-void instrutionJumpIfNotEquals(String *label);
-void instrutionJumpIfEqulsStack(String *label);
-void instrutionJumpIfNotEqualsStack(String *label);
-void instrutionExit();
+void instructionLabel(String *label);
+void instructionJump(String *label);
+void instructionJumpIfEquls(String *label);
+void instructionJumpIfNotEqulas(String *label);
+void instructionJumpIfEqulsStack(String *label);
+void instructionJumpIfNotEqualsStack(String *label);
+void instructionExit();
 
 // Ladici instrukce
-void instrutionBreak();
-void instrutionDPrint();
+void instructionBreak(void);
+void instructionDPrint(void);
 
 #endif
