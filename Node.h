@@ -2,7 +2,7 @@
 #define NODE_H
 #include "String.h"
 #include "Token.h"
-#include "HashTable.h"
+#include "symtable.h"
 
 typedef union _Value {
     String *intVal;
@@ -143,6 +143,9 @@ typedef struct _WhileNode {
 
 typedef struct _MainNode {
     BodyNode *body;
+    HashTable *funcTable;
+    int functionsCount;
+    FuncNode **functions;
 } MainNode;
 
 PrefixItem *createPrefixItem(void *value, PrefixType type);

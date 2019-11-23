@@ -2,15 +2,12 @@
 #define PARSER_H
 #include "List.h"
 #include "Node.h"
-#include "HashTable.h"
+#include "symtable.h"
 #include "Stack.h"
 
 typedef struct _ParserState {
     List *list;
     MainNode *main;
-    HashTable *funcTable;
-    int functionsCount;
-    FuncNode **functions;
 } ParserState;
 
 ParserState *createParserState(List *list);
