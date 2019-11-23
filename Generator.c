@@ -8,10 +8,10 @@ Generator *createGenerator() {
 }
 
 void generateMain(Generator *generator, MainNode *main) {
-    instrutionJump(createString("_IFJ_START_"));
+    instructionJump(createString("_IFJ_START_"));
     for (int i = 0; i < main->functionsCount; i++)
         generateFunc(generator, main->functions[i]);
-    instrutionLabel(createString("_IFJ_START_"));
+    instructionLabel(createString("_IFJ_START_"));
     generateBody(generator, main->body);
 }
 
