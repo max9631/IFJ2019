@@ -1,6 +1,7 @@
 #ifndef GENERATOR_H
 #define GENERATOR_H
 #include "Node.h"
+#include "Instruction.h"
 
 typedef struct _Generator {
     int condCount;
