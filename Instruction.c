@@ -1,8 +1,8 @@
 #include "Instruction.h"
 
 // Prace se zasobnikem, volani funkci.
-void instructionMove(){
-    printf("MOVE\n");
+void instructionMove(String *var) {
+    printf("MOVE %s\n", var->value);
 }
 
 void instructionCreateFrame() {
@@ -17,13 +17,12 @@ void instructionPopFrame() {
     printf("POPRFRAME\n");
 }
 
-void instructionDefVar() {
-    printf("DEFVAR\n");
+void instructionDefVar(String *var) {
+    printf("DEFVAR %s\n", var->value);
 }
 
-
 void instructionCall(String *label) {
-    printf("CALL %s\n", label->value); 
+    printf("CALL %s\n", label->value);
 }
 
 void instructionReturn() {
@@ -33,12 +32,10 @@ void instructionReturn() {
 // Prace s datovym zasobnikem
 void instructionPushStack() {
     printf("PUSHS\n");
-
 }
 
-void instructionPopStack() {
-    printf("POPS\n");
-
+void instructionPopStack(String *var) {
+    printf("POPS %s\n", var->value);
 }
 
 void instructionClearStack() {
@@ -46,191 +43,155 @@ void instructionClearStack() {
 }
 
 // Aritmeticke, relacni, booleovske a konverzni instrukce
-void instructionAdd() {
-    printf("ADD\n");
-
+void instructionAdd(String *var) {
+    printf("ADD %s\n", var->value);
 }
 
-void instructionSub() {
-    printf("SUB\n");
-
+void instructionSub(String *var) {
+    printf("SUB %s\n", var->value);
 }
 
-void instructionMul() {
-    printf("MUL\n");
-
+void instructionMul(String *var) {
+    printf("MUL %s\n", var->value);
 }
 
-void instructionDiv() {
-    printf("DIV\n");
-
+void instructionDiv(String *var) {
+    printf("DIV %s\n", var->value);
 }
 
-void instructionIDiv() {
-    printf("IDIV\n");
-
+void instructionIDiv(String *var) {
+    printf("IDIV %s\n", var->value);
 }
 
 void instructionAddStack() {
     printf("ADDS\n");
-
 }
 
 void instructionSubStack() {
     printf("SUBS\n");
-
 }
 
 void instructionMulStack() {
     printf("MULS\n");
-
 }
 
 void instructionDivStack() {
     printf("DIVS\n");
-
 }
 
 void instructionIDivStack() {
     printf("IDIVS\n");
-
 }
 
-void instructionLessThan() {
-    printf("LESSTHAN\n");
-
+void instructionLessThan(String *var) {
+    printf("LT %s\n", var->value);
 }
 
-void instructionGreaterThan() {
-    printf("GREATERTHAN\n");
-
+void instructionGreaterThan(String *var) {
+    printf("GT %s\n", var->value);
 }
 
-void instructionEquals() {
-    printf("EQUALS\n");
-
+void instructionEquals(String *var) {
+    printf("EQ %s\n", var->value);
 }
 
 void instructionLessThanStack() {
-    printf("LESSTHANS\n");
-
+    printf("LTS\n");
 }
 
 void instructionGreaterThanStack() {
-    printf("GREATERTHANS\n");
-
+    printf("GTS\n");
 }
 
 void instructionEqualsStack() {
-    printf("EQUALSS\n");
-    
+    printf("EQS\n");
 }
 
-void instructionAnd() {
-    printf("AND\n");
-
+void instructionAnd(String *var) {
+    printf("AND %s\n", var->value);
 }
 
-void instructionOr() {
-    printf("OR\n");
-
+void instructionOr(String *var) {
+    printf("OR %s\n", var->value);
 }
 
-void instructionNot() {
-    printf("NOT\n");
-
+void instructionNot(String *var) {
+    printf("NOT %s\n", var->value);
 }
 
 void instructionAndStack() {
     printf("ANDS\n");
-
 }
 
 void instructionOrStack() {
     printf("ORS\n");
-
 }
 
 void instructionNotStack() {
     printf("NOTS\n");
 }
 
-void instructionIntToFloat() {
-    printf("INTTOFLOAT\n");
-
+void instructionIntToFloat(String *var) {
+    printf("INT2FLOAT %s\n", var->value);
 }
 
-void instructionFloatToInt() {
-    printf("FLOATTOINT\n");
-
+void instructionFloatToInt(String *var) {
+    printf("FLOAT2INT %s\n", var->value);
 }
 
-void instructionIntToChar() {
-    printf("INTTOCHAR\n");
-
+void instructionIntToChar(String *var) {
+    printf("INT2CHAR %s\n", var->value);
 }
 
-void instructionStringToInt() {
-    printf("STRINGTOINT\n");
-
+void instructionStringToInt(String *var) {
+    printf("STRI2INT %s\n", var->value);
 }
 
 void instructionIntToFloats() {
-    printf("INTTOFLOATS\n");
-
+    printf("INT2FLOATS\n");
 }
 
 void instructionFloatToInts() {
-    printf("FLOATTOINTS\n");
-
+    printf("FLOAT2INTS\n");
 }
 
 void instructionIntToChars() {
-    printf("INTTOCHARS\n");
-
+    printf("INT2CHARS\n");
 }
 
 void instructionStriToInts() {
-    printf("STRITOINTS\n");
-
+    printf("STRI2INTS\n");
 }
 
 // Vstupne-Vystupni instrukce
-void instructionRead() {
-    printf("READ\n");
-
+void instructionRead(String *var) {
+    printf("READ %s\n", var->value);
 }
 
 void instructionWrite() {
     printf("WRITE\n");
-
 }
 
 // Prace s reteci
-void instructionConcat() {
-    printf("CONCAT\n");
-
+void instructionConcat(String *var) {
+    printf("CONCAT %s\n", var->value);
 }
 
-void instructionStrLen() {
-    printf("STRLEN\n");
-
+void instructionStrLen(String *var) {
+    printf("STRLEN %s\n", var->value);
 }
 
-void instructionGetChar() {
-    printf("GETCHAR\n");
-
+void instructionGetChar(String *var) {
+    printf("GETCHAR %s\n", var->value);
 }
 
-void instructionSetChar() {
-    printf("SETCHAR\n");
-
+void instructionSetChar(String *var) {
+    printf("SETCHAR %s\n", var->value);
 }
 
 // Prace s typy
-void instructionType() {
-    printf("TYPE\n");
-
+void instructionType(String *var) {
+    printf("TYPE %s\n", var->value);
 }
 
 // Instrukce pro rizeni toku programu
@@ -242,14 +203,12 @@ void instructionJump(String *label) {
     printf("JUMP %s\n", label->value);
 }
 
-void instructionJumpIfEquls() {
-    printf("JUMPIFEQ\n");
-
+void instructionJumpIfEquls(String *label) {
+    printf("JUMPIFEQ %s\n", label->value);
 }
 
-void instructionJumpIfNotEqulas() {
-    printf("JUMPIFNEQ\n");
-
+void instructionJumpIfNotEqulas(String *label) {
+    printf("JUMPIFNEQ %s\n", label->value);
 }
 
 void instructionJumpIfEqulsStack(String *label) {
@@ -266,10 +225,9 @@ void instructionExit() {
 
 // Ladici instrukce
 void instructionBreak() {
-    printf("BREAK\n"); 
+    printf("BREAK\n");
 }
 
 void instructionDPrint() {
     printf("DPRINT\n");
-
 }
