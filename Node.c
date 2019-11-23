@@ -68,10 +68,11 @@ StatementNode *craeteStatementNode(void *statement, StatementType type) {
     return node;
 }
 
-ExpressionNode *createExpressionNode(void *expression, ExpressionType type) {
+ExpressionNode *createExpressionNode(void *expression, ExpressionType type, ExpressionDataType dataType) {
     ExpressionNode *node = (ExpressionNode *) malloc(sizeof(ExpressionNode));
     node->expression = expression;
     node->type = type;
+    node->dataType = dataType;
     return node;
 }
 

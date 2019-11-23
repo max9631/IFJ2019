@@ -18,7 +18,6 @@ void addPraserFunction(ParserState *state, FuncNode *func);
 void DestroyParserState(ParserState *state);
 
 MainNode *parseTokens(ParserState *state);
-
 BodyNode *parseBody(ParserState *state, BodyNode *body, String **arguments, int argCount, HashTable *symtable);
 FuncNode *parseFunc(ParserState *state, BodyNode *body);
 CondNode *parseCond(ParserState *state, BodyNode *body);
@@ -29,7 +28,7 @@ CallNode *parseCall(ParserState *state, BodyNode *body);
 ExpressionNode *parseExpression(ParserState *state, BodyNode *body);
 
 ExpressionNode *parseValue(ParserState *state, BodyNode *body) ;
-OperationNode *parseOperation(ParserState *state, Stack *prefix, OperationType type, int line, BodyNode *body);
+ExpressionNode *parseOperation(ParserState *state, Stack *prefix, OperationType type, int line, BodyNode *body);
 
 bool isTokenValue(Token *token);
 bool isTokenOperator(Token *token);

@@ -187,11 +187,11 @@ ExpressionNode *parseValue(ParserState *state, BodyNode *body) {
         if (!containsSymbol(body, token->value))
             handleError(SemanticIdentifierError, "Uknown identier '%s' on line %d", token->value->value, token->line);
         return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_IDENTIFIER), EXPRESSION_VALUE);
-    case DATA_TOKEN_INT: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_INT), EXPRESSION_VALUE);
-    case DATA_TOKEN_FLOAT: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_FLOAT), EXPRESSION_VALUE);
-    case DATA_TOKEN_STRING: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_STRING), EXPRESSION_VALUE);
-    case DATA_TOKEN_BOOL: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_BOOL), EXPRESSION_VALUE);
-    case DATA_TOKEN_NONE: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_NONE), EXPRESSION_VALUE);
+    case DATA_TOKEN_INT: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_INT);
+    case DATA_TOKEN_FLOAT: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_FLOAT);
+    case DATA_TOKEN_STRING: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_STRING);
+    case DATA_TOKEN_BOOL: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_BOOL);
+    case DATA_TOKEN_NONE: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_NONE);
     default: handleError(SyntaxError, "Uknown value %s on line %d", token->value->value, token->line);
     }
     return NULL;
@@ -219,19 +219,27 @@ bool isTokenOperator(Token *token) {
         token->type == OPERATOR_MUL;
 }
 
-OperationNode *parseOperation(ParserState *state, Stack *prefix, OperationType type, int line, BodyNode *body) {
-    OperationNode *node = createOperationNode(type);
-    Token *token = (Token *) pop(prefix);
-    if (token == NULL) handleError(SyntaxError, "Invalid expression on line %d", line);
-    if(isTokenOperator(token)) node->value2 = createExpressionNode(parseOperation(state, prefix, operationTypeForToken(token), line, body), EXPRESSION_OPERATION);
-    else if (isTokenValue(token)) node->value2 = createExpressionNode(parseValue(state, body), EXPRESSION_VALUE);
-//    destroyToken(token);
-    token = (Token *) pop(prefix);
-    if (token == NULL) handleError(SyntaxError, "Invalid expression on line %d", line);
-    if(isTokenOperator(token)) node->value1 = createExpressionNode(parseOperation(state, prefix, operationTypeForToken(token), line, body), EXPRESSION_OPERATION);
-    else if (isTokenValue(token)) node->value1 = createExpressionNode(parseValue(state, body), EXPRESSION_VALUE);
-//    destroyToken(token);
-    return node;
+ExpressionNode *parseOperation(ParserState *state, Stack *prefix, OperationType type, int line, BodyNode *body) {
+    OperationNode *operation = createOperationNode(type);
+    Token *token;
+    ExpressionNode *operands[2];
+    
+    for (int i = 1; i >= 0; i--) {
+        token = (Token *) pop(prefix);
+        if(isTokenOperator(token)) operands[i] = parseOperation(state, prefix, operationTypeForToken(token), line, body);
+        else if (isTokenValue(token)) operands[i] = parseValue(state, body);
+        else handleError(SyntaxError, "Invalid expression on line %d", line);
+    }
+    
+    operation->value1 = operands[0];
+    operation->value2 = operands[1];
+    ExpressionDataType dataType;
+    if (operands[0]->dataType == EXPRESSION_DATA_TYPE_FLOAT && operands[1]->dataType == EXPRESSION_DATA_TYPE_INT) {
+        
+    }
+    
+    ExpressionDataType dataType;
+    return createExpressionNode(operation, EXPRESSION_OPERATION, dataType);
 }
 
 bool isTokenExpression(Token *token) {
@@ -279,7 +287,7 @@ ExpressionNode *parseExpression(ParserState *state, BodyNode *body) {
     if (item == NULL)
         handleError(SyntaxError, "Invalid expression on line %d", line);
     if(item->type == PREFIX_OPERATOR_TOKEN) {
-        ExpressionNode *node = createExpressionNode(parseOperation(state, prefix, operationTypeForToken(item->prefix.operator), line, body), EXPRESSION_OPERATION);
+        ExpressionNode *node = parseOperation(state, prefix, operationTypeForToken(item->prefix.operator), line, body);
         if (prefix->count > 0) handleError(SyntaxError, "Invalid expression on line %d", line);
         return node;
     } else if (prefix->count == 0) return item->prefix.value;

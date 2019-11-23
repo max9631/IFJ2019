@@ -14,12 +14,8 @@ typedef union _Value {
 } Value;
 
 typedef enum _ValueType {
-    VALUE_INT,
-    VALUE_FLOAT,
-    VALUE_STRING,
-    VALUE_IDENTIFIER,
-    VALUE_BOOL,
-    VALUE_NONE
+    VALUE_CONSTANT,
+    VALUE_VARIABLE
 } ValueType;
 
 
@@ -31,12 +27,23 @@ typedef struct _ValueNode {
 typedef enum _ExpressionType { 
     EXPRESSION_CALL,
     EXPRESSION_VALUE,
-    EXPRESSION_OPERATION
+    EXPRESSION_OPERATION,
+    EXPRESSION_CONVERSION_TO_FLOAT
 } ExpressionType;
+
+typedef enum _ExpressionDataType {
+    EXPRESSION_DATA_TYPE_NONE,
+    EXPRESSION_DATA_TYPE_INT,
+    EXPRESSION_DATA_TYPE_FLOAT,
+    EXPRESSION_DATA_TYPE_BOOL,
+    EXPRESSION_DATA_TYPE_STRING,
+    EXPRESSION_DATA_TYPE_UNKNOWN
+} ExpressionDataType;
 
 typedef struct _ExpressionNode {
     void *expression;
     ExpressionType type;
+    ExpressionDataType dataType;
 } ExpressionNode;
 
 typedef enum _PrefixType {
@@ -148,6 +155,7 @@ WhileNode *createWhileNode(ExpressionNode *condition, BodyNode *body);
 AssignNode *createAssignNode(String *identifier, AssignOperator operator, ExpressionNode *expression);
 StatementNode *craeteStatementNode(void *statement, StatementType type);
 ExpressionNode *createExpressionNode(void *expressions, ExpressionType type);
+ExpressionNode *createExpressionNode(void *expressions, ExpressionType type, ExpressionDataType dataType);
 BodyNode *createBodyNode(BodyNode *parrentBody, HashTable *symtable);
 MainNode *createMainNode(BodyNode *body);
 
