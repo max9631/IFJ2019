@@ -84,6 +84,9 @@ BodyNode *createBodyNode() {
 MainNode *createMainNode(BodyNode *body) {
     MainNode *node = (MainNode *) malloc(sizeof(MainNode));
     node->body = body;
+    node->funcTable = createHashTable();
+    node->functionsCount = 0;
+    node->functions = NULL;
     return node;
 }
 

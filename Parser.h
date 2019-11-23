@@ -8,9 +8,6 @@
 typedef struct _ParserState {
     List *list;
     MainNode *main;
-    HashTable *funcTable;
-    int functionsCount;
-    FuncNode **functions;
 } ParserState;
 
 ParserState *createParserState(List *list);

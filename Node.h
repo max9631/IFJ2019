@@ -135,6 +135,9 @@ typedef struct _WhileNode {
 
 typedef struct _MainNode {
     BodyNode *body;
+    HashTable *funcTable;
+    int functionsCount;
+    FuncNode **functions;
 } MainNode;
 
 PrefixItem *createPrefixItem(void *value, PrefixType type);
