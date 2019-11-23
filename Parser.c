@@ -180,10 +180,10 @@ ExpressionNode *parseValue(ParserState *state, BodyNode *body) {
     switch(token->type) {
     case TOKEN_IDENTIFIER:
         if (peekNext(state->list, 1)->type == TOKEN_OPAREN)
-            return createExpressionNode(parseCall(state, body), EXPRESSION_CALL);
+            return createExpressionNode(parseCall(state, body), EXPRESSION_CALL, EXPRESSION_DATA_TYPE_UNKNOWN);
         if (!containsSymbol(body, token->value))
             handleError(SemanticIdentifierError, "Uknown identier '%s' on line %d", token->value->value, token->line);
-        return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_IDENTIFIER), EXPRESSION_VALUE);
+        return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_VARIABLE), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_UNKNOWN);
     case DATA_TOKEN_INT: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_INT);
     case DATA_TOKEN_FLOAT: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_FLOAT);
     case DATA_TOKEN_STRING: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_STRING);
@@ -230,12 +230,14 @@ ExpressionNode *parseOperation(ParserState *state, Stack *prefix, OperationType 
     
     operation->value1 = operands[0];
     operation->value2 = operands[1];
-    ExpressionDataType dataType;
-    if (operands[0]->dataType == EXPRESSION_DATA_TYPE_FLOAT && operands[1]->dataType == EXPRESSION_DATA_TYPE_INT) {
-        
+    
+    if (operation->value2->dataType == EXPRESSION_DATA_TYPE_FLOAT && operation->value1->dataType == EXPRESSION_DATA_TYPE_INT) {
+        operation->value1 = createExpressionNode(operation->value1, EXPRESSION_CONVERSION_INT_TO_FLOAT, EXPRESSION_DATA_TYPE_FLOAT);
+    } else if (operation->value1->dataType == EXPRESSION_DATA_TYPE_FLOAT && operation->value2->dataType == EXPRESSION_DATA_TYPE_INT) {
+        operation->value2 = createExpressionNode(operation->value2, EXPRESSION_CONVERSION_INT_TO_FLOAT, EXPRESSION_DATA_TYPE_FLOAT);
     }
     
-    ExpressionDataType dataType;
+    ExpressionDataType dataType = EXPRESSION_DATA_TYPE_UNKNOWN;
     return createExpressionNode(operation, EXPRESSION_OPERATION, dataType);
 }
 
@@ -293,7 +295,7 @@ ExpressionNode *parseExpression(ParserState *state, BodyNode *body) {
 }
 
 bool containsFunction(ParserState *state, String *identifier) {
-    return contains(state->funcTable, identifier->value);
+    return contains(state->main->funcTable, identifier->value);
 }
 
 bool containsSymbol(BodyNode *body, String *identifier) {
@@ -306,7 +308,7 @@ bool containsSymbol(BodyNode *body, String *identifier) {
 }
 
 long getArgumentsCountForFuntion(ParserState *state, String *functionName) {
-    HashTableItem *item = getHashTableItem(state->funcTable, functionName->value);
+    HashTableItem *item = getHashTableItem(state->main->funcTable, functionName->value);
     long currentCount = (long) item->data;
     return currentCount;
 }
@@ -319,7 +321,7 @@ void registerSymbol(BodyNode *body, String *identifier) {
 void registerFunction(ParserState *state, String *identifier, int argsCount) {
     long bigCount = (long)argsCount;
     void *data = (void *)bigCount;
-    insertHashTableItem(state->funcTable, identifier->value, data);
+    insertHashTableItem(state->main->funcTable, identifier->value, data);
 }
 
 /* --------------- DEBUG Functions ----------------- */

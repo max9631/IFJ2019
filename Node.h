@@ -28,7 +28,7 @@ typedef enum _ExpressionType {
     EXPRESSION_CALL,
     EXPRESSION_VALUE,
     EXPRESSION_OPERATION,
-    EXPRESSION_CONVERSION_TO_FLOAT
+    EXPRESSION_CONVERSION_INT_TO_FLOAT
 } ExpressionType;
 
 typedef enum _ExpressionDataType {
