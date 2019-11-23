@@ -16,7 +16,8 @@ void generateMain(Generator *generator, MainNode *main) {
 }
 
 void generateBody(Generator *generator, BodyNode *body) {
-    
+    for (int i = 0; i < body->statementsCount; i++)
+        generateStatement(generator, body->statements[i]);
 }
 
 void generateFunc(Generator *generator, FuncNode *function) {
@@ -44,6 +45,6 @@ void generateCall(Generator *generator, CallNode *call) {
 }
 
 void generateExpression(Generator *generator, ExpressionNode *expression) {
-    
+    // TODO: generate code for type checking. If data types of operand are not compatible, exit with code 4.
 }
 
