@@ -2,10 +2,12 @@
 #define GENERATOR_H
 #include "Node.h"
 #include "Instruction.h"
+#include "String.h"
 
 typedef struct _Generator {
     int condCount;
     int whileCount;
+    String *trashVar;
 } Generator;
 
 Generator *createGenerator(void);
@@ -19,5 +21,6 @@ void generateAssign(Generator *generator, AssignNode *assign);
 void generateStatement(Generator *generator, StatementNode *statement);
 void generateCall(Generator *generator, CallNode *call);
 void generateExpression(Generator *generator, ExpressionNode *expression);
+void generateReturn(Generator *generator, StatementNode *node);
 
 #endif
