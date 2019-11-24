@@ -16,30 +16,48 @@ HashTable *createHashTable () {
     return table;
 }
 
-HashTableItem* getItem(HashTable *table, char *key) {
+HashTable *createFuncTable() {
+	HashTable *table = createHashTable();
+	insertHashTableItem(table, "print", NULL);
+	insertHashTableItem(table, "inputi", NULL);
+	insertHashTableItem(table, "inputs", NULL);
+	insertHashTableItem(table, "inputf", NULL);
+	insertHashTableItem(table, "len", NULL);
+	insertHashTableItem(table, "substr", NULL);
+	insertHashTableItem(table, "ord", NULL);
+	insertHashTableItem(table, "chr", NULL);
+	return table;
+}
+
+HashTable *createSymTable() {
+	return createHashTable();
+}
+
+HashTableItem* getHashTableItem(HashTable *table, char *key) {
 	if (table == NULL) return NULL;
 	HashTableItem *item = (*table)[indexForKey(key)];
-	while (item != NULL && item->key != key) item = item->ptrnext;
+	while (item != NULL && strcmp(item->key, key) != 0) item = item->ptrnext;
 	if (item == NULL) return NULL;
 	return item;
 }
 
-void insertItem(HashTable *table, char *key, void *data) {
+void insertHashTableItem(HashTable *table, char *key, void *data) {
 	if (table == NULL) return;
-	HashTableItem *item = getItem(table, key);
+	HashTableItem *item = getHashTableItem(table, key);
 	if (item != NULL) {
 		item->data = data;
 		return;
 	}
 	HashTableItem *newItem = (HashTableItem *) malloc(sizeof(HashTableItem));
 	if (newItem == NULL) return;
+    newItem->key = malloc(strlen(key) * sizeof(char));
 	newItem->key = strcpy(newItem->key, key);
 	newItem->data = data;
 	newItem->ptrnext = (*table)[indexForKey(key)];
 	(*table)[indexForKey(key)] = newItem;
 }
 
-void deleteItem(HashTable *table, char *key) {
+void removeHashTableItem(HashTable *table, char *key) {
 	if (table == NULL) return;
 	int index = indexForKey(key);
 	HashTableItem *lastItem = NULL;
@@ -77,10 +95,10 @@ void destroyHashTable(HashTable *table) {
 }
 
 String *getString(HashTable *table, char *key) {
-    HashTableItem *item = getItem(table, key);
+    HashTableItem *item = getHashTableItem(table, key);
     return (String *)item->data;
 }
 
 bool contains(HashTable *table, char *key) {
-	return getItem(table, key) != NULL;
+	return getHashTableItem(table, key) != NULL;
 }

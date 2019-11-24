@@ -8,10 +8,11 @@ OperationNode *createOperationNode(OperationType type) {
     return node;
 }
 
-ValueNode *createValueNode(String *str, ValueType type) {
+ValueNode *createValueNode(String *str, ValueType type, bool isGlobal) {
     ValueNode *node = (ValueNode *) malloc(sizeof(ValueNode));
     node->value.stringVal = createString(str->value);
     node->type = type;
+    node->isGlobal = isGlobal;
     return node;
 }
 
@@ -69,16 +70,20 @@ StatementNode *craeteStatementNode(void *statement, StatementType type) {
     return node;
 }
 
-ExpressionNode *createExpressionNode(void *expression, ExpressionType type) {
+ExpressionNode *createExpressionNode(void *expression, ExpressionType type, ExpressionDataType dataType) {
     ExpressionNode *node = (ExpressionNode *) malloc(sizeof(ExpressionNode));
     node->expression = expression;
     node->type = type;
+    node->dataType = dataType;
     return node;
 }
 
-BodyNode *createBodyNode() {
+BodyNode *createBodyNode(BodyNode *parrentBody, HashTable *symtable) {
     BodyNode *node = (BodyNode *) malloc(sizeof(BodyNode));
-    node->symTable = createHashTable();
+    node->symTable = symtable;
+    if (node->symTable == NULL)
+        node->symTable = createSymTable();
+    node->parrentBody = parrentBody;
     node->statements = NULL;
     return node;
 }
@@ -86,7 +91,7 @@ BodyNode *createBodyNode() {
 MainNode *createMainNode(BodyNode *body) {
     MainNode *node = (MainNode *) malloc(sizeof(MainNode));
     node->body = body;
-    node->funcTable = createHashTable();
+    node->funcTable = createFuncTable();
     node->functionsCount = 0;
     node->functions = NULL;
     return node;

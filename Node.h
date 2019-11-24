@@ -14,29 +14,37 @@ typedef union _Value {
 } Value;
 
 typedef enum _ValueType {
-    VALUE_INT,
-    VALUE_FLOAT,
-    VALUE_STRING,
-    VALUE_IDENTIFIER,
-    VALUE_BOOL,
-    VALUE_NONE
+    VALUE_CONSTANT,
+    VALUE_VARIABLE
 } ValueType;
 
 
 typedef struct _ValueNode {
     Value value;
     ValueType type;
+    bool isGlobal;
 } ValueNode;
 
 typedef enum _ExpressionType { 
     EXPRESSION_CALL,
     EXPRESSION_VALUE,
-    EXPRESSION_OPERATION
+    EXPRESSION_OPERATION,
+    EXPRESSION_CONVERSION_INT_TO_FLOAT
 } ExpressionType;
+
+typedef enum _ExpressionDataType {
+    EXPRESSION_DATA_TYPE_NONE,
+    EXPRESSION_DATA_TYPE_INT,
+    EXPRESSION_DATA_TYPE_FLOAT,
+    EXPRESSION_DATA_TYPE_BOOL,
+    EXPRESSION_DATA_TYPE_STRING,
+    EXPRESSION_DATA_TYPE_UNKNOWN
+} ExpressionDataType;
 
 typedef struct _ExpressionNode {
     void *expression;
     ExpressionType type;
+    ExpressionDataType dataType;
 } ExpressionNode;
 
 typedef enum _PrefixType {
@@ -111,6 +119,7 @@ typedef struct _AssignNode {
 
 typedef struct _BodyNode {
     HashTable *symTable;
+    struct _BodyNode *parrentBody;
     int statementsCount;
     StatementNode **statements;
 } BodyNode;
@@ -142,15 +151,15 @@ typedef struct _MainNode {
 
 PrefixItem *createPrefixItem(void *value, PrefixType type);
 OperationNode *createOperationNode(OperationType type);
-ValueNode *createValueNode(String *str, ValueType type);
+ValueNode *createValueNode(String *str, ValueType type, bool isGlobal);
 CallNode *createCallNode(String *identifier);
 FuncNode *createFuncNode(String *name, BodyNode *body);
 CondNode *createCondNode(ExpressionNode *condition, BodyNode *trueBody, BodyNode *falseBody);
 WhileNode *createWhileNode(ExpressionNode *condition, BodyNode *body);
 AssignNode *createAssignNode(String *identifier, AssignOperator operator, ExpressionNode *expression);
 StatementNode *craeteStatementNode(void *statement, StatementType type);
-ExpressionNode *createExpressionNode(void *expressions, ExpressionType type);
-BodyNode *createBodyNode(void);
+ExpressionNode *createExpressionNode(void *expressions, ExpressionType type, ExpressionDataType dataType);
+BodyNode *createBodyNode(BodyNode *parrentBody, HashTable *symtable);
 MainNode *createMainNode(BodyNode *body);
 
 OperationType operationTypeForToken(Token *token);
