@@ -126,6 +126,78 @@ void generateCall(Generator *generator, CallNode *call) {
     instructionCall(call->identifier);
 }
 
+String *convertValueToIFJ(ValueNode *value, ExpressionDataType dataType) {
+    if (value->type == VALUE_CONSTANT) {
+        switch (dataType) {
+            case EXPRESSION_DATA_TYPE_NONE: return createString("nil@nil");
+            case EXPRESSION_DATA_TYPE_INT: return createString("int@%s", value->value.intVal->value);
+            case EXPRESSION_DATA_TYPE_FLOAT: return createString("float@%s", value->value.floatVal->value);
+            case EXPRESSION_DATA_TYPE_BOOL: return createString("bool@%s", value->value.boolVal->value);
+            case EXPRESSION_DATA_TYPE_STRING: return createString("string@\"%s\"", value->value.stringVal->value);
+            case EXPRESSION_DATA_TYPE_UNKNOWN: return createString("nil@nil");
+        }
+    } else if (value->type == VALUE_VARIABLE) {
+        char *prefix = value->isGlobal ? "GF" : "TF";
+        return createString("%s@%s", prefix, value->value.identifier->value);
+    }
+    return createString("nil@nil");
+}
+
+void stackInstructionForOperationType(Generator *generator, OperationNode *operation) {
+    switch (operation->type) {
+        case OPERATION_ADD: return instructionAddStack();
+        case OPERATION_SUB:
+            instructionSubStack();
+        case OPERATION_MUL:
+            instructionMulStack();
+        case OPERATION_DIV:
+            instructionDivStack();
+        case OPERATION_EQUALS:
+            instructionEqualsStack();
+        case OPERATION_NOTEQUALS:
+            instructionEqualsStack();
+            instructionNotStack();
+        case OPERATION_GREATER:
+            instructionGreaterThanStack();
+        case OPERATION_GREATEROREQUALS:
+            instructionGreaterThanStack();
+            generateExpression(generator, operation->value1);
+            generateExpression(generator, operation->value2);
+            instructionEqualsStack();
+            instructionOrStack();
+            break;
+        case OPERATION_LESS:
+            instructionLessThanStack();
+        case OPERATION_LESSOREQUALS:
+            instructionLessThanStack();
+            generateExpression(generator, operation->value1);
+            generateExpression(generator, operation->value2);
+            instructionEqualsStack();
+            instructionOrStack();
+            break;
+        case OPERATION_AND:
+            instructionAndStack();
+        case OPERATION_OR:
+            instructionOrStack();
+    }
+}
+
 void generateExpression(Generator *generator, ExpressionNode *expression) {
-    // TODO: generate code for type checking. If data types of operand are not compatible, exit with code 4.
+    switch (expression->type) {
+        case EXPRESSION_CALL:;
+            CallNode *call = (CallNode *)expression->expression;
+            generateCall(generator, call);
+            break;
+        case EXPRESSION_VALUE:;
+            ValueNode *value = (ValueNode *) expression->expression;
+            instructionPushStack(convertValueToIFJ(value, expression->dataType));
+            break;
+        case EXPRESSION_OPERATION:;
+            OperationNode *operation = (OperationNode *) expression->expression;
+            generateExpression(generator, operation->value1);
+            generateExpression(generator, operation->value2);
+            // TODO: generate code for type checking. If data types of operand are not compatible, exit with code 4.
+            stackInstructionForOperationType(generator, operation);
+            break;
+    }
 }
