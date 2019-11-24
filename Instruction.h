@@ -64,9 +64,9 @@ void instructionType(String *var);
 // Instrukce pro rizeni toku programu
 void instructionLabel(String *label);
 void instructionJump(String *label);
-void instructionJumpIfEquls(String *label, String *symb1, String *symb2);
-void instructionJumpIfNotEqulas(String *label, String *symb1, String *symb2);
-void instructionJumpIfEqulsStack(String *label);
+void instructionJumpIfEquals(String *label, String *symb1, String *symb2);
+void instructionJumpIfNotEquals(String *label, String *symb1, String *symb2);
+void instructionJumpIfEqualsStack(String *label);
 void instructionJumpIfNotEqualsStack(String *label);
 void instructionExit();
 

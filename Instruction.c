@@ -203,15 +203,15 @@ void instructionJump(String *label) {
     printf("JUMP %s\n", label->value);
 }
 
-void instructionJumpIfEquls(String *label, String *symb1, String *symb2) {
+void instructionJumpIfEquals(String *label, String *symb1, String *symb2) {
     printf("JUMPIFEQ %s %s %s\n", label->value, symb1->value, symb2->value);
 }
 
-void instructionJumpIfNotEqulas(String *label, String *symb1, String *symb2) {
-    printf("JUMPIFNEQ %s\n", label->value, symb1->value, symb2->value);
+void instructionJumpIfNotEquals(String *label, String *symb1, String *symb2) {
+    printf("JUMPIFNEQ %s %s %s\n", label->value, symb1->value, symb2->value);
 }
 
-void instructionJumpIfEqulsStack(String *label) {
+void instructionJumpIfEqualsStack(String *label) {
     printf("JUMPIFEQS %s\n", label->value);
 }
 
