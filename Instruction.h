@@ -12,7 +12,7 @@ void instructionCall(String *label);
 void instructionReturn();
 
 // Prace s datovym zasobnikem
-void instructionPushStack();
+void instructionPushStack(String *var);
 void instructionPopStack(String *var);
 void instructionClearStack();
 

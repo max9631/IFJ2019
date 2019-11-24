@@ -30,8 +30,8 @@ void instructionReturn() {
 }
 
 // Prace s datovym zasobnikem
-void instructionPushStack() {
-    printf("PUSHS\n");
+void instructionPushStack(String *var) {
+    printf("PUSHS %s\n", var->value);
 }
 
 void instructionPopStack(String *var) {
