@@ -181,18 +181,11 @@ ExpressionNode *parseValue(ParserState *state, BodyNode *body) {
     case TOKEN_IDENTIFIER:
         if (peekNext(state->list, 1)->type == TOKEN_OPAREN)
             return createExpressionNode(parseCall(state, body), EXPRESSION_CALL, EXPRESSION_DATA_TYPE_UNKNOWN);
-        if (!containsSymbol(body, token->value))
+        BodyNode *identifierBody = findBodyForIdentifier(body, token->value);
+        if (identifierBody == NULL)
             handleError(SemanticIdentifierError, "Uknown identier '%s' on line %d", token->value->value, token->line);
-        String *identifier = token->value;
-        bool isLocal = false;
-        while (body != NULL) {
-            if (contains(body->symTable, identifier->value)) {
-                isLocal = body->parrentBody != NULL;
-                break;
-            }
-            body = body->parrentBody;
-        }
-        return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_VARIABLE, isLocal), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_UNKNOWN);
+        bool isGlobal = identifierBody->parrentBody == NULL;
+        return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_VARIABLE, isGlobal), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_UNKNOWN);
     case DATA_TOKEN_INT: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT, false), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_INT);
     case DATA_TOKEN_FLOAT: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT, false), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_FLOAT);
     case DATA_TOKEN_STRING: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT, false), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_STRING);
@@ -308,12 +301,16 @@ bool containsFunction(ParserState *state, String *identifier) {
 }
 
 bool containsSymbol(BodyNode *body, String *identifier) {
+    return findBodyForIdentifier(body, identifier) != NULL;
+}
+
+BodyNode *findBodyForIdentifier(BodyNode *body, String *identifier) {
     while (body != NULL) {
         if (contains(body->symTable, identifier->value))
-            return true;
+            break;
         body = body->parrentBody;
     }
-    return false;
+    return body;
 }
 
 long getArgumentsCountForFuntion(ParserState *state, String *functionName) {
