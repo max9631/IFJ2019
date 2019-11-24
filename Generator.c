@@ -63,7 +63,7 @@ void generateStatement(Generator *generator, StatementNode *statement) {
 }
 
 void generateCall(Generator *generator, CallNode *call) {
-
+    
 }
 
 void generateExpression(Generator *generator, ExpressionNode *expression) {
