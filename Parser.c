@@ -169,7 +169,7 @@ CallNode *parseCall(ParserState *state, BodyNode *body) {
         }
     }
     long correctNumberOfArguments = getArgumentsCountForFuntion(state, identifier->value);
-    if (argsCount != correctNumberOfArguments)
+    if (argsCount != correctNumberOfArguments && correctNumberOfArguments != __LONG_MAX__)
         handleError(SemanticArgumentError, "Wrong number of arguments one line %d. Should be %d, but got %d", identifier->line, correctNumberOfArguments, argsCount);
     consume(state->list, TOKEN_CPAREN);
     return call;

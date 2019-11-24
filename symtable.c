@@ -18,7 +18,7 @@ HashTable *createHashTable () {
 
 HashTable *createFuncTable() {
 	HashTable *table = createHashTable();
-	insertHashTableItem(table, "print", NULL);
+	insertHashTableItem(table, "print", (void *) __LONG_MAX__);
 	insertHashTableItem(table, "inputi", NULL);
 	insertHashTableItem(table, "inputs", NULL);
 	insertHashTableItem(table, "inputf", NULL);
