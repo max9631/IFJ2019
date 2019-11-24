@@ -29,9 +29,14 @@ void generateFunc(Generator *generator, FuncNode *function) {
 void generateCond(Generator *generator, CondNode *condition) {
     String *condTrueLabel = createString("_COND_JMP_LABEL_TRUE_%d", generator->condCount++);
     String *condFalseLabel = createString("_COND_JMP_LABEL_FALSE_%d", generator->condCount);
+    String *trueSymb = createString("bool@true");
+    String *falseSymb = createString("bool@false");
+    String *LocalFrame_val = createString("");
 
-    instructionJumpIfEquls(condTrueLabel, condition->condition, "bool@true");
-    instructionJumpIfNotEqulas(condFalseLabel, condition->condition, "bool@false");
+    generateExpression(generator, condition->condition);
+
+    instructionJumpIfEquls(condTrueLabel, LocalFrame_val, trueSymb);
+    instructionJumpIfNotEqulas(condFalseLabel, LocalFrame_val, falseSymb);
 
     instructionLabel(condTrueLabel);
     generateBody(generator, condition->trueBody);
@@ -45,23 +50,25 @@ void generateCond(Generator *generator, CondNode *condition) {
 void generateWhile(Generator *generator, WhileNode *whileNode) {
     String *whileLabel = createString("_WHILE_JMP_LABEL_%d", generator->whileCount++);
     String *LocalFrame_val = createString("");
+    String *trueSymb = createString("bool@true");
+
     instructionLabel(whileLabel);
     generateExpression(generator, whileNode->condition);
     instructionPopStack(LocalFrame_val);
-    instructionJumpIfEquls(whileLabel, LocalFrame_val, "bool@true");
+    instructionJumpIfEquls(whileLabel, LocalFrame_val, trueSymb);
     instructionReturn();
 }
 
 void generateAssign(Generator *generator, AssignNode *assign) {
-    
+
 }
 
 void generateStatement(Generator *generator, StatementNode *statement) {
-    
+
 }
 
 void generateCall(Generator *generator, CallNode *call) {
-    
+
 }
 
 void generateExpression(Generator *generator, ExpressionNode *expression) {
