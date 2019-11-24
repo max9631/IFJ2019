@@ -183,12 +183,21 @@ ExpressionNode *parseValue(ParserState *state, BodyNode *body) {
             return createExpressionNode(parseCall(state, body), EXPRESSION_CALL, EXPRESSION_DATA_TYPE_UNKNOWN);
         if (!containsSymbol(body, token->value))
             handleError(SemanticIdentifierError, "Uknown identier '%s' on line %d", token->value->value, token->line);
-        return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_VARIABLE), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_UNKNOWN);
-    case DATA_TOKEN_INT: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_INT);
-    case DATA_TOKEN_FLOAT: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_FLOAT);
-    case DATA_TOKEN_STRING: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_STRING);
-    case DATA_TOKEN_BOOL: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_BOOL);
-    case DATA_TOKEN_NONE: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_NONE);
+        String *identifier = token->value;
+        bool isLocal = false;
+        while (body != NULL) {
+            if (contains(body->symTable, identifier->value)) {
+                isLocal = body->parrentBody != NULL;
+                break;
+            }
+            body = body->parrentBody;
+        }
+        return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_VARIABLE, isLocal), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_UNKNOWN);
+    case DATA_TOKEN_INT: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT, false), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_INT);
+    case DATA_TOKEN_FLOAT: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT, false), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_FLOAT);
+    case DATA_TOKEN_STRING: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT, false), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_STRING);
+    case DATA_TOKEN_BOOL: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT, false), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_BOOL);
+    case DATA_TOKEN_NONE: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT, false), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_NONE);
     default: handleError(SyntaxError, "Uknown value %s on line %d", token->value->value, token->line);
     }
     return NULL;

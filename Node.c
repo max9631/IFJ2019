@@ -8,10 +8,11 @@ OperationNode *createOperationNode(OperationType type) {
     return node;
 }
 
-ValueNode *createValueNode(String *str, ValueType type) {
+ValueNode *createValueNode(String *str, ValueType type, bool isGlobal) {
     ValueNode *node = (ValueNode *) malloc(sizeof(ValueNode));
     node->value.stringVal = createString(str->value);
     node->type = type;
+    node->isGlobal = isGlobal;
     return node;
 }
 

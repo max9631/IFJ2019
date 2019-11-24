@@ -22,6 +22,7 @@ typedef enum _ValueType {
 typedef struct _ValueNode {
     Value value;
     ValueType type;
+    bool isGlobal;
 } ValueNode;
 
 typedef enum _ExpressionType { 
@@ -150,7 +151,7 @@ typedef struct _MainNode {
 
 PrefixItem *createPrefixItem(void *value, PrefixType type);
 OperationNode *createOperationNode(OperationType type);
-ValueNode *createValueNode(String *str, ValueType type);
+ValueNode *createValueNode(String *str, ValueType type, bool isGlobal);
 CallNode *createCallNode(String *identifier);
 FuncNode *createFuncNode(String *name, BodyNode *body);
 CondNode *createCondNode(ExpressionNode *condition, BodyNode *trueBody, BodyNode *falseBody);
