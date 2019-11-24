@@ -14,20 +14,22 @@ String *createString(char *chars, ...){
     va_start(argList, chars);
     String *str = (String *) malloc(sizeof(String));
     if (str == NULL) handleError(InternalError, "String Error: Could not initialize memory");
-    str->value = (char *) malloc(sizeof(char*));
-    if (str->value == NULL) handleError(InternalError, "String Error: Could not initialize memory");
+    size_t size = snprintf(NULL, 0, chars, va_arg(argList, int));
+    str->value = (char *) malloc(size);
     sprintf(str->value, chars, va_arg(argList, int));
-    str->lenght = stringLength(chars);
+    if (str->value == NULL) handleError(InternalError, "String Error: Could not initialize memory");
+    str->lenght = stringLength(str->value);
     va_end(argList);
     return str;
 }
 
 bool appendCharacter(String *str, int c) {
 	if (str == NULL) return false;
-	str->lenght = str->lenght + 1;
-	str->value = (char *) realloc(str->value, str->lenght * sizeof(char));
+	str->lenght++;
+	str->value = (char *) realloc(str->value, (str->lenght + 1) * sizeof(char));
 	if (str->value == NULL) return false;
 	str->value[str->lenght - 1] = (char) c;
+    str->value[str->lenght] = '\0';
 	return true;
 }
 
