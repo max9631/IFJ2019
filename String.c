@@ -25,10 +25,11 @@ String *createString(char *chars, ...){
 
 bool appendCharacter(String *str, int c) {
 	if (str == NULL) return false;
-	str->lenght = str->lenght + 1;
-	str->value = (char *) realloc(str->value, str->lenght * sizeof(char));
+	str->lenght++;
+	str->value = (char *) realloc(str->value, (str->lenght + 1) * sizeof(char));
 	if (str->value == NULL) return false;
 	str->value[str->lenght - 1] = (char) c;
+    str->value[str->lenght] = '\0';
 	return true;
 }
 
