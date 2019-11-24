@@ -17,7 +17,6 @@ String *createString(char *chars, ...){
     str->value = (char *) malloc(sizeof(char*));
     if (str->value == NULL) handleError(InternalError, "String Error: Could not initialize memory");
     sprintf(str->value, chars, va_arg(argList, int));
-    //strcpy(str->value, chars);
     str->lenght = stringLength(chars);
     va_end(argList);
     return str;
