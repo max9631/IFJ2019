@@ -89,9 +89,8 @@ void generateStatement(Generator *generator, StatementNode *statement) {
 }
 
 void generateReturn(Generator *generator, StatementNode *statement) {
-    instructionPopStack(generator->trashVar);
-
     if(statement->statement != NULL) {
+        instructionPopStack(generator->trashVar);
         ExpressionNode *exprNode = (ExpressionNode *)statement->statement;
         generateExpression(generator, exprNode);
     }
