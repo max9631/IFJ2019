@@ -34,6 +34,7 @@ FuncNode *createFuncNode(String *name, BodyNode *body) {
     FuncNode *node = (FuncNode *) malloc(sizeof(FuncNode));
     node->name = name;
     node->argsCount = 0;
+    node->args = NULL;
     node->body = body;
     return node;
 }
