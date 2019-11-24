@@ -32,12 +32,11 @@ void generateCond(Generator *generator, CondNode *condition) {
 
     instructionJumpIfEquls(condTrueLabel, condition->condition, "bool@true");
     instructionJumpIfNotEqulas(condFalseLabel, condition->condition, "bool@false");
-    printf("#IF_%d_TRUE\n",generator->condCount);
+
     instructionLabel(condTrueLabel);
     generateBody(generator, condition->trueBody);
     instructionReturn();
 
-    printf("#IF_%d_FALSE\n",generator->condCount);
     instructionLabel(condFalseLabel);
     generateBody(generator, condition->falseBody);
     instructionReturn();
@@ -46,7 +45,6 @@ void generateCond(Generator *generator, CondNode *condition) {
 void generateWhile(Generator *generator, WhileNode *whileNode) {
     String *whileLabel = createString("_WHILE_JMP_LABEL_%d", generator->whileCount++);
     String *LocalFrame_val = createString("");
-    printf("#WHILE_%d START\n",generator->whileCount);
     instructionLabel(whileLabel);
     generateExpression(generator, whileNode->condition);
     instructionPopStack(LocalFrame_val);
@@ -63,7 +61,7 @@ void generateStatement(Generator *generator, StatementNode *statement) {
 }
 
 void generateCall(Generator *generator, CallNode *call) {
-    
+
 }
 
 void generateExpression(Generator *generator, ExpressionNode *expression) {
