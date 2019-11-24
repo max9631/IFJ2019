@@ -5,8 +5,14 @@ int main(int argc, char *argv[]) {
 	UNUSED(argv);
 
     inDebugMode = true;
-
-	FILE *file = stdin;
+    FILE *file;
+    if (inDebugMode) {
+        file = fopen(argv[1], "r");
+        if (file == NULL)
+            handleError(2, "Invalid file name");
+    } else {
+        file = stdin;
+    }
 	document = createDocument(file);
 	tokenList = createList();
 	scan(tokenList, document);
