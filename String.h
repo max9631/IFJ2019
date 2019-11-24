@@ -16,7 +16,7 @@ typedef struct String {
 /**
  * Creates a string using malloc.
  */
-String *createString(char *chars);
+String *createString(char *chars, ...);
 String *createStringFromChar(char ch);
 
 /**
