@@ -220,14 +220,18 @@ bool isTokenOperator(Token *token) {
 
 ExpressionNode *parseOperation(ParserState *state, Stack *prefix, OperationType type, int line, BodyNode *body) {
     OperationNode *operation = createOperationNode(type);
-    Token *token;
+    PrefixItem *item;
     ExpressionNode *operands[2];
     
     for (int i = 1; i >= 0; i--) {
-        token = (Token *) pop(prefix);
-        if(isTokenOperator(token)) operands[i] = parseOperation(state, prefix, operationTypeForToken(token), line, body);
-        else if (isTokenValue(token)) operands[i] = parseValue(state, body);
-        else handleError(SyntaxError, "Invalid expression on line %d", line);
+        item = (PrefixItem *) pop(prefix);
+        if (item->type == PREFIX_OPERATOR_TOKEN) {
+            Token *token = (Token *) item->prefix.operator;
+            operands[i] = parseOperation(state, prefix, operationTypeForToken(token), line, body);
+        } else if (item->type == PREFIX_VALUE_EXPRESSION) {
+            operands[i] = item->prefix.value;
+        } else
+            handleError(SyntaxError, "Invalid expression on line %d", line);
     }
     
     operation->value1 = operands[0];
@@ -258,11 +262,12 @@ ExpressionNode *parseExpression(ParserState *state, BodyNode *body) {
     Stack *operators = createStack();
     int parensCount = 0;
     int line = peek(state->list)->line;
+    Token *token;
     while (isTokenExpression(peek(state->list))) {
-        Token *token = peek(state->list);
-        if (isTokenValue(token))
+        token = peek(state->list);
+        if (isTokenValue(token)) {
             push(prefix, createPrefixItem(parseValue(state, body), PREFIX_VALUE_EXPRESSION));
-        else if (isTokenOperator(token)) {
+        } else if (isTokenOperator(token)) {
             Token *token = popToken(state->list);
             while (operators->count != 0 && hasStackHigherOrEqualPrecedence(operators, token->type))
                 push(prefix, createPrefixItem(pop(operators), PREFIX_OPERATOR_TOKEN));
