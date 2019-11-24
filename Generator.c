@@ -27,11 +27,31 @@ void generateFunc(Generator *generator, FuncNode *function) {
 }
 
 void generateCond(Generator *generator, CondNode *condition) {
+    String *condTrueLabel = createString("_COND_JMP_LABEL_TRUE_%d", generator->condCount++);
+    String *condFalseLabel = createString("_COND_JMP_LABEL_FALSE_%d", generator->condCount);
 
+    instructionJumpIfEquls(condTrueLabel, condition->condition, "bool@true");
+    instructionJumpIfNotEqulas(condFalseLabel, condition->condition, "bool@false");
+    printf("#IF_%d_TRUE\n",generator->condCount);
+    instructionLabel(condTrueLabel);
+    generateBody(generator, condition->trueBody);
+    instructionReturn();
+
+    printf("#IF_%d_FALSE\n",generator->condCount);
+    instructionLabel(condFalseLabel);
+    generateBody(generator, condition->falseBody);
+    instructionReturn();
 }
 
 void generateWhile(Generator *generator, WhileNode *whileNode) {
-
+    String *whileLabel = createString("_WHILE_JMP_LABEL_%d", generator->whileCount++);
+    String *LocalFrame_val = createString("");
+    printf("#WHILE_%d START\n",generator->whileCount);
+    instructionLabel(whileLabel);
+    generateExpression(generator, whileNode->condition);
+    instructionPopStack(LocalFrame_val);
+    instructionJumpIfEquls(whileLabel, LocalFrame_val, "bool@true");
+    instructionReturn();
 }
 
 void generateAssign(Generator *generator, AssignNode *assign) {
