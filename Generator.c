@@ -53,15 +53,15 @@ void generateWhile(Generator *generator, WhileNode *whileNode) {
 }
 
 void generateAssign(Generator *generator, AssignNode *assign) {
-
+    
 }
 
 void generateStatement(Generator *generator, StatementNode *statement) {
-
+    
 }
 
 void generateCall(Generator *generator, CallNode *call) {
-
+    
 }
 
 void generateExpression(Generator *generator, ExpressionNode *expression) {
