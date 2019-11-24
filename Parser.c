@@ -152,7 +152,7 @@ StatementNode *parseStatement(ParserState *state, BodyNode *body) {
 CallNode *parseCall(ParserState *state, BodyNode *body) {
     Token* identifier = consume(state->list, TOKEN_IDENTIFIER);
     if (!containsFunction(state, identifier->value)) {
-        handleError(SemanticIdentifierError, "Unknown function identifier '%s' on line %d", identifier->value, identifier->line);
+        handleError(SemanticIdentifierError, "Unknown function identifier '%s' on line %d", identifier->value->value, identifier->line);
     }
     CallNode *call = createCallNode(identifier->value);
     consume(state->list, TOKEN_OPAREN);
