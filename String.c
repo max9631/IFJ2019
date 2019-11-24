@@ -9,14 +9,17 @@ String *createStringFromChar(char ch){
 	return str;
 }
 
-String *createString(char *chars){
-	String *str = (String *) malloc(sizeof(String));
-	if (str == NULL) handleError(InternalError, "String Error: Could not initialize memory");
-	str->value = (char *) malloc(sizeof(char*));
-	if (str->value == NULL) handleError(InternalError, "String Error: Could not initialize memory");
-	strcpy(str->value, chars);
-	str->lenght = stringLength(chars);
-	return str;
+String *createString(char *chars, ...){
+    va_list argList;
+    va_start(argList, chars);
+    String *str = (String *) malloc(sizeof(String));
+    if (str == NULL) handleError(InternalError, "String Error: Could not initialize memory");
+    str->value = (char *) malloc(sizeof(char*));
+    if (str->value == NULL) handleError(InternalError, "String Error: Could not initialize memory");
+    sprintf(str->value, chars, va_arg(argList, int));
+    str->lenght = stringLength(chars);
+    va_end(argList);
+    return str;
 }
 
 bool appendCharacter(String *str, int c) {
