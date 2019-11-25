@@ -26,7 +26,7 @@ void generateFunc(Generator *generator, FuncNode *function) {
     instructionLabel(function->name);
     instructionCreateFrame();
     for(int i = function->argsCount-1; i >= 0; i-- ) {
-        String *identifier = createString("TF@%s", function->args[i]);
+        String *identifier = createString("TF@%s", function->args[i]->value);
         instructionDefVar(identifier);
         instructionPopStack(identifier);
     }
@@ -72,7 +72,7 @@ void generateWhile(Generator *generator, WhileNode *whileNode) {
 
 void generateAssign(Generator *generator, AssignNode *assign) {
     char *frame = assign->isGlobal ? "GF" : "TF";
-    String *identifier = createString("%s@%s", frame, assign->identifier);
+    String *identifier = createString("%s@%s", frame, assign->identifier->value);
     if (assign->cretesVariable) {
         instructionDefVar(identifier);
     }
