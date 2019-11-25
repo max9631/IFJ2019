@@ -19,13 +19,13 @@ HashTable *createHashTable () {
 HashTable *createFuncTable() {
 	HashTable *table = createHashTable();
 	insertHashTableItem(table, "print", (void *) __LONG_MAX__);
-	insertHashTableItem(table, "inputi", NULL);
-	insertHashTableItem(table, "inputs", NULL);
-	insertHashTableItem(table, "inputf", NULL);
-	insertHashTableItem(table, "len", NULL);
-	insertHashTableItem(table, "substr", NULL);
-	insertHashTableItem(table, "ord", NULL);
-	insertHashTableItem(table, "chr", NULL);
+	insertHashTableItem(table, "inputi", (void *) __LONG_MAX__);
+	insertHashTableItem(table, "inputs", (void *) __LONG_MAX__);
+	insertHashTableItem(table, "inputf", (void *) __LONG_MAX__);
+	insertHashTableItem(table, "len", (void *) __LONG_MAX__);
+	insertHashTableItem(table, "substr", (void *) __LONG_MAX__);
+	insertHashTableItem(table, "ord", (void *) __LONG_MAX__);
+	insertHashTableItem(table, "chr", (void *) __LONG_MAX__);
 	return table;
 }
 
