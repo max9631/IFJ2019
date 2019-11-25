@@ -93,11 +93,7 @@ void generateStatement(Generator *generator, StatementNode *statement) {
             ExpressionNode *exprNode = (ExpressionNode *)statement->statement;
             generateExpression(generator, exprNode);
             break;
-        case STATEMENT_ASSIGN:
-        case STATEMENT_ASSIGN_ADD:
-        case STATEMENT_ASSIGN_DIV:
-        case STATEMENT_ASSIGN_MUL:
-        case STATEMENT_ASSIGN_SUB:;
+        case STATEMENT_ASSIGN:;
             AssignNode *assignNode = (AssignNode *)statement->statement;
             generateAssign(generator, assignNode);
             break;
@@ -110,7 +106,6 @@ void generateReturn(Generator *generator, StatementNode *statement) {
         ExpressionNode *exprNode = (ExpressionNode *)statement->statement;
         generateExpression(generator, exprNode);
     }
-
     instructionReturn();
 }
 

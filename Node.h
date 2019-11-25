@@ -91,10 +91,6 @@ typedef struct _OperationNode {
 
 typedef enum _StatementType { 
     STATEMENT_ASSIGN,
-    STATEMENT_ASSIGN_MUL,
-    STATEMENT_ASSIGN_DIV,
-    STATEMENT_ASSIGN_ADD,
-    STATEMENT_ASSIGN_SUB,
     STATEMENT_EXPRESSION, 
     STATEMENT_WHILE,
     STATEMENT_IF,
@@ -108,7 +104,11 @@ typedef struct _StatementNode {
 } StatementNode;
 
 typedef enum _AssignOperator {
-    ASSIGN_NONE, ASSIGN_ADD, ASSIGN_SUB, ASSIGN_DIV, ASSIGN_MUL
+    ASSIGN_NONE,
+    ASSIGN_ADD,
+    ASSIGN_SUB,
+    ASSIGN_DIV,
+    ASSIGN_MUL
 } AssignOperator;
 
 typedef struct _AssignNode {
