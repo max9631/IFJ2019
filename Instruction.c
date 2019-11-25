@@ -14,7 +14,7 @@ void instructionPushFrame() {
 }
 
 void instructionPopFrame() {
-    printf("POPRFRAME\n");
+    printf("POPFRAME\n");
 }
 
 void instructionDefVar(String *var) {
