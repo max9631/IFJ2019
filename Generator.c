@@ -220,8 +220,13 @@ void generateExpression(Generator *generator, ExpressionNode *expression) {
             OperationNode *operation = (OperationNode *) expression->expression;
             generateExpression(generator, operation->value1);
             generateExpression(generator, operation->value2);
+            
             // TODO: generate code for type checking. If data types of operand are not compatible, exit with code 4.
             stackInstructionForOperationType(generator, operation);
+            break;
+        case EXPRESSION_CONVERSION_INT_TO_FLOAT:
+            generateExpression(generator, expression);
+            instructionIntToFloatStack();
             break;
     }
 }
