@@ -113,7 +113,9 @@ void generateCall(Generator *generator, CallNode *call) {
     for(int i = 0; i < call->argsCount; i++){
         generateExpression(generator, call->expressions[i]);
     }
+    instructionPushFrame();
     instructionCall(call->identifier);
+    instructionPopFrame();
 }
 
 String *convertValueToIFJ(ValueNode *value, ExpressionDataType dataType) {
