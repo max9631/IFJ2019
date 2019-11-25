@@ -43,10 +43,10 @@ void instructionIntToFloat(String *var);
 void instructionFloatToInt(String *var);
 void instructionIntToChar(String *var);
 void instructionStringToInt(String *var);
-void instructionIntToFloats();
-void instructionFloatToInts();
-void instructionIntToChars();
-void instructionStriToInts();
+void instructionIntToFloatStack();
+void instructionFloatToIntStack();
+void instructionIntToCharStack();
+void instructionStriToIntStack();
 
 // Vstupne-Vystupni instrukce
 void instructionRead(String *var);

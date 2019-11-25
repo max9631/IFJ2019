@@ -147,19 +147,19 @@ void instructionStringToInt(String *var) {
     printf("STRI2INT %s\n", var->value);
 }
 
-void instructionIntToFloats() {
+void instructionIntToFloatStack() {
     printf("INT2FLOATS\n");
 }
 
-void instructionFloatToInts() {
+void instructionFloatToIntStack() {
     printf("FLOAT2INTS\n");
 }
 
-void instructionIntToChars() {
+void instructionIntToCharStack() {
     printf("INT2CHARS\n");
 }
 
-void instructionStriToInts() {
+void instructionStriToIntStack() {
     printf("STRI2INTS\n");
 }
 
