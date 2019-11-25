@@ -36,28 +36,22 @@ void generateFunc(Generator *generator, FuncNode *function) {
 }
 
 void generateCond(Generator *generator, CondNode *condition) {
-    String *condTrueLabel = createString("_COND_JMP_LABEL_TRUE_%d", generator->condCount++);
-    String *condFalseLabel = createString("_COND_JMP_LABEL_FALSE_%d", generator->condCount);
-    String *LocalFrame_val = createString("");
+    String *condEndLabel = createString("_COND_JMP_LABEL_END_%d", generator->condCount++);
+    String *condFalseLabel = createString("_COND_JMP_LABEL_FALSE_%d", generator->condCount++);
 
     generateExpression(generator, condition->condition);
-
-    instructionJumpIfEqualsStack(condTrueLabel);
-    instructionJumpIfNotEqualsStack(condFalseLabel);
+    instructionPushStack(createString("bool@false"));
+    instructionJumpIfEqualsStack(condFalseLabel);
 
     //if
-    instructionLabel(condTrueLabel);
     generateBody(generator, condition->trueBody);
-    instructionPopStack(LocalFrame_val); //TODO: LocalFrame_val -- fix this for global?
-    instructionPopStack(LocalFrame_val); //TODO: LocalFrame_val -- fix this for global?
-    instructionReturn();
+    instructionJump(condEndLabel);
 
     //else
     instructionLabel(condFalseLabel);
     generateBody(generator, condition->falseBody);
-    instructionPopStack(LocalFrame_val); //TODO: LocalFrame_val -- fix this for global?
-    instructionPopStack(LocalFrame_val); //TODO: LocalFrame_val -- fix this for global?
-    instructionReturn();
+    
+    instructionLabel(condEndLabel);
 }
 
 void generateWhile(Generator *generator, WhileNode *whileNode) {
