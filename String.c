@@ -14,9 +14,9 @@ String *createString(char *chars, ...){
     va_start(argList, chars);
     String *str = (String *) malloc(sizeof(String));
     if (str == NULL) handleError(InternalError, "String Error: Could not initialize memory");
-    size_t size = snprintf(NULL, 0, chars, va_arg(argList, int));
+    size_t size = vsnprintf(NULL, 0, chars, argList);
     str->value = (char *) malloc(size);
-    sprintf(str->value, chars, va_arg(argList, int));
+    vsprintf(str->value, chars, argList);
     if (str->value == NULL) handleError(InternalError, "String Error: Could not initialize memory");
     str->lenght = stringLength(str->value);
     va_end(argList);
