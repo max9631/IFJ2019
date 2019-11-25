@@ -169,20 +169,28 @@ String *convertValueToIFJ(ValueNode *value, ExpressionDataType dataType) {
 
 void stackInstructionForOperationType(Generator *generator, OperationNode *operation) {
     switch (operation->type) {
-        case OPERATION_ADD: return instructionAddStack();
+        case OPERATION_ADD:
+            instructionAddStack();
+            break;
         case OPERATION_SUB:
             instructionSubStack();
+            break;
         case OPERATION_MUL:
             instructionMulStack();
+            break;
         case OPERATION_DIV:
             instructionDivStack();
+            break;
         case OPERATION_EQUALS:
             instructionEqualsStack();
+            break;
         case OPERATION_NOTEQUALS:
             instructionEqualsStack();
             instructionNotStack();
+            break;
         case OPERATION_GREATER:
             instructionGreaterThanStack();
+            break;
         case OPERATION_GREATEROREQUALS:
             instructionGreaterThanStack();
             generateExpression(generator, operation->value1);
@@ -192,6 +200,7 @@ void stackInstructionForOperationType(Generator *generator, OperationNode *opera
             break;
         case OPERATION_LESS:
             instructionLessThanStack();
+            break;
         case OPERATION_LESSOREQUALS:
             instructionLessThanStack();
             generateExpression(generator, operation->value1);
@@ -201,8 +210,10 @@ void stackInstructionForOperationType(Generator *generator, OperationNode *opera
             break;
         case OPERATION_AND:
             instructionAndStack();
+            break;
         case OPERATION_OR:
             instructionOrStack();
+            break;
     }
 }
 
