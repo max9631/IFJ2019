@@ -62,7 +62,7 @@ void generateWhile(Generator *generator, WhileNode *whileNode) {
     instructionLabel(whileLabel);
     
     generateExpression(generator, whileNode->condition);
-    instructionPushStack(createString("bool@true"));
+    instructionPushStack(createString("bool@false"));
     instructionJumpIfEqualsStack(whileLabel_end);
     
     generateBody(generator, whileNode->body);
