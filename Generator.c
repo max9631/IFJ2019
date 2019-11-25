@@ -236,7 +236,7 @@ void generateExpression(Generator *generator, ExpressionNode *expression) {
             stackInstructionForOperationType(generator, operation);
             break;
         case EXPRESSION_CONVERSION_INT_TO_FLOAT:
-            generateExpression(generator, expression);
+            generateExpression(generator, expression->expression);
             instructionIntToFloatStack();
             break;
     }
