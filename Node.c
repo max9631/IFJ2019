@@ -55,11 +55,13 @@ WhileNode *createWhileNode(ExpressionNode *condition, BodyNode *body) {
     return node;
 }
 
-AssignNode *createAssignNode(String *identifier, AssignOperator operator, ExpressionNode *expression) {
+AssignNode *createAssignNode(String *identifier, AssignOperator operator, ExpressionNode *expression, bool cretesVariable, bool isGlobal) {
     AssignNode *node = (AssignNode *)malloc(sizeof(AssignNode));
     node->identifier = createString(identifier->value);
     node->expression = expression;
     node->operator = operator;
+    node->cretesVariable = cretesVariable;
+    node->isGlobal = isGlobal;
     return node;
 }
 

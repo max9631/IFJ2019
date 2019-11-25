@@ -71,7 +71,39 @@ void generateWhile(Generator *generator, WhileNode *whileNode) {
 }
 
 void generateAssign(Generator *generator, AssignNode *assign) {
-    
+    char *frame = assign->isGlobal ? "GF" : "TF";
+    String *identifier = createString("%s@%s", frame, assign->identifier);
+    if (assign->cretesVariable) {
+        instructionDefVar(identifier);
+    }
+    switch (assign->operator) {
+        case ASSIGN_NONE:
+            break;
+        case ASSIGN_ADD:
+        case ASSIGN_SUB:
+        case ASSIGN_DIV:
+        case ASSIGN_MUL:
+            instructionPushStack(identifier);
+            break;
+    }
+    generateExpression(generator, assign->expression);
+    switch (assign->operator) {
+        case ASSIGN_NONE:
+            break;
+        case ASSIGN_ADD:
+            instructionAddStack();
+            break;
+        case ASSIGN_SUB:
+            instructionSubStack();
+            break;
+        case ASSIGN_DIV:
+            instructionDivStack();
+            break;
+        case ASSIGN_MUL:
+            instructionMulStack();
+            break;
+    }
+    instructionPopStack(identifier);
 }
 
 void generateStatement(Generator *generator, StatementNode *statement) {

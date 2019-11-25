@@ -115,6 +115,8 @@ typedef struct _AssignNode {
     String *identifier;
     ExpressionNode *expression;
     AssignOperator operator;
+    bool cretesVariable;
+    bool isGlobal;
 } AssignNode;
 
 typedef struct _BodyNode {
@@ -156,7 +158,7 @@ CallNode *createCallNode(String *identifier);
 FuncNode *createFuncNode(String *name, BodyNode *body);
 CondNode *createCondNode(ExpressionNode *condition, BodyNode *trueBody, BodyNode *falseBody);
 WhileNode *createWhileNode(ExpressionNode *condition, BodyNode *body);
-AssignNode *createAssignNode(String *identifier, AssignOperator operator, ExpressionNode *expression);
+AssignNode *createAssignNode(String *identifier, AssignOperator operator, ExpressionNode *expression, bool cretesVariable, bool isGlobal);
 StatementNode *craeteStatementNode(void *statement, StatementType type);
 ExpressionNode *createExpressionNode(void *expressions, ExpressionType type, ExpressionDataType dataType);
 BodyNode *createBodyNode(BodyNode *parrentBody, HashTable *symtable);
