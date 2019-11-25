@@ -10,6 +10,7 @@ Generator *createGenerator() {
 
 void generateMain(Generator *generator, MainNode *main) {
     instructionDefVar(generator->trashVar);
+    instructionCreateFrame();
     instructionJump(createString("_ifj_start"));
     for (int i = 0; i < main->functionsCount; i++)
         generateFunc(generator, main->functions[i]);
