@@ -56,24 +56,18 @@ void generateCond(Generator *generator, CondNode *condition) {
 
 void generateWhile(Generator *generator, WhileNode *whileNode) {
     String *whileLabel = createString("_WHILE_JMP_LABEL_%d", generator->whileCount++);
-    String *whileLabel_end = createString("_WHILE_END_JMP_LABEL_%d", generator->whileCount);
-    String *LocalFrame_val = createString("");
-
+    String *whileLabel_end = createString("_WHILE_END_JMP_LABEL_%d", generator->whileCount++);
+    
     instructionLabel(whileLabel);
-
-    //Check the while condition
+    
     generateExpression(generator, whileNode->condition);
+    instructionPushStack(createString("bool@true"));
     instructionJumpIfEqualsStack(whileLabel_end);
-
-    //Generate while body
+    
     generateBody(generator, whileNode->body);
+    
     instructionJump(whileLabel);
-
-    //While end
     instructionLabel(whileLabel_end);
-    instructionPopStack(LocalFrame_val); //TODO: LocalFrame_val -- fix this for global?
-    instructionPopStack(LocalFrame_val); //TODO: LocalFrame_val -- fix this for global?
-    instructionReturn();
 }
 
 void generateAssign(Generator *generator, AssignNode *assign) {
