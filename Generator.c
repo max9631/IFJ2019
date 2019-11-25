@@ -24,6 +24,13 @@ void generateBody(Generator *generator, BodyNode *body) {
 
 void generateFunc(Generator *generator, FuncNode *function) {
     instructionLabel(function->name);
+    instructionCreateFrame();
+    for(int i = function->argsCount-1; i >= 0; i-- ) {
+        String *identifier = createString("TF@%s", function->args[i]);
+        instructionDefVar(identifier);
+        instructionPopStack(identifier);
+    }
+    instructionPushStack(createString("nil@nil"));
     generateBody(generator, function->body);
     instructionReturn();
 }
