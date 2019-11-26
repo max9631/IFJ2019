@@ -30,7 +30,7 @@ bool appendCharacter(String *str, int c);
 /**
  * Checks whether str1 and str2 are the same.
  */
-bool stringEquals(String *str1, String *str2);
+bool stringEquals(String *str1, char *str2);
 
 /**
  * Deallocates str.

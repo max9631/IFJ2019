@@ -40,12 +40,8 @@ bool appendCharacter(String *str, int c) {
 	return true;
 }
 
-bool stringEquals(String *str1, String *str2){
-  if(stringLength(str1->value) != stringLength(str2->value)) return false;
-  for(int i = 0; i < stringLength(str1->value); i++){
-    if(str1->value[i] != str2->value[i]) return false;
-  }
-  return true;
+bool stringEquals(String *str1, char *str2){
+    return strcmp(str1->value, str2) == 0;
 }
 
 void destroyString(String *str) {
