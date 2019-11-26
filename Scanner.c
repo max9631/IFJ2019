@@ -140,7 +140,7 @@ Token *defineDoubleQuoteString(Document *document) {
 			isMultilineString = true;
 			ch = nextCharacter(document);
 		} else {
-			return createToken(NULL, DATA_TOKEN_STRING);
+			return createToken(createString(""), DATA_TOKEN_STRING);
 		}
 	}
 	String *string = recordStringUntilChar(document, (int) '"');
