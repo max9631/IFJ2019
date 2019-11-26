@@ -1,8 +1,8 @@
 #include "Instruction.h"
 
 // Prace se zasobnikem, volani funkci.
-void instructionMove(String *var) {
-    printf("MOVE %s\n", var->value);
+void instructionMove(String *var, String *sym) {
+    printf("MOVE %s %s\n", var->value, sym->value);
 }
 
 void instructionCreateFrame() {
@@ -83,12 +83,12 @@ void instructionIDivStack() {
     printf("IDIVS\n");
 }
 
-void instructionLessThan(String *var) {
-    printf("LT %s\n", var->value);
+void instructionLessThan(String *var, String *sym1, String *sym2) {
+    printf("LT %s %s %S\n", var->value, sym1->value, sym2->value);
 }
 
-void instructionGreaterThan(String *var) {
-    printf("GT %s\n", var->value);
+void instructionGreaterThan(String *var, String *sym1, String *sym2) {
+    printf("GT %s %s %S\n", var->value, sym1->value, sym2->value);
 }
 
 void instructionEquals(String *var) {
@@ -139,8 +139,8 @@ void instructionFloatToInt(String *var) {
     printf("FLOAT2INT %s\n", var->value);
 }
 
-void instructionIntToChar(String *var) {
-    printf("INT2CHAR %s\n", var->value);
+void instructionIntToChar(String *var, String *strchar) {
+    printf("INT2CHAR %s %s\n", var->value, strchar->value);
 }
 
 void instructionStringToInt(String *var) {
@@ -164,25 +164,25 @@ void instructionStriToIntStack() {
 }
 
 // Vstupne-Vystupni instrukce
-void instructionRead(String *var) {
-    printf("READ %s\n", var->value);
+void instructionRead(String *var, String *type) {
+    printf("READ %s %s\n", var->value, type->value);
 }
 
-void instructionWrite() {
-    printf("WRITE\n");
+void instructionWrite(String *symb) {
+    printf("WRITE %s\n", symb->value);
 }
 
 // Prace s reteci
-void instructionConcat(String *var) {
-    printf("CONCAT %s\n", var->value);
+void instructionConcat(String *var, String *sym1, String *sym2) {
+    printf("CONCAT %s %s %s\n", var->value, sym1->value, sym2->value);
 }
 
-void instructionStrLen(String *var) {
-    printf("STRLEN %s\n", var->value);
+void instructionStrLen(String *var, String *str) {
+    printf("STRLEN %s %s\n", var->value, str->value);
 }
 
-void instructionGetChar(String *var) {
-    printf("GETCHAR %s\n", var->value);
+void instructionGetChar(String *var, String *str, String *position) {
+    printf("GETCHAR %s %s %s\n", var->value, str->value, position->value);
 }
 
 void instructionSetChar(String *var) {

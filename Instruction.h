@@ -3,7 +3,7 @@
 #include "String.h"
 
 // Prace s ramci, volani funkci
-void instructionMove(String *var);
+void instructionMove(String *var, String *sym);
 void instructionCreateFrame();
 void instructionPushFrame();
 void instructionPopFrame();
@@ -27,11 +27,11 @@ void instructionSubStack();
 void instructionMulStack();
 void instructionDivStack();
 void instructionIDivStack();
-void instructionLessThan(String *var);
+void instructionLessThan(String *var, String *sym1, String *sym2);
+void instructionGreaterThan(String *var, String *sym1, String *sym2);
 void instructionGreaterThanStack();
 void instructionEqualsStack();
 void instructionLessThanStack();
-void instrutionGreaterThanStack();
 void instrutionEqualsStack();
 void instructionAnd(String *var);
 void instructionOr(String *var);
@@ -41,7 +41,7 @@ void instructionOrStack();
 void instructionNotStack();
 void instructionIntToFloat(String *var);
 void instructionFloatToInt(String *var);
-void instructionIntToChar(String *var);
+void instructionIntToChar(String *var, String *strchar);
 void instructionStringToInt(String *var);
 void instructionIntToFloatStack();
 void instructionFloatToIntStack();
@@ -49,13 +49,13 @@ void instructionIntToCharStack();
 void instructionStriToIntStack();
 
 // Vstupne-Vystupni instrukce
-void instructionRead(String *var);
-void instructionWrite();
+void instructionRead(String *var, String *type);
+void instructionWrite(String *symb);
 
 // Prace s reteci
-void instructionConcat(String *var);
-void instructionStrLen(String *var);
-void instructionGetChar(String *var);
+void instructionConcat(String *var, String *sym1, String *sym2);
+void instructionStrLen(String *var, String *str);
+void instructionGetChar(String *var, String *str, String *position);
 void instructionSetChar(String *var);
 
 // Prace s typy
