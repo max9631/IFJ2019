@@ -116,14 +116,20 @@ WhileNode *parseWhile(ParserState *state, BodyNode *parrentBody) {
 
 AssignNode *parseAssign(ParserState *state, BodyNode *body) {
     Token *identifier = consume(state->list, TOKEN_IDENTIFIER);
-    registerSymbol(body, identifier->value);
+    bool createsVar = true;
+    bool isGlobal = body->parrentBody == NULL;
+    if (containsSymbol(body, identifier->value)) {
+        createsVar = false;
+    } else {
+        registerSymbol(body, identifier->value);
+    }
     TokenType type = popToken(state->list)->type;
     switch (type) {
-    case OPERATOR_ASSIGN: return createAssignNode(identifier->value, ASSIGN_NONE, parseExpression(state, body));
-    case OPERATOR_DIV_ASSIGN: return createAssignNode(identifier->value, ASSIGN_DIV, parseExpression(state, body));
-    case OPERATOR_MUL_ASSIGN: return createAssignNode(identifier->value, ASSIGN_MUL, parseExpression(state, body));
-    case OPERATOR_ADD_ASSIGN: return createAssignNode(identifier->value, ASSIGN_ADD, parseExpression(state, body));
-    case OPERATOR_SUB_ASSIGN: return createAssignNode(identifier->value, ASSIGN_SUB, parseExpression(state, body));
+    case OPERATOR_ASSIGN: return createAssignNode(identifier->value, ASSIGN_NONE, parseExpression(state, body), createsVar, isGlobal);
+    case OPERATOR_DIV_ASSIGN: return createAssignNode(identifier->value, ASSIGN_DIV, parseExpression(state, body), createsVar, isGlobal);
+    case OPERATOR_MUL_ASSIGN: return createAssignNode(identifier->value, ASSIGN_MUL, parseExpression(state, body), createsVar, isGlobal);
+    case OPERATOR_ADD_ASSIGN: return createAssignNode(identifier->value, ASSIGN_ADD, parseExpression(state, body), createsVar, isGlobal);
+    case OPERATOR_SUB_ASSIGN: return createAssignNode(identifier->value, ASSIGN_SUB, parseExpression(state, body), createsVar, isGlobal);
     default: handleError(SyntaxError, "Expected assign operator, but got %s", convertTokenTypeToString(type));
     }
     return NULL;
@@ -241,6 +247,14 @@ ExpressionNode *parseOperation(ParserState *state, Stack *prefix, OperationType 
         operation->value1 = createExpressionNode(operation->value1, EXPRESSION_CONVERSION_INT_TO_FLOAT, EXPRESSION_DATA_TYPE_FLOAT);
     } else if (operation->value1->dataType == EXPRESSION_DATA_TYPE_FLOAT && operation->value2->dataType == EXPRESSION_DATA_TYPE_INT) {
         operation->value2 = createExpressionNode(operation->value2, EXPRESSION_CONVERSION_INT_TO_FLOAT, EXPRESSION_DATA_TYPE_FLOAT);
+    }
+    if (operation->type == OPERATION_DIV) {
+        if (operation->value1->dataType == EXPRESSION_DATA_TYPE_INT) {
+            operation->value1 = createExpressionNode(operation->value1, EXPRESSION_CONVERSION_INT_TO_FLOAT, EXPRESSION_DATA_TYPE_FLOAT);
+        }
+        if (operation->value2->dataType == EXPRESSION_DATA_TYPE_INT) {
+            operation->value2 = createExpressionNode(operation->value2, EXPRESSION_CONVERSION_INT_TO_FLOAT, EXPRESSION_DATA_TYPE_FLOAT);
+        }
     }
     
     ExpressionDataType dataType = EXPRESSION_DATA_TYPE_UNKNOWN;

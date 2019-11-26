@@ -4,7 +4,7 @@ int main(int argc, char *argv[]) {
 	UNUSED(argc);
 	UNUSED(argv);
 
-    inDebugMode = true;
+    inDebugMode = false;
     FILE *file;
     if (inDebugMode) {
         file = fopen(argv[1], "r");

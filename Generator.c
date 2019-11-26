@@ -10,10 +10,11 @@ Generator *createGenerator() {
 
 void generateMain(Generator *generator, MainNode *main) {
     instructionDefVar(generator->trashVar);
-    instructionJump(createString("_IFJ_START_"));
+    instructionCreateFrame();
+    instructionJump(createString("_ifj_start"));
     for (int i = 0; i < main->functionsCount; i++)
         generateFunc(generator, main->functions[i]);
-    instructionLabel(createString("_IFJ_START_"));
+    instructionLabel(createString("_ifj_start"));
     generateBody(generator, main->body);
 }
 
@@ -24,59 +25,86 @@ void generateBody(Generator *generator, BodyNode *body) {
 
 void generateFunc(Generator *generator, FuncNode *function) {
     instructionLabel(function->name);
+    instructionCreateFrame();
+    for(int i = function->argsCount-1; i >= 0; i-- ) {
+        String *identifier = createString("TF@%s", function->args[i]->value);
+        instructionDefVar(identifier);
+        instructionPopStack(identifier);
+    }
+    instructionPushStack(createString("nil@nil"));
     generateBody(generator, function->body);
     instructionReturn();
 }
 
 void generateCond(Generator *generator, CondNode *condition) {
-    String *condTrueLabel = createString("_COND_JMP_LABEL_TRUE_%d", generator->condCount++);
-    String *condFalseLabel = createString("_COND_JMP_LABEL_FALSE_%d", generator->condCount);
-    String *LocalFrame_val = createString("");
+    String *condFalseLabel = createString("_%d_if_else", generator->condCount++);
+    String *condEndLabel = createString("_%d_if_end_", generator->condCount++);
 
     generateExpression(generator, condition->condition);
-
-    instructionJumpIfEqualsStack(condTrueLabel);
-    instructionJumpIfNotEqualsStack(condFalseLabel);
+    instructionPushStack(createString("bool@false"));
+    instructionJumpIfEqualsStack(condFalseLabel);
 
     //if
-    instructionLabel(condTrueLabel);
     generateBody(generator, condition->trueBody);
-    instructionPopStack(LocalFrame_val); //TODO: LocalFrame_val -- fix this for global?
-    instructionPopStack(LocalFrame_val); //TODO: LocalFrame_val -- fix this for global?
-    instructionReturn();
+    instructionJump(condEndLabel);
 
     //else
     instructionLabel(condFalseLabel);
     generateBody(generator, condition->falseBody);
-    instructionPopStack(LocalFrame_val); //TODO: LocalFrame_val -- fix this for global?
-    instructionPopStack(LocalFrame_val); //TODO: LocalFrame_val -- fix this for global?
-    instructionReturn();
+    
+    instructionLabel(condEndLabel);
 }
 
 void generateWhile(Generator *generator, WhileNode *whileNode) {
-    String *whileLabel = createString("_WHILE_JMP_LABEL_%d", generator->whileCount++);
-    String *whileLabel_end = createString("_WHILE_END_JMP_LABEL_%d", generator->whileCount);
-    String *LocalFrame_val = createString("");
-
+    String *whileLabel = createString("_%d_while", generator->whileCount++);
+    String *whileLabel_end = createString("_%d_while_end", generator->whileCount++);
+    
     instructionLabel(whileLabel);
-
-    //Check the while condition
+    
     generateExpression(generator, whileNode->condition);
+    instructionPushStack(createString("bool@false"));
     instructionJumpIfEqualsStack(whileLabel_end);
-
-    //Generate while body
+    
     generateBody(generator, whileNode->body);
+    
     instructionJump(whileLabel);
-
-    //While end
     instructionLabel(whileLabel_end);
-    instructionPopStack(LocalFrame_val); //TODO: LocalFrame_val -- fix this for global?
-    instructionPopStack(LocalFrame_val); //TODO: LocalFrame_val -- fix this for global?
-    instructionReturn();
 }
 
 void generateAssign(Generator *generator, AssignNode *assign) {
-    
+    char *frame = assign->isGlobal ? "GF" : "TF";
+    String *identifier = createString("%s@%s", frame, assign->identifier->value);
+    if (assign->cretesVariable) {
+        instructionDefVar(identifier);
+    }
+    switch (assign->operator) {
+        case ASSIGN_NONE:
+            break;
+        case ASSIGN_ADD:
+        case ASSIGN_SUB:
+        case ASSIGN_DIV:
+        case ASSIGN_MUL:
+            instructionPushStack(identifier);
+            break;
+    }
+    generateExpression(generator, assign->expression);
+    switch (assign->operator) {
+        case ASSIGN_NONE:
+            break;
+        case ASSIGN_ADD:
+            instructionAddStack();
+            break;
+        case ASSIGN_SUB:
+            instructionSubStack();
+            break;
+        case ASSIGN_DIV:
+            instructionDivStack();
+            break;
+        case ASSIGN_MUL:
+            instructionMulStack();
+            break;
+    }
+    instructionPopStack(identifier);
 }
 
 void generateStatement(Generator *generator, StatementNode *statement) {
@@ -98,11 +126,7 @@ void generateStatement(Generator *generator, StatementNode *statement) {
             ExpressionNode *exprNode = (ExpressionNode *)statement->statement;
             generateExpression(generator, exprNode);
             break;
-        case STATEMENT_ASSIGN:
-        case STATEMENT_ASSIGN_ADD:
-        case STATEMENT_ASSIGN_DIV:
-        case STATEMENT_ASSIGN_MUL:
-        case STATEMENT_ASSIGN_SUB:;
+        case STATEMENT_ASSIGN:;
             AssignNode *assignNode = (AssignNode *)statement->statement;
             generateAssign(generator, assignNode);
             break;
@@ -115,7 +139,6 @@ void generateReturn(Generator *generator, StatementNode *statement) {
         ExpressionNode *exprNode = (ExpressionNode *)statement->statement;
         generateExpression(generator, exprNode);
     }
-
     instructionReturn();
 }
 
@@ -123,7 +146,9 @@ void generateCall(Generator *generator, CallNode *call) {
     for(int i = 0; i < call->argsCount; i++){
         generateExpression(generator, call->expressions[i]);
     }
+    instructionPushFrame();
     instructionCall(call->identifier);
+    instructionPopFrame();
 }
 
 String *convertValueToIFJ(ValueNode *value, ExpressionDataType dataType) {
@@ -145,20 +170,28 @@ String *convertValueToIFJ(ValueNode *value, ExpressionDataType dataType) {
 
 void stackInstructionForOperationType(Generator *generator, OperationNode *operation) {
     switch (operation->type) {
-        case OPERATION_ADD: return instructionAddStack();
+        case OPERATION_ADD:
+            instructionAddStack();
+            break;
         case OPERATION_SUB:
             instructionSubStack();
+            break;
         case OPERATION_MUL:
             instructionMulStack();
+            break;
         case OPERATION_DIV:
             instructionDivStack();
+            break;
         case OPERATION_EQUALS:
             instructionEqualsStack();
+            break;
         case OPERATION_NOTEQUALS:
             instructionEqualsStack();
             instructionNotStack();
+            break;
         case OPERATION_GREATER:
             instructionGreaterThanStack();
+            break;
         case OPERATION_GREATEROREQUALS:
             instructionGreaterThanStack();
             generateExpression(generator, operation->value1);
@@ -168,6 +201,7 @@ void stackInstructionForOperationType(Generator *generator, OperationNode *opera
             break;
         case OPERATION_LESS:
             instructionLessThanStack();
+            break;
         case OPERATION_LESSOREQUALS:
             instructionLessThanStack();
             generateExpression(generator, operation->value1);
@@ -177,8 +211,10 @@ void stackInstructionForOperationType(Generator *generator, OperationNode *opera
             break;
         case OPERATION_AND:
             instructionAndStack();
+            break;
         case OPERATION_OR:
             instructionOrStack();
+            break;
     }
 }
 
@@ -196,8 +232,13 @@ void generateExpression(Generator *generator, ExpressionNode *expression) {
             OperationNode *operation = (OperationNode *) expression->expression;
             generateExpression(generator, operation->value1);
             generateExpression(generator, operation->value2);
+            
             // TODO: generate code for type checking. If data types of operand are not compatible, exit with code 4.
             stackInstructionForOperationType(generator, operation);
+            break;
+        case EXPRESSION_CONVERSION_INT_TO_FLOAT:
+            generateExpression(generator, expression->expression);
+            instructionIntToFloatStack();
             break;
     }
 }
