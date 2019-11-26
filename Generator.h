@@ -7,7 +7,9 @@
 typedef struct _Generator {
     int condCount;
     int whileCount;
-    String *trashVar;
+    String *tmp1Var;
+    String *tmp2Var;
+    String *tmp3Var;
 } Generator;
 
 Generator *createGenerator(void);

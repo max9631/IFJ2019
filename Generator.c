@@ -4,12 +4,16 @@ Generator *createGenerator() {
     Generator *generator = (Generator *)malloc(sizeof(Generator));
     generator->condCount = 0;
     generator->whileCount = 0;
-    generator->trashVar = createString("GF@IFJ_TRASH");
+    generator->tmp1Var = createString("GF@IFJ_TMP1");
+    generator->tmp2Var = createString("GF@IFJ_TMP2");
+    generator->tmp3Var = createString("GF@IFJ_TMP3");
     return generator;
 }
 
 void generateMain(Generator *generator, MainNode *main) {
-    instructionDefVar(generator->trashVar);
+    instructionDefVar(generator->tmp1Var);
+    instructionDefVar(generator->tmp2Var);
+    instructionDefVar(generator->tmp3Var);
     instructionCreateFrame();
     instructionJump(createString("_ifj_start"));
     for (int i = 0; i < main->functionsCount; i++)
@@ -135,7 +139,7 @@ void generateStatement(Generator *generator, StatementNode *statement) {
 
 void generateReturn(Generator *generator, StatementNode *statement) {
     if(statement->statement != NULL) {
-        instructionPopStack(generator->trashVar);
+        instructionPopStack(generator->tmp1Var);
         ExpressionNode *exprNode = (ExpressionNode *)statement->statement;
         generateExpression(generator, exprNode);
     }
