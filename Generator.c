@@ -181,7 +181,7 @@ void generateChrFunction(Generator *generator) {
     String *position = createString("tf@position");
     instructionDefVar(position);
     instructionPopStack(position);
-    //    // TODO: check if int
+    // TODO: check if int
     
     // if 0  > expression && expression > 255: return None
     instructionPushStack(position);

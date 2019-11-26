@@ -84,11 +84,11 @@ void instructionIDivStack() {
 }
 
 void instructionLessThan(String *var, String *sym1, String *sym2) {
-    printf("LT %s %s %S\n", var->value, sym1->value, sym2->value);
+    printf("LT %s %s %s\n", var->value, sym1->value, sym2->value);
 }
 
 void instructionGreaterThan(String *var, String *sym1, String *sym2) {
-    printf("GT %s %s %S\n", var->value, sym1->value, sym2->value);
+    printf("GT %s %s %s\n", var->value, sym1->value, sym2->value);
 }
 
 void instructionEquals(String *var) {
