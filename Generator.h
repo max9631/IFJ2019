@@ -25,4 +25,13 @@ void generateCall(Generator *generator, CallNode *call);
 void generateExpression(Generator *generator, ExpressionNode *expression);
 void generateReturn(Generator *generator, StatementNode *node);
 
+//System functions
+
+void generatePrint(Generator *generator, CallNode *call);
+void generateInput(Generator *generator, String *type);
+void generateLen(Generator *generator, ExpressionNode *expression);
+void generateChrFunction(Generator *generator);
+void generateOrdFunction(Generator *generator);
+void generateSubStringFunction(Generator *generator);
+
 #endif
