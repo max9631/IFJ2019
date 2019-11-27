@@ -213,7 +213,7 @@ String *convertValueToIFJ(ValueNode *value, ExpressionDataType dataType) {
 void stackInstructionForOperationType(Generator *generator, OperationNode *operation) {
     switch (operation->type) {
         case OPERATION_ADD:
-            instructionAddStack();
+            instructionCall(generator->addOrConcatFunction);
             break;
         case OPERATION_SUB:
             instructionSubStack();
