@@ -78,7 +78,7 @@ Token *peekNext(List *list, int offset) {
     for(int i = 0; i < offset; i++) {
         item = item->nextItem;
 
-        if(item == NULL) 
+        if(item == NULL)
             return NULL;
     }
 

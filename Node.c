@@ -43,8 +43,8 @@ FuncNode *createFuncNode(String *name, BodyNode *body) {
 CondNode *createCondNode(ExpressionNode *condition, BodyNode *trueBody, BodyNode *falseBody) {
     CondNode *node = (CondNode *) malloc(sizeof(CondNode));
     node->condition = condition;
-    node->trueBody = trueBody;    
-    node->falseBody = falseBody;    
+    node->trueBody = trueBody;
+    node->falseBody = falseBody;
     return node;
 }
 

@@ -139,7 +139,7 @@ AssignNode *parseAssign(ParserState *state, BodyNode *body) {
 StatementNode *parseStatement(ParserState *state, BodyNode *body) {
     Token *nextToken = peek(state->list);
     switch (nextToken->type) {
-    case TOKEN_IDENTIFIER: 
+    case TOKEN_IDENTIFIER:
         if (isTokenAsignOperator(peekNext(state->list, 1)))
             return craeteStatementNode(parseAssign(state, body), STATEMENT_ASSIGN);
         return craeteStatementNode(parseExpression(state, body), STATEMENT_EXPRESSION);
@@ -228,7 +228,7 @@ ExpressionNode *parseOperation(ParserState *state, Stack *prefix, OperationType 
     OperationNode *operation = createOperationNode(type);
     PrefixItem *item;
     ExpressionNode *operands[2];
-    
+
     for (int i = 1; i >= 0; i--) {
         item = (PrefixItem *) pop(prefix);
         if (item->type == PREFIX_OPERATOR_TOKEN) {
@@ -239,10 +239,10 @@ ExpressionNode *parseOperation(ParserState *state, Stack *prefix, OperationType 
         } else
             handleError(SyntaxError, "Invalid expression on line %d", line);
     }
-    
+
     operation->value1 = operands[0];
     operation->value2 = operands[1];
-    
+
     if (operation->value2->dataType == EXPRESSION_DATA_TYPE_FLOAT && operation->value1->dataType == EXPRESSION_DATA_TYPE_INT) {
         operation->value1 = createExpressionNode(operation->value1, EXPRESSION_CONVERSION_INT_TO_FLOAT, EXPRESSION_DATA_TYPE_FLOAT);
     } else if (operation->value1->dataType == EXPRESSION_DATA_TYPE_FLOAT && operation->value2->dataType == EXPRESSION_DATA_TYPE_INT) {
@@ -256,7 +256,7 @@ ExpressionNode *parseOperation(ParserState *state, Stack *prefix, OperationType 
             operation->value2 = createExpressionNode(operation->value2, EXPRESSION_CONVERSION_INT_TO_FLOAT, EXPRESSION_DATA_TYPE_FLOAT);
         }
     }
-    
+
     ExpressionDataType dataType = EXPRESSION_DATA_TYPE_UNKNOWN;
     return createExpressionNode(operation, EXPRESSION_OPERATION, dataType);
 }

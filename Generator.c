@@ -38,7 +38,7 @@ void generateFunc(Generator *generator, FuncNode *function) {
 
 void generateCond(Generator *generator, CondNode *condition) {
     String *condFalseLabel = createString("_%d_if_else", generator->condCount++);
-    String *condEndLabel = createString("_%d_if_end_", generator->condCount++);
+    String *condEndLabel = createString("_%d_if_end_", generator->condCount);
 
     generateExpression(generator, condition->condition);
     instructionPushStack(createString("bool@false"));
@@ -51,22 +51,22 @@ void generateCond(Generator *generator, CondNode *condition) {
     //else
     instructionLabel(condFalseLabel);
     generateBody(generator, condition->falseBody);
-    
+
     instructionLabel(condEndLabel);
 }
 
 void generateWhile(Generator *generator, WhileNode *whileNode) {
     String *whileLabel = createString("_%d_while", generator->whileCount++);
-    String *whileLabel_end = createString("_%d_while_end", generator->whileCount++);
-    
+    String *whileLabel_end = createString("_%d_while_end", generator->whileCount);
+
     instructionLabel(whileLabel);
-    
+
     generateExpression(generator, whileNode->condition);
     instructionPushStack(createString("bool@false"));
     instructionJumpIfEqualsStack(whileLabel_end);
-    
+
     generateBody(generator, whileNode->body);
-    
+
     instructionJump(whileLabel);
     instructionLabel(whileLabel_end);
 }
@@ -232,7 +232,7 @@ void generateExpression(Generator *generator, ExpressionNode *expression) {
             OperationNode *operation = (OperationNode *) expression->expression;
             generateExpression(generator, operation->value1);
             generateExpression(generator, operation->value2);
-            
+
             // TODO: generate code for type checking. If data types of operand are not compatible, exit with code 4.
             stackInstructionForOperationType(generator, operation);
             break;
