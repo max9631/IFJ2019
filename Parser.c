@@ -267,8 +267,33 @@ bool isTokenExpression(Token *token) {
         token->type == TOKEN_OPAREN || token->type == TOKEN_CPAREN;
 }
 
+int priorityForOperator(TokenType type) {
+    switch (type) {
+        case OPERATOR_NOT:
+        case OPERATOR_NEQL:
+        case OPERATOR_MORE:
+        case OPERATOR_MOREEQL:
+        case OPERATOR_LESS:
+        case OPERATOR_LESSEQL:
+        case OPERATOR_AND:
+        case OPERATOR_OR:
+        case OPERATOR_EQL:
+            return 3;
+        case OPERATOR_ADD:
+        case OPERATOR_SUB:
+            return 2;
+        case OPERATOR_DIV:
+        case OPERATOR_MUL:
+        case OPERATOR_IDIV:
+            return 1;
+        default:
+            return 0;
+    }
+}
+
 bool hasStackHigherOrEqualPrecedence(Stack *operators, TokenType type) {
-    return ((Token *)operators->items[operators->count - 1])->type >= type;
+    Token *top = (Token *)operators->items[operators->count - 1];
+    return priorityForOperator(top->type) >= priorityForOperator(type);
 }
 
 // End for expressions: "\n", ",", ")"
