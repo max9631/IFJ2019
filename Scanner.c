@@ -90,7 +90,8 @@ Token *defineValue(Document *document) {
 		if(dotOccuredLast){
 			i++;
 			if(i > 1){
-				dotOccuredLast = false, i = 0;
+                dotOccuredLast = false;
+                i = 0;
 			}
 		}
 		appendCharacter(string, c);
