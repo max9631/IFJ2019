@@ -2,8 +2,7 @@
 
 Generator *createGenerator() {
     Generator *generator = (Generator *)malloc(sizeof(Generator));
-    generator->condCount = 0;
-    generator->whileCount = 0;
+    generator->labelCount = 0;
     generator->tmp1Var = createString("GF@IFJ_TMP1");
     generator->tmp2Var = createString("GF@IFJ_TMP2");
     generator->tmp3Var = createString("GF@IFJ_TMP3");
@@ -54,8 +53,9 @@ void generateFunc(Generator *generator, FuncNode *function) {
 }
 
 void generateCond(Generator *generator, CondNode *condition) {
-    String *condFalseLabel = createString("_%d_if_else", generator->condCount++);
-    String *condEndLabel = createString("_%d_if_end_", generator->condCount);
+    int coundId = generator->labelCount++;
+    String *condFalseLabel = createString("_%d_if_else", coundId);
+    String *condEndLabel = createString("_%d_if_end_", coundId);
 
     generateExpression(generator, condition->condition);
     instructionPushStack(createString("bool@false"));
@@ -73,8 +73,9 @@ void generateCond(Generator *generator, CondNode *condition) {
 }
 
 void generateWhile(Generator *generator, WhileNode *whileNode) {
-    String *whileLabel = createString("_%d_while", generator->whileCount++);
-    String *whileLabel_end = createString("_%d_while_end", generator->whileCount);
+    int whileId = generator->labelCount++;
+    String *whileLabel = createString("_%d_while", whileId);
+    String *whileLabel_end = createString("_%d_while_end", whileId);
 
     instructionLabel(whileLabel);
 

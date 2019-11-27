@@ -5,8 +5,7 @@
 #include "String.h"
 
 typedef struct _Generator {
-    int condCount;
-    int whileCount;
+    int labelCount;
     String *checkExpressionTypesFunctionLabel;
     String *checkTypeFunctionLabel;
     String *convertToFloatFunctionLabel;
