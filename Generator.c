@@ -48,8 +48,8 @@ void generateFunc(Generator *generator, FuncNode *function) {
         instructionDefVar(identifier);
         instructionPopStack(identifier);
     }
-    instructionPushStack(createString("nil@nil"));
     generateBody(generator, function->body);
+    instructionPushStack(createString("nil@nil"));
     instructionReturn();
 }
 
@@ -152,9 +152,10 @@ void generateStatement(Generator *generator, StatementNode *statement) {
 
 void generateReturn(Generator *generator, StatementNode *statement) {
     if(statement->statement != NULL) {
-        instructionPopStack(generator->tmp1Var);
         ExpressionNode *exprNode = (ExpressionNode *)statement->statement;
         generateExpression(generator, exprNode);
+    } else {
+        instructionPushStack(createString("nil@nil"));
     }
     instructionReturn();
 }
@@ -265,6 +266,7 @@ void stackInstructionForOperationType(Generator *generator, OperationNode *opera
             break;
         case OPERATION_IDIV:
             instructionIDivStack();
+            break;
     }
 }
 
