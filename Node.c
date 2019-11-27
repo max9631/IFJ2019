@@ -65,10 +65,10 @@ AssignNode *createAssignNode(String *identifier, AssignOperator operator, Expres
     return node;
 }
 
-StatementNode *craeteStatementNode(void *statement, StatementType type) {
+StatementNode *createStatementNode(void *statement, StatementType type) {
     StatementNode *node = (StatementNode *) malloc(sizeof(StatementNode));
     node->statement = statement;
-    node->type = type;
+    node->statementType = type;
     return node;
 }
 

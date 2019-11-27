@@ -141,17 +141,17 @@ StatementNode *parseStatement(ParserState *state, BodyNode *body) {
     switch (nextToken->type) {
     case TOKEN_IDENTIFIER: 
         if (isTokenAsignOperator(peekNext(state->list, 1)))
-            return craeteStatementNode(parseAssign(state, body), STATEMENT_ASSIGN);
-        return craeteStatementNode(parseExpression(state, body), STATEMENT_EXPRESSION);
-    case KEYWORD_WHILE: return craeteStatementNode(parseWhile(state, body), STATEMENT_WHILE);
-    case KEYWORD_IF: return craeteStatementNode(parseCond(state, body), STATEMENT_IF);
-    case KEYWORD_PASS: return craeteStatementNode(consume(state->list, KEYWORD_PASS), STATEMENT_PASS);
+            return createStatementNode(parseAssign(state, body), STATEMENT_ASSIGN);
+        return createStatementNode(parseExpression(state, body), STATEMENT_EXPRESSION);
+    case KEYWORD_WHILE: return createStatementNode(parseWhile(state, body), STATEMENT_WHILE);
+    case KEYWORD_IF: return createStatementNode(parseCond(state, body), STATEMENT_IF);
+    case KEYWORD_PASS: return createStatementNode(consume(state->list, KEYWORD_PASS), STATEMENT_PASS);
     case KEYWORD_RETURN:
             consume(state->list, KEYWORD_RETURN);
             if (peek(state->list)->type != TOKEN_EOL)
-                return craeteStatementNode(parseExpression(state, body), STATEMENT_RETURN);
-            return craeteStatementNode(NULL, STATEMENT_RETURN);
-    default: return craeteStatementNode(parseExpression(state, body), STATEMENT_EXPRESSION);
+                return createStatementNode(parseExpression(state, body), STATEMENT_RETURN);
+            return createStatementNode(NULL, STATEMENT_RETURN);
+    default: return createStatementNode(parseExpression(state, body), STATEMENT_EXPRESSION);
     }
 }
 
