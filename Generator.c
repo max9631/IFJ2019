@@ -356,7 +356,7 @@ String *convertValueToIFJ(ValueNode *value, ExpressionDataType dataType) {
             case EXPRESSION_DATA_TYPE_INT: return createString("int@%s", value->value.intVal->value);
             case EXPRESSION_DATA_TYPE_FLOAT: return createString("float@%s", value->value.floatVal->value);
             case EXPRESSION_DATA_TYPE_BOOL: return createString("bool@%s", value->value.boolVal->value);
-            case EXPRESSION_DATA_TYPE_STRING: return createString("string@\"%s\"", value->value.stringVal->value);
+            case EXPRESSION_DATA_TYPE_STRING: return createString("string@%s", convertToHexadecimalString(value->value.stringVal)->value);
             case EXPRESSION_DATA_TYPE_UNKNOWN: return createString("nil@nil");
         }
     } else if (value->type == VALUE_VARIABLE) {

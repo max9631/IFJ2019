@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <math.h>
 #include <string.h>
 #include "Error.h"
 
@@ -44,5 +45,7 @@ void destroyString(String *str);
   */
 
 int stringLength(char *str);
+
+String *convertToHexadecimalString(String *str);
 
 #endif

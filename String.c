@@ -56,3 +56,24 @@ int stringLength(char *str) {
       c++;
    return c;
 }
+
+bool isValidHexaChar(int c) { return (c > 64 && c < 91) || (c > 96 && c < 123) || (c > 47 && c < 58); } // a-z || A-Z || 0-9
+
+String *convertToHexadecimalString(String *fromStr) {
+    String *str = createString("");
+    for (int i = 0; i < fromStr->lenght; i++) {
+        int ch = fromStr->value[i];
+        if (isValidHexaChar(ch)) {
+            appendCharacter(str, ch);
+        } else {
+            appendCharacter(str, (int) '\\');
+            for (int n = 2; n >= 0; n--) {
+                int pos = pow(10, n);
+                int dec = (ch % (pos * 10)) / pos;
+                dec += 48;
+                appendCharacter(str, dec);
+            }
+        }
+    }
+    return str;
+}
