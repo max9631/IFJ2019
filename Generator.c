@@ -334,9 +334,9 @@ void generateSubStringFunction(Generator *generator) {
 
 void generateCall(Generator *generator, CallNode *call) {
     if (stringEquals(call->identifier, "print")) generatePrint(generator, call);
-    else if (stringEquals(call->identifier, "inputi")) generateInput(generator, createString("string@int"));
-    else if (stringEquals(call->identifier, "inputs")) generateInput(generator, createString("string@string"));
-    else if (stringEquals(call->identifier, "inputf")) generateInput(generator, createString("string@float"));
+    else if (stringEquals(call->identifier, "inputi")) generateInput(generator, createString("int"));
+    else if (stringEquals(call->identifier, "inputs")) generateInput(generator, createString("string"));
+    else if (stringEquals(call->identifier, "inputf")) generateInput(generator, createString("float"));
     else if (stringEquals(call->identifier, "len")) generateLen(generator, call->expressions[0]);
     else {
         for(int i = 0; i < call->argsCount; i++){
