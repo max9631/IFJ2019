@@ -124,6 +124,7 @@ typedef struct _BodyNode {
     HashTable *symTable;
     struct _BodyNode *parrentBody;
     int statementsCount;
+    bool isGlobal;
     StatementNode **statements;
 } BodyNode;
 
@@ -162,7 +163,7 @@ WhileNode *createWhileNode(ExpressionNode *condition, BodyNode *body);
 AssignNode *createAssignNode(String *identifier, AssignOperator operator, ExpressionNode *expression, bool cretesVariable, bool isGlobal);
 StatementNode *createStatementNode(void *statement, StatementType type);
 ExpressionNode *createExpressionNode(void *expressions, ExpressionType type, ExpressionDataType dataType);
-BodyNode *createBodyNode(BodyNode *parrentBody, HashTable *symtable);
+BodyNode *createBodyNode(BodyNode *parrentBody, HashTable *symtable, bool isGlobal);
 MainNode *createMainNode(BodyNode *body);
 
 OperationType operationTypeForToken(Token *token);

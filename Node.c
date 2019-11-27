@@ -80,13 +80,14 @@ ExpressionNode *createExpressionNode(void *expression, ExpressionType type, Expr
     return node;
 }
 
-BodyNode *createBodyNode(BodyNode *parrentBody, HashTable *symtable) {
+BodyNode *createBodyNode(BodyNode *parrentBody, HashTable *symtable, bool isGlobal) {
     BodyNode *node = (BodyNode *) malloc(sizeof(BodyNode));
     node->symTable = symtable;
     if (node->symTable == NULL)
         node->symTable = createSymTable();
     node->parrentBody = parrentBody;
     node->statements = NULL;
+    node->isGlobal = isGlobal;
     return node;
 }
 

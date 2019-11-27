@@ -23,7 +23,7 @@ void DestroyParserState(ParserState *state) {
 }
 
 MainNode *parseTokens(ParserState *state) {
-    state->main = createMainNode(createBodyNode(NULL, createSymTable()));
+    state->main = createMainNode(createBodyNode(NULL, createSymTable(), true));
     BodyNode *body = state->main->body;
     while (peek(state->list)->type != TOKEN_EOF) {
         if (peek(state->list)->type != TOKEN_EOL) {
@@ -37,8 +37,8 @@ MainNode *parseTokens(ParserState *state) {
     return state->main;
 }
 
-BodyNode *parseBody(ParserState *state, BodyNode *parrentBody, String **arguments, int argCount, HashTable *symtable) {
-    BodyNode *body = createBodyNode(parrentBody, symtable);
+BodyNode *parseBody(ParserState *state, BodyNode *parrentBody, String **arguments, int argCount, HashTable *symtable, bool isGlobal) {
+    BodyNode *body = createBodyNode(parrentBody, symtable, isGlobal);
     for (int i = 0; i < argCount; i++)
         registerSymbol(body, arguments[i]);
     while (peek(state->list)->type != TOKEN_DEINDENT) {
@@ -78,7 +78,7 @@ FuncNode *parseFunc(ParserState *state, BodyNode *body) {
     consume(list, TOKEN_COLON);
     consume(list, TOKEN_EOL);
     consume(list, TOKEN_INDENT);
-    function->body = parseBody(state, body, function->args, function->argsCount, createSymTable());
+    function->body = parseBody(state, body, function->args, function->argsCount, createSymTable(), false);
     consume(list, TOKEN_DEINDENT);
     return function;
 }
@@ -109,7 +109,7 @@ WhileNode *parseWhile(ParserState *state, BodyNode *parrentBody) {
     consume(list, TOKEN_COLON);
     consume(list, TOKEN_EOL);
     consume(list, TOKEN_INDENT);
-    BodyNode *body = parseBody(state, parrentBody, NULL, 0, parrentBody->symTable);
+    BodyNode *body = parseBody(state, parrentBody, NULL, 0, parrentBody->symTable, parrentBody->isGlobal);
     consume(list, TOKEN_DEINDENT);
     return createWhileNode(condition, body);
 }
@@ -117,7 +117,7 @@ WhileNode *parseWhile(ParserState *state, BodyNode *parrentBody) {
 AssignNode *parseAssign(ParserState *state, BodyNode *body) {
     Token *identifier = consume(state->list, TOKEN_IDENTIFIER);
     bool createsVar = true;
-    bool isGlobal = body->parrentBody == NULL;
+    bool isGlobal = body->isGlobal;
     if (containsSymbol(body, identifier->value)) {
         createsVar = false;
     } else {
@@ -187,11 +187,9 @@ ExpressionNode *parseValue(ParserState *state, BodyNode *body) {
     case TOKEN_IDENTIFIER:
         if (peekNext(state->list, 1)->type == TOKEN_OPAREN)
             return createExpressionNode(parseCall(state, body), EXPRESSION_CALL, EXPRESSION_DATA_TYPE_UNKNOWN);
-        BodyNode *identifierBody = findBodyForIdentifier(body, token->value);
-        if (identifierBody == NULL)
+        if (!containsSymbol(body, token->value))
             handleError(SemanticIdentifierError, "Uknown identier '%s' on line %d", token->value->value, token->line);
-        bool isGlobal = identifierBody->parrentBody == NULL;
-        return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_VARIABLE, isGlobal), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_UNKNOWN);
+        return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_VARIABLE, body->isGlobal), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_UNKNOWN);
     case DATA_TOKEN_INT: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT, false), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_INT);
     case DATA_TOKEN_FLOAT: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT, false), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_FLOAT);
     case DATA_TOKEN_STRING: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT, false), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_STRING);
