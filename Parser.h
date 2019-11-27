@@ -15,7 +15,7 @@ void addPraserFunction(ParserState *state, FuncNode *func);
 void DestroyParserState(ParserState *state);
 
 MainNode *parseTokens(ParserState *state);
-BodyNode *parseBody(ParserState *state, BodyNode *body, String **arguments, int argCount, HashTable *symtable);
+BodyNode *parseBody(ParserState *state, BodyNode *body, String **arguments, int argCount, HashTable *symtable, bool isGlobal);
 FuncNode *parseFunc(ParserState *state, BodyNode *body);
 CondNode *parseCond(ParserState *state, BodyNode *body);
 WhileNode *parseWhile(ParserState *state, BodyNode *body);

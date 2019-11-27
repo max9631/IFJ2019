@@ -2,11 +2,15 @@
 
 Generator *createGenerator() {
     Generator *generator = (Generator *)malloc(sizeof(Generator));
-    generator->condCount = 0;
-    generator->whileCount = 0;
+    generator->labelCount = 0;
     generator->tmp1Var = createString("GF@IFJ_TMP1");
     generator->tmp2Var = createString("GF@IFJ_TMP2");
     generator->tmp3Var = createString("GF@IFJ_TMP3");
+    
+    generator->checkExpressionTypesFunctionLabel = createString("_EmbeddedExpressionTypeCheck");
+    generator->checkTypeFunctionLabel = createString("_EmbeddedTypeCheck");
+    generator->convertToFloatFunctionLabel = createString("_EmbeddedConvertToFloat");
+    generator->addOrConcatFunction = createString("_EmbeddedAddOrConcatFunction");
     return generator;
 }
 
@@ -17,6 +21,10 @@ void generateMain(Generator *generator, MainNode *main) {
     instructionDefVar(generator->tmp3Var);
     instructionCreateFrame();
     instructionJump(createString("_ifj_start"));
+    generateCheckExpressionTypesFunction(generator);
+    generateCheckTypeFunction(generator);
+    generateConvertToFloatFunction(generator);
+    generateAddOrConcat(generator);
     generateChrFunction(generator);
     generateOrdFunction(generator);
     generateSubStringFunction(generator);
@@ -39,14 +47,15 @@ void generateFunc(Generator *generator, FuncNode *function) {
         instructionDefVar(identifier);
         instructionPopStack(identifier);
     }
-    instructionPushStack(createString("nil@nil"));
     generateBody(generator, function->body);
+    instructionPushStack(createString("nil@nil"));
     instructionReturn();
 }
 
 void generateCond(Generator *generator, CondNode *condition) {
-    String *condFalseLabel = createString("_%d_if_else", generator->condCount++);
-    String *condEndLabel = createString("_%d_if_end_", generator->condCount);
+    int coundId = generator->labelCount++;
+    String *condFalseLabel = createString("_%d_if_else", coundId);
+    String *condEndLabel = createString("_%d_if_end_", coundId);
 
     generateExpression(generator, condition->condition);
     instructionPushStack(createString("bool@false"));
@@ -64,8 +73,9 @@ void generateCond(Generator *generator, CondNode *condition) {
 }
 
 void generateWhile(Generator *generator, WhileNode *whileNode) {
-    String *whileLabel = createString("_%d_while", generator->whileCount++);
-    String *whileLabel_end = createString("_%d_while_end", generator->whileCount);
+    int whileId = generator->labelCount++;
+    String *whileLabel = createString("_%d_while", whileId);
+    String *whileLabel_end = createString("_%d_while_end", whileId);
 
     instructionLabel(whileLabel);
 
@@ -85,15 +95,8 @@ void generateAssign(Generator *generator, AssignNode *assign) {
     if (assign->cretesVariable) {
         instructionDefVar(identifier);
     }
-    switch (assign->operator) {
-        case ASSIGN_NONE:
-            break;
-        case ASSIGN_ADD:
-        case ASSIGN_SUB:
-        case ASSIGN_DIV:
-        case ASSIGN_MUL:
-            instructionPushStack(identifier);
-            break;
+    if (assign->operator != ASSIGN_NONE) {
+        instructionPushStack(identifier);
     }
     generateExpression(generator, assign->expression);
     switch (assign->operator) {
@@ -143,9 +146,10 @@ void generateStatement(Generator *generator, StatementNode *statement) {
 
 void generateReturn(Generator *generator, StatementNode *statement) {
     if(statement->statement != NULL) {
-        instructionPopStack(generator->tmp1Var);
         ExpressionNode *exprNode = (ExpressionNode *)statement->statement;
         generateExpression(generator, exprNode);
+    } else {
+        instructionPushStack(createString("nil@nil"));
     }
     instructionReturn();
 }
@@ -172,165 +176,6 @@ void generateLen(Generator *generator, ExpressionNode *expression) {
     instructionPopStack(generator->tmp1Var);
     instructionStrLen(generator->tmp2Var, generator->tmp1Var);
     instructionPushStack(generator->tmp2Var);
-}
-
-void generateChrFunction(Generator *generator) {
-    String *elseLabel = createString("_%d_if_else", generator->condCount++);
-    String *endLabel = createString("_%d_if_end", generator->condCount++);
-    
-    instructionLabel(createString("chr"));
-    String *position = createString("tf@position");
-    instructionDefVar(position);
-    instructionPopStack(position);
-    // TODO: check if int
-    
-    // if 0  > expression && expression > 255: return None
-    instructionPushStack(position);
-    instructionPushStack(createString("int@0"));
-    instructionLessThanStack();
-    instructionPushStack(position);
-    instructionPushStack(createString("int@255"));
-    instructionGreaterThanStack();
-    instructionAndStack();
-    instructionPushStack(createString("bool@false"));
-    instructionJumpIfEqualsStack(elseLabel);
-    
-    //if
-    instructionPushStack(createString("nil@nil"));
-    instructionJump(endLabel);
-    
-    //else
-    instructionLabel(elseLabel);
-    instructionPushStack(position);
-    instructionIntToCharStack();
-    instructionLabel(endLabel);
-    instructionReturn();
-}
-
-void generateOrdFunction(Generator *generator) {
-    String *elseLabel = createString("_%d_if_else", generator->condCount++);
-    String *endLabel = createString("_%d_if_end", generator->condCount++);
-    
-    instructionLabel(createString("ord"));
-    String *str = createString("tf@str");
-    String *position = createString("tf@position");
-    String *len = createString("tf@len");
-    
-    instructionDefVar(str);
-    instructionDefVar(position);
-    instructionDefVar(len);
-    
-    instructionPopStack(position);
-    // TODO: Check if int
-    instructionPopStack(str);
-    // TODO: Check if string
-    instructionStrLen(len, generator->tmp1Var);
-    
-    instructionPopStack(generator->tmp2Var); // position
-    instructionPopStack(generator->tmp1Var); // value
-    instructionStrLen(generator->tmp3Var, generator->tmp1Var); //strlen
-    
-    // if 0  > position && expression > len(str): return None
-    instructionPushStack(position);
-    instructionPushStack(createString("int@0"));
-    instructionLessThanStack();
-    instructionPushStack(position);
-    instructionPushStack(len);
-    instructionGreaterThanStack();
-    instructionAndStack();
-    instructionPushStack(createString("bool@false"));
-    instructionJumpIfEqualsStack(elseLabel);
-    instructionPushStack(createString("nil@nil"));
-    instructionJump(endLabel);
-    
-    //else
-    instructionLabel(elseLabel);
-    instructionGetChar(generator->tmp3Var, generator->tmp1Var, generator->tmp3Var);
-    instructionIntToChar(generator->tmp1Var, generator->tmp3Var);
-    instructionPushStack(generator->tmp1Var);
-    instructionLabel(endLabel);
-    
-    instructionReturn();
-
-}
-
-void generateSubStringFunction(Generator *generator) {
-    instructionLabel(createString("substr"));
-    instructionCreateFrame();
-    
-    String *elseLabel = createString("_%d_if_else", generator->condCount++);
-    String *endLabel = createString("_%d_if_end", generator->condCount++);
-    String *whileLabel = createString("_%d_while", generator->whileCount++);
-    String *whileEndLabel = createString("_%d_while_end", generator->whileCount++);
-    
-    String *str = createString("TF@s");
-    String *subLen = createString("TF@n");
-    String *index = createString("TF@i");
-    String *length = createString("TF@length");
-    
-    instructionDefVar(str);
-    instructionDefVar(subLen);
-    instructionDefVar(index);
-    instructionDefVar(length);
-    
-    instructionPopStack(subLen);
-    // TODO: check int
-    instructionPopStack(index);
-    // TODO: check int
-    instructionPopStack(str);
-    // TODO: check string
-    instructionStrLen(length, str);
-    
-    instructionLessThan(generator->tmp1Var, index, length);
-    instructionGreaterThan(generator->tmp2Var, index, createString("int@0"));
-    instructionLessThan(generator->tmp3Var, subLen, createString("int@0"));
-    
-    // if
-    instructionPushStack(generator->tmp1Var);
-    instructionPushStack(generator->tmp2Var);
-    instructionAndStack();
-    instructionPushStack(generator->tmp3Var);
-    instructionOrStack();
-    instructionPushStack(createString("bool@false"));
-    instructionJumpIfEqualsStack(elseLabel);
-    // if true
-    instructionPushStack(createString("nil@nil"));
-    instructionReturn();
-    // else not true
-    instructionLabel(elseLabel);
-    
-    String *finalStr = createString("TF@ch");
-    instructionDefVar(finalStr);
-    instructionMove(finalStr, createString("string@"));
-    
-    String *i = createString("TF@index");
-    instructionDefVar(i);
-    instructionMove(i, index);
-    
-    instructionLabel(whileLabel);
-    instructionPushStack(i);
-    instructionPushStack(index);
-    instructionPushStack(subLen);
-    instructionAddStack();
-    instructionLessThanStack();
-    instructionPushStack(i);
-    instructionPushStack(length);
-    instructionLessThanStack();
-    instructionAndStack();
-    instructionPushStack(createString("bool@false"));
-    instructionJumpIfEqualsStack(whileEndLabel);
-    instructionGetChar(generator->tmp1Var, str, i);
-    instructionConcat(finalStr, finalStr, generator->tmp1Var);
-    instructionJump(whileLabel);
-    
-    instructionLabel(whileEndLabel);
-    instructionPushStack(finalStr);
-    instructionReturn();
-    
-    instructionLabel(endLabel);
-    
-    instructionPushStack(createString("nil@nil"));
-    instructionReturn();
 }
 
 void generateCall(Generator *generator, CallNode *call) {
@@ -369,7 +214,7 @@ String *convertValueToIFJ(ValueNode *value, ExpressionDataType dataType) {
 void stackInstructionForOperationType(Generator *generator, OperationNode *operation) {
     switch (operation->type) {
         case OPERATION_ADD:
-            instructionAddStack();
+            instructionCall(generator->addOrConcatFunction);
             break;
         case OPERATION_SUB:
             instructionSubStack();
@@ -415,6 +260,7 @@ void stackInstructionForOperationType(Generator *generator, OperationNode *opera
             break;
         case OPERATION_IDIV:
             instructionIDivStack();
+            break;
     }
 }
 
@@ -432,6 +278,10 @@ void generateExpression(Generator *generator, ExpressionNode *expression) {
             OperationNode *operation = (OperationNode *) expression->expression;
             generateExpression(generator, operation->value1);
             generateExpression(generator, operation->value2);
+            
+            instructionPushFrame();
+            instructionCall(generator->checkExpressionTypesFunctionLabel);
+            instructionPopFrame();
 
             // TODO: generate code for type checking. If data types of operand are not compatible, exit with code 4.
             stackInstructionForOperationType(generator, operation);

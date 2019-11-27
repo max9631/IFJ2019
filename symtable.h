@@ -23,6 +23,8 @@ HashTable *createHashTable(void);
 HashTable *createFuncTable(void);
 HashTable *createSymTable(void);
 HashTableItem *getHashTableItem(HashTable *table, char *key);
+HashTable *copyHashTable(HashTable *table);
+HashTable *mergeHashTables(HashTable *table1, HashTable *table2);
 void insertHashTableItem(HashTable *table, char *key, void *data);
 void removeHashTableItem(HashTable *table, char *key);
 void destroyHashTable(HashTable *table);

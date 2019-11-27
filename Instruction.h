@@ -31,11 +31,11 @@ void instructionDivStack(void);
 void instructionIDivStack(void);
 void instructionLessThan(String *var, String *sym1, String *sym2);
 void instructionGreaterThan(String *var, String *sym1, String *sym2);
+void instructionEquals(String *var, String *sym1, String *sym2);
 void instructionGreaterThanStack(void);
 void instructionEqualsStack(void);
 void instructionLessThanStack(void);
-void instrutionEqualsStack(void);
-void instructionAnd(String *var);
+void instructionAnd(String *var, String *sym1, String *sym2);
 void instructionOr(String *var);
 void instructionNot(String *var);
 void instructionAndStack(void);
@@ -61,7 +61,7 @@ void instructionGetChar(String *var, String *str, String *position);
 void instructionSetChar(String *var);
 
 // Prace s typy
-void instructionType(String *var);
+void instructionType(String *var, String *sym);
 
 // Instrukce pro rizeni toku programu
 void instructionLabel(String *label);
@@ -70,7 +70,7 @@ void instructionJumpIfEquals(String *label, String *symb1, String *symb2);
 void instructionJumpIfNotEquals(String *label, String *symb1, String *symb2);
 void instructionJumpIfEqualsStack(String *label);
 void instructionJumpIfNotEqualsStack(String *label);
-void instructionExit(void);
+void instructionExit(int exitCode);
 
 // Ladici instrukce
 void instructionBreak(void);

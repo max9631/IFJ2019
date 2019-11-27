@@ -1,0 +1,32 @@
+def checkTypes(arg1, arg2):
+ type1 = Type(arg1)
+ type2 = Type(arg2)
+ if (type1 == type2):
+  return
+ else:
+  c1 = type1 == "int"
+  c2 = type2 == "float"
+  if (c1):
+   float(type2)
+  else:
+   a1 = type1 == "float"
+   a2 = type2 == "int"
+   if (a1):
+    float(arg2)
+   else:
+    exit(4)
+
+def checkType(arg, type):
+ argType = Type(arg)
+ if argType == type:
+  return
+ else:
+  exit(4)
+
+def convertToFloat(arg):
+ type = Type(arg)
+ if (type == "float"):
+  return
+ else:
+  exit(4)
+
