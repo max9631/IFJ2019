@@ -25,7 +25,7 @@ typedef struct _ValueNode {
     bool isGlobal;
 } ValueNode;
 
-typedef enum _ExpressionType { 
+typedef enum _ExpressionType {
     EXPRESSION_CALL,
     EXPRESSION_VALUE,
     EXPRESSION_OPERATION,
@@ -90,9 +90,9 @@ typedef struct _OperationNode {
     OperationType type;
 } OperationNode;
 
-typedef enum _StatementType { 
+typedef enum _StatementType {
     STATEMENT_ASSIGN,
-    STATEMENT_EXPRESSION, 
+    STATEMENT_EXPRESSION,
     STATEMENT_WHILE,
     STATEMENT_IF,
     STATEMENT_RETURN,

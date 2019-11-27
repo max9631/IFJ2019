@@ -69,7 +69,7 @@ void removeHashTableItem(HashTable *table, char *key) {
 	if (item == NULL) return;
 	if (lastItem != NULL)
 		lastItem->ptrnext = item->ptrnext;
-	else 
+	else
 		(*table)[index] = item->ptrnext;
     if (item == NULL) return;
     if (item->key != NULL) free(item->key);

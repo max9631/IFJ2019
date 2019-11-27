@@ -98,8 +98,8 @@ Token *defineValue(Document *document) {
 		c = nextCharacter(document);
 	}
 	TokenType type = DATA_TOKEN_INT;
-	if (dotOccured) 
-		type = DATA_TOKEN_FLOAT; 
+	if (dotOccured)
+		type = DATA_TOKEN_FLOAT;
 	return createToken(string, type);
 }
 
@@ -111,7 +111,7 @@ Token *defineIdentifier(Document *document) {
 		appendCharacter(string, ch);
 		ch = nextCharacter(document);
 	}
-	TokenType type;  
+	TokenType type;
 	if(strcmp("def",string->value) == 0) type = KEYWORD_DEF;
 	else if(strcmp("else",string->value) == 0) type = KEYWORD_ELSE;
 	else if(strcmp("return",string->value) == 0) type = KEYWORD_RETURN;
@@ -160,7 +160,14 @@ Token *defineDoubleQuoteString(Document *document) {
 
 Token *defineApostrophString(Document *document) {
 	nextCharacter(document);
-	String *string = recordStringUntilChar(document, (int) '\'');
+	int ch = document->currentChar;
+	String *string;
+	if(isApostroph(ch)){
+		string = createString("");
+	}
+	else{
+		string = recordStringUntilChar(document, (int) '\'');
+	}
 	nextCharacter(document);
 	return createToken(string, DATA_TOKEN_STRING);
 }
@@ -242,7 +249,6 @@ Token *defineOperator(Document *document, int c) {
         appendCharacter(string, nextCH);
         type = OPERATOR_IDIV;
     }
-	
 	return createToken(string, type); 
 }
 
@@ -257,9 +263,9 @@ void generateIndent(List *list, Document *document) {
 		return;
 	if (isEndOfLine(ch))
 		return;
-	if (sum == document->lastIndent) 
+	if (sum == document->lastIndent)
 		return;
-	if (sum > document->lastIndent + 1) 
+	if (sum > document->lastIndent + 1)
 		handleError(SyntaxError, "Wrong number of indents at line %d column %d", document->line, document->column);
 	else if (sum == document->lastIndent + 1) {
 		addTokenToList(createTokenWithLine(NULL, TOKEN_INDENT, document->line), list);
@@ -324,7 +330,7 @@ void scan(List *list, Document *document) {
 		else if (isEndOfLine(current)) {
 			token = createToken(createStringFromChar('\n'), TOKEN_EOL);
 			nextCharacter(document);
-		} 
+		}
 		else if (isTerminator(current)) nextCharacter(document);
 		else {
 			msg("%c is value of %d\n", current, current);
