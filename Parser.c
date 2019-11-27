@@ -141,17 +141,17 @@ StatementNode *parseStatement(ParserState *state, BodyNode *body) {
     switch (nextToken->type) {
     case TOKEN_IDENTIFIER:
         if (isTokenAsignOperator(peekNext(state->list, 1)))
-            return craeteStatementNode(parseAssign(state, body), STATEMENT_ASSIGN);
-        return craeteStatementNode(parseExpression(state, body), STATEMENT_EXPRESSION);
-    case KEYWORD_WHILE: return craeteStatementNode(parseWhile(state, body), STATEMENT_WHILE);
-    case KEYWORD_IF: return craeteStatementNode(parseCond(state, body), STATEMENT_IF);
-    case KEYWORD_PASS: return craeteStatementNode(consume(state->list, KEYWORD_PASS), STATEMENT_PASS);
+            return createStatementNode(parseAssign(state, body), STATEMENT_ASSIGN);
+        return createStatementNode(parseExpression(state, body), STATEMENT_EXPRESSION);
+    case KEYWORD_WHILE: return createStatementNode(parseWhile(state, body), STATEMENT_WHILE);
+    case KEYWORD_IF: return createStatementNode(parseCond(state, body), STATEMENT_IF);
+    case KEYWORD_PASS: return createStatementNode(consume(state->list, KEYWORD_PASS), STATEMENT_PASS);
     case KEYWORD_RETURN:
             consume(state->list, KEYWORD_RETURN);
             if (peek(state->list)->type != TOKEN_EOL)
-                return craeteStatementNode(parseExpression(state, body), STATEMENT_RETURN);
-            return craeteStatementNode(NULL, STATEMENT_RETURN);
-    default: return craeteStatementNode(parseExpression(state, body), STATEMENT_EXPRESSION);
+                return createStatementNode(parseExpression(state, body), STATEMENT_RETURN);
+            return createStatementNode(NULL, STATEMENT_RETURN);
+    default: return createStatementNode(parseExpression(state, body), STATEMENT_EXPRESSION);
     }
 }
 
@@ -221,6 +221,7 @@ bool isTokenOperator(Token *token) {
         token->type == OPERATOR_SUB ||
         token->type == OPERATOR_EQL ||
         token->type == OPERATOR_DIV ||
+        token->type == OPERATOR_IDIV ||
         token->type == OPERATOR_MUL;
 }
 
@@ -266,8 +267,33 @@ bool isTokenExpression(Token *token) {
         token->type == TOKEN_OPAREN || token->type == TOKEN_CPAREN;
 }
 
+int priorityForOperator(TokenType type) {
+    switch (type) {
+        case OPERATOR_NOT:
+        case OPERATOR_NEQL:
+        case OPERATOR_MORE:
+        case OPERATOR_MOREEQL:
+        case OPERATOR_LESS:
+        case OPERATOR_LESSEQL:
+        case OPERATOR_AND:
+        case OPERATOR_OR:
+        case OPERATOR_EQL:
+            return 3;
+        case OPERATOR_ADD:
+        case OPERATOR_SUB:
+            return 2;
+        case OPERATOR_DIV:
+        case OPERATOR_MUL:
+        case OPERATOR_IDIV:
+            return 1;
+        default:
+            return 0;
+    }
+}
+
 bool hasStackHigherOrEqualPrecedence(Stack *operators, TokenType type) {
-    return ((Token *)operators->items[operators->count - 1])->type >= type;
+    Token *top = (Token *)operators->items[operators->count - 1];
+    return priorityForOperator(top->type) >= priorityForOperator(type);
 }
 
 // End for expressions: "\n", ",", ")"

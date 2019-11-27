@@ -50,6 +50,7 @@ bool isSpace(int c) { return c == (int) ' '; }
 bool isComment(int c) { return c == (int) '#'; }
 bool isUnderscore(int c) { return c == (int) '_'; }
 bool isExp(int c){ return (c == (int) 'E' || c == (int) 'e'); }
+bool isHexadecimal(int c) { return ((c >= (int) '0') && (c <= (int) '9')) || ((c >= (int) 'A') && c <= (int) 'F') || ((c >= (int) 'a') && c <= (int) 'f'); }
 
 bool isTerminator(int c) { return c == EOF || isSpace(c) || isEndOfLine(c); }
 bool isValidIdentifierCharacter(int c) { return isCharacter(c) || isNumber(c) || isUnderscore(c); }
@@ -89,7 +90,8 @@ Token *defineValue(Document *document) {
 		if(dotOccuredLast){
 			i++;
 			if(i > 1){
-				dotOccuredLast = false, i = 0;
+                dotOccuredLast = false;
+                i = 0;
 			}
 		}
 		appendCharacter(string, c);
@@ -140,7 +142,7 @@ Token *defineDoubleQuoteString(Document *document) {
 			isMultilineString = true;
 			ch = nextCharacter(document);
 		} else {
-			return createToken(NULL, DATA_TOKEN_STRING);
+			return createToken(createString(""), DATA_TOKEN_STRING);
 		}
 	}
 	String *string = recordStringUntilChar(document, (int) '"');
@@ -170,14 +172,55 @@ Token *defineApostrophString(Document *document) {
 	return createToken(string, DATA_TOKEN_STRING);
 }
 
+int getDecimalValueFromHexaChar(int hex) {
+    if (isNumber(hex)) return hex - 48;
+    switch (tolower(hex)) {
+        case (int)'a': return 10;
+        case (int)'b': return 11;
+        case (int)'c': return 12;
+        case (int)'d': return 13;
+        case (int)'e': return 14;
+        case (int)'f': return 15;
+    }
+    return 0;
+}
+
+int getDecimalChFromHexaCharsOnLine(int hex1, int hex2, int line) {
+    if (!isHexadecimal(hex1) || !isHexadecimal(hex2)) {
+        handleError(SyntaxError, "Expected hexadecimal notation after \\x in string on line %d", line);
+    }
+    int dec1 = getDecimalValueFromHexaChar(hex1);
+    int dec2 = getDecimalValueFromHexaChar(hex2);
+    return (16 * dec1) + dec2;
+}
+
 String *recordStringUntilChar(Document *document, int endChar) {
 	int ch = document->currentChar;
 	String *string = createStringFromChar(ch);
 	bool isEscaping = false;
 	ch = nextCharacter(document);
 	while (ch != endChar || isEscaping) {
-		isEscaping = (isEscaping) ? false : ch == (int) '\\';
+        if (ch == (int) '\\') {
+            isEscaping = true;
+            ch = nextCharacter(document);
+            continue;
+        }
 		if (!isEscaping) appendCharacter(string, ch);
+        else if (ch == (int) 'n') appendCharacter(string, (int) '\n');
+        else if (ch == (int) 't') appendCharacter(string, (int) '\t');
+        else if (ch == (int) '\'' || ch == (int) '"') appendCharacter(string, ch);
+        else if (ch == (int) 'x') {
+            int line = document->line;
+            int hex1 = nextCharacter(document);
+            int hex2 = nextCharacter(document);
+            int dec = getDecimalChFromHexaCharsOnLine(hex1, hex2, line);
+            appendCharacter(string, dec);
+        } else {
+            appendCharacter(string, (int) '\\');
+            appendCharacter(string, (int) ch);
+        }
+        isEscaping = (isEscaping) ? false : ch == (int) '\\';
+    
 		ch = nextCharacter(document);
 	}
 	return string;
@@ -202,9 +245,11 @@ Token *defineOperator(Document *document, int c) {
 		appendCharacter(string, nextCH);
 		type += 1;
         nextCharacter(document);
-	}
-
-	return createToken(string, type);
+    } else if (type == OPERATOR_DIV && isDevision(nextCH)) {
+        appendCharacter(string, nextCH);
+        type = OPERATOR_IDIV;
+    }
+	return createToken(string, type); 
 }
 
 void generateIndent(List *list, Document *document) {

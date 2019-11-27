@@ -40,12 +40,8 @@ bool appendCharacter(String *str, int c) {
 	return true;
 }
 
-bool stringEquals(String *str1, String *str2){
-  if(stringLength(str1->value) != stringLength(str2->value)) return false;
-  for(int i = 0; i < stringLength(str1->value); i++){
-    if(str1->value[i] != str2->value[i]) return false;
-  }
-  return true;
+bool stringEquals(String *str1, char *str2){
+    return strcmp(str1->value, str2) == 0;
 }
 
 void destroyString(String *str) {
@@ -59,4 +55,25 @@ int stringLength(char *str) {
    while (str[c] != '\0')
       c++;
    return c;
+}
+
+bool isValidHexaChar(int c) { return (c > 64 && c < 91) || (c > 96 && c < 123) || (c > 47 && c < 58); } // a-z || A-Z || 0-9
+
+String *convertToHexadecimalString(String *fromStr) {
+    String *str = createString("");
+    for (int i = 0; i < fromStr->lenght; i++) {
+        int ch = fromStr->value[i];
+        if (isValidHexaChar(ch)) {
+            appendCharacter(str, ch);
+        } else {
+            appendCharacter(str, (int) '\\');
+            for (int n = 2; n >= 0; n--) {
+                int pos = pow(10, n);
+                int dec = (ch % (pos * 10)) / pos;
+                dec += 48;
+                appendCharacter(str, dec);
+            }
+        }
+    }
+    return str;
 }

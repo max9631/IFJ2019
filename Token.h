@@ -18,8 +18,8 @@ typedef enum {
     OPERATOR_NEQL,//!=
     OPERATOR_MORE, //>
     OPERATOR_MOREEQL, //>=
-    OPERATOR_LESS, //<
-    OPERATOR_LESSEQL, //<=
+    OPERATOR_LESS, // <
+    OPERATOR_LESSEQL, // <=
     OPERATOR_ADD, //+
     OPERATOR_ADD_ASSIGN, //+=
     OPERATOR_SUB, //-
@@ -32,6 +32,7 @@ typedef enum {
     OPERATOR_MUL_ASSIGN, //*=
     OPERATOR_AND, // TODO and
     OPERATOR_OR, // TODO or
+    OPERATOR_IDIV,
 
     /* Misc */
     TOKEN_OPAREN, //(

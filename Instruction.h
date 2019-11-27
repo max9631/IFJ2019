@@ -2,19 +2,21 @@
 #define ASSEMBLYDEFS_H
 #include "String.h"
 
+void instructionIFJSign(void);
+
 // Prace s ramci, volani funkci
-void instructionMove(String *var);
-void instructionCreateFrame();
-void instructionPushFrame();
-void instructionPopFrame();
+void instructionMove(String *var, String *sym);
+void instructionCreateFrame(void);
+void instructionPushFrame(void);
+void instructionPopFrame(void);
 void instructionDefVar(String *var);
 void instructionCall(String *label);
-void instructionReturn();
+void instructionReturn(void);
 
 // Prace s datovym zasobnikem
 void instructionPushStack(String *var);
 void instructionPopStack(String *var);
-void instructionClearStack();
+void instructionClearStack(void);
 
 // Aritmeticke, relacni, booleovske a konverzni instrukce
 void instructionAdd(String *var);
@@ -22,40 +24,40 @@ void instructionSub(String *var);
 void instructionMul(String *var);
 void instructionDiv(String *var);
 void instructionIDiv(String *var);
-void instructionAddStack();
-void instructionSubStack();
-void instructionMulStack();
-void instructionDivStack();
-void instructionIDivStack();
-void instructionLessThan(String *var);
-void instructionGreaterThanStack();
-void instructionEqualsStack();
-void instructionLessThanStack();
-void instrutionGreaterThanStack();
-void instrutionEqualsStack();
+void instructionAddStack(void);
+void instructionSubStack(void);
+void instructionMulStack(void);
+void instructionDivStack(void);
+void instructionIDivStack(void);
+void instructionLessThan(String *var, String *sym1, String *sym2);
+void instructionGreaterThan(String *var, String *sym1, String *sym2);
+void instructionGreaterThanStack(void);
+void instructionEqualsStack(void);
+void instructionLessThanStack(void);
+void instrutionEqualsStack(void);
 void instructionAnd(String *var);
 void instructionOr(String *var);
 void instructionNot(String *var);
-void instructionAndStack();
-void instructionOrStack();
-void instructionNotStack();
+void instructionAndStack(void);
+void instructionOrStack(void);
+void instructionNotStack(void);
 void instructionIntToFloat(String *var);
 void instructionFloatToInt(String *var);
-void instructionIntToChar(String *var);
+void instructionIntToChar(String *var, String *strchar);
 void instructionStringToInt(String *var);
-void instructionIntToFloatStack();
-void instructionFloatToIntStack();
-void instructionIntToCharStack();
-void instructionStriToIntStack();
+void instructionIntToFloatStack(void);
+void instructionFloatToIntStack(void);
+void instructionIntToCharStack(void);
+void instructionStriToIntStack(void);
 
 // Vstupne-Vystupni instrukce
-void instructionRead(String *var);
-void instructionWrite();
+void instructionRead(String *var, String *type);
+void instructionWrite(String *symb);
 
 // Prace s reteci
-void instructionConcat(String *var);
-void instructionStrLen(String *var);
-void instructionGetChar(String *var);
+void instructionConcat(String *var, String *sym1, String *sym2);
+void instructionStrLen(String *var, String *str);
+void instructionGetChar(String *var, String *str, String *position);
 void instructionSetChar(String *var);
 
 // Prace s typy
@@ -68,7 +70,7 @@ void instructionJumpIfEquals(String *label, String *symb1, String *symb2);
 void instructionJumpIfNotEquals(String *label, String *symb1, String *symb2);
 void instructionJumpIfEqualsStack(String *label);
 void instructionJumpIfNotEqualsStack(String *label);
-void instructionExit();
+void instructionExit(void);
 
 // Ladici instrukce
 void instructionBreak(void);

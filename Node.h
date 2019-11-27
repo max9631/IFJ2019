@@ -80,7 +80,8 @@ typedef enum _OperationType {
     OPERATION_LESS,
     OPERATION_LESSOREQUALS,
     OPERATION_AND,
-    OPERATION_OR
+    OPERATION_OR,
+    OPERATION_IDIV
 } OperationType;
 
 typedef struct _OperationNode {
@@ -100,7 +101,7 @@ typedef enum _StatementType {
 
 typedef struct _StatementNode {
     void *statement;
-    StatementType type;
+    StatementType statementType;
 } StatementNode;
 
 typedef enum _AssignOperator {
@@ -159,7 +160,7 @@ FuncNode *createFuncNode(String *name, BodyNode *body);
 CondNode *createCondNode(ExpressionNode *condition, BodyNode *trueBody, BodyNode *falseBody);
 WhileNode *createWhileNode(ExpressionNode *condition, BodyNode *body);
 AssignNode *createAssignNode(String *identifier, AssignOperator operator, ExpressionNode *expression, bool cretesVariable, bool isGlobal);
-StatementNode *craeteStatementNode(void *statement, StatementType type);
+StatementNode *createStatementNode(void *statement, StatementType type);
 ExpressionNode *createExpressionNode(void *expressions, ExpressionType type, ExpressionDataType dataType);
 BodyNode *createBodyNode(BodyNode *parrentBody, HashTable *symtable);
 MainNode *createMainNode(BodyNode *body);

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <math.h>
 #include <string.h>
 #include "Error.h"
 
@@ -30,7 +31,7 @@ bool appendCharacter(String *str, int c);
 /**
  * Checks whether str1 and str2 are the same.
  */
-bool stringEquals(String *str1, String *str2);
+bool stringEquals(String *str1, char *str2);
 
 /**
  * Deallocates str.
@@ -44,5 +45,7 @@ void destroyString(String *str);
   */
 
 int stringLength(char *str);
+
+String *convertToHexadecimalString(String *str);
 
 #endif
