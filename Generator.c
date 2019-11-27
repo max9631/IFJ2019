@@ -11,6 +11,7 @@ Generator *createGenerator() {
 }
 
 void generateMain(Generator *generator, MainNode *main) {
+    instructionIFJSign();
     instructionDefVar(generator->tmp1Var);
     instructionDefVar(generator->tmp2Var);
     instructionDefVar(generator->tmp3Var);

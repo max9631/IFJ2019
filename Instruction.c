@@ -1,5 +1,9 @@
 #include "Instruction.h"
 
+void instructionIFJSign() {
+    printf(".IFJcode19\n");
+}
+
 // Prace se zasobnikem, volani funkci.
 void instructionMove(String *var, String *sym) {
     printf("MOVE %s %s\n", var->value, sym->value);

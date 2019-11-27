@@ -2,6 +2,8 @@
 #define ASSEMBLYDEFS_H
 #include "String.h"
 
+void instructionIFJSign();
+
 // Prace s ramci, volani funkci
 void instructionMove(String *var, String *sym);
 void instructionCreateFrame();
