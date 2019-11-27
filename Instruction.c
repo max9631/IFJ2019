@@ -95,8 +95,8 @@ void instructionGreaterThan(String *var, String *sym1, String *sym2) {
     printf("GT %s %s %s\n", var->value, sym1->value, sym2->value);
 }
 
-void instructionEquals(String *var) {
-    printf("EQ %s\n", var->value);
+void instructionEquals(String *var, String *sym1, String *sym2) {
+    printf("EQ %s %s %s\n", var->value, sym1->value, sym2->value);
 }
 
 void instructionLessThanStack() {
@@ -111,8 +111,8 @@ void instructionEqualsStack() {
     printf("EQS\n");
 }
 
-void instructionAnd(String *var) {
-    printf("AND %s\n", var->value);
+void instructionAnd(String *var, String *sym1, String *sym2) {
+    printf("AND %s %s %s\n", var->value, sym1->value, sym2->value);
 }
 
 void instructionOr(String *var) {
@@ -194,8 +194,8 @@ void instructionSetChar(String *var) {
 }
 
 // Prace s typy
-void instructionType(String *var) {
-    printf("TYPE %s\n", var->value);
+void instructionType(String *var, String *sym) {
+    printf("TYPE %s %s\n", var->value, sym->value);
 }
 
 // Instrukce pro rizeni toku programu
@@ -223,8 +223,8 @@ void instructionJumpIfNotEqualsStack(String *label) {
     printf("JUMPIFNEQS %s\n", label->value);
 }
 
-void instructionExit() {
-    printf("EXIT\n");
+void instructionExit(int exitCode) {
+    printf("EXIT int@%d\n", exitCode);
 }
 
 // Ladici instrukce
