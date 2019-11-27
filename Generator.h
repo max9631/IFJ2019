@@ -7,10 +7,17 @@
 typedef struct _Generator {
     int condCount;
     int whileCount;
+    String *checkExpressionTypesFunctionLabel;
+    String *checkTypeFunctionLabel;
+    String *convertToFloatFunctionLabel;
+    String *addOrConcatFunction;
+    
     String *tmp1Var;
     String *tmp2Var;
     String *tmp3Var;
 } Generator;
+
+#include "Embedded.h"
 
 Generator *createGenerator(void);
 
@@ -30,8 +37,5 @@ void generateReturn(Generator *generator, StatementNode *node);
 void generatePrint(Generator *generator, CallNode *call);
 void generateInput(Generator *generator, String *type);
 void generateLen(Generator *generator, ExpressionNode *expression);
-void generateChrFunction(Generator *generator);
-void generateOrdFunction(Generator *generator);
-void generateSubStringFunction(Generator *generator);
 
 #endif
