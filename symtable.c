@@ -23,14 +23,39 @@ HashTable *createFuncTable() {
 	insertHashTableItem(table, "inputs", (void *) 0x0);
 	insertHashTableItem(table, "inputf", (void *) 0x0);
 	insertHashTableItem(table, "len", (void *) 0x1);
-	insertHashTableItem(table, "substr", (void *) 0x3);
-	insertHashTableItem(table, "ord", (void *) 0x2);
-	insertHashTableItem(table, "chr", (void *) 0x1);
+    insertHashTableItem(table, "substr", (void *) 0x3);
+    insertHashTableItem(table, "ord", (void *) 0x2);
+    insertHashTableItem(table, "chr", (void *) 0x1);
 	return table;
 }
 
 HashTable *createSymTable() {
 	return createHashTable();
+}
+
+
+HashTable *copyHashTable(HashTable *table) {
+    HashTable *copy = createHashTable();
+    for (int i = 0; i < HTSIZE; i++) {
+        HashTableItem *item = (*table)[i];
+        while (item != NULL) {
+            insertHashTableItem(copy, item->key, item->data);
+            item = item->ptrnext;
+        }
+    }
+    return copy;
+}
+
+HashTable *mergeHashTables(HashTable *table1, HashTable *table2) {
+    HashTable *mergeTable = table1;
+    for (int i = 0; i < HTSIZE; i++) {
+        HashTableItem *item = (*table2)[i];
+        while (item != NULL) {
+            insertHashTableItem(mergeTable, item->key, item->data);
+            item = item->ptrnext;
+        }
+    }
+    return mergeTable;
 }
 
 HashTableItem* getHashTableItem(HashTable *table, char *key) {

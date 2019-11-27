@@ -90,15 +90,21 @@ CondNode *parseCond(ParserState *state, BodyNode *body) {
     consume(list, TOKEN_COLON);
     consume(list, TOKEN_EOL);
     consume(list, TOKEN_INDENT);
-    BodyNode *trueBody = parseBody(state, body, NULL, 0, body->symTable);
+    
+    HashTable *trueSymTable = copyHashTable(body->symTable);
+    HashTable *falseSymTable = copyHashTable(body->symTable);
+    
+    BodyNode *trueBody = parseBody(state, body, NULL, 0, trueSymTable, body->isGlobal);
     consume(list, TOKEN_DEINDENT);
     consume(list, TOKEN_EOL);
     consume(list, KEYWORD_ELSE);
     consume(list, TOKEN_COLON);
     consume(list, TOKEN_EOL);
     consume(list, TOKEN_INDENT);
-    BodyNode *falseBody = parseBody(state, body, NULL, 0, body->symTable);
+    BodyNode *falseBody = parseBody(state, body, NULL, 0, falseSymTable, body->isGlobal);
     consume(list, TOKEN_DEINDENT);
+    
+    body->symTable = mergeHashTables(trueSymTable, falseSymTable);
     return createCondNode(condition, trueBody, falseBody);
 }
 
