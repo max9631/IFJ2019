@@ -151,13 +151,13 @@ void generateReturn(Generator *generator, StatementNode *statement) {
 
 void generatePrint(Generator *generator, CallNode *call) {
     for (int i = 0; i < call->argsCount; i++) {
-        if (i == 0) instructionWrite(createString("string@\032"));
+        if (i == 0) instructionWrite(createString("string@\\032"));
         generateExpression(generator, call->expressions[i]);
         instructionPopStack(generator->tmp1Var);
         // TODO: check if not nil
         instructionWrite(generator->tmp1Var);
     }
-    instructionWrite(createString("string@\010"));
+    instructionWrite(createString("string@\\010"));
 }
 
 void generateInput(Generator *generator, String *type) {
