@@ -2,7 +2,7 @@
 
 // prints message to stderr, clears memory and exits with specified error number.
 void handleError(ErrorCodes code, char *message, ...) {
-	if (!inDebugMode) 
+	if (!inDebugMode)
 		return;
 	fflush(stderr);
 	fflush(stdout);

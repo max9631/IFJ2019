@@ -70,9 +70,9 @@ void destroyToken(Token *token) {
 }
 
 bool isTokenAsignOperator(Token *token) {
-    return token->type == OPERATOR_ASSIGN || 
-        token->type == OPERATOR_DIV_ASSIGN || 
-        token->type == OPERATOR_MUL_ASSIGN || 
-        token->type == OPERATOR_ADD_ASSIGN || 
+    return token->type == OPERATOR_ASSIGN ||
+        token->type == OPERATOR_DIV_ASSIGN ||
+        token->type == OPERATOR_MUL_ASSIGN ||
+        token->type == OPERATOR_ADD_ASSIGN ||
         token->type == OPERATOR_SUB_ASSIGN;
 }
