@@ -221,6 +221,7 @@ bool isTokenOperator(Token *token) {
         token->type == OPERATOR_SUB ||
         token->type == OPERATOR_EQL ||
         token->type == OPERATOR_DIV ||
+        token->type == OPERATOR_IDIV ||
         token->type == OPERATOR_MUL;
 }
 

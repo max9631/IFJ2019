@@ -80,7 +80,8 @@ typedef enum _OperationType {
     OPERATION_LESS,
     OPERATION_LESSOREQUALS,
     OPERATION_AND,
-    OPERATION_OR
+    OPERATION_OR,
+    OPERATION_IDIV
 } OperationType;
 
 typedef struct _OperationNode {

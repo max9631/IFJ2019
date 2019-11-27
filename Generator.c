@@ -413,6 +413,8 @@ void stackInstructionForOperationType(Generator *generator, OperationNode *opera
         case OPERATION_OR:
             instructionOrStack();
             break;
+        case OPERATION_IDIV:
+            instructionIDivStack();
     }
 }
 
