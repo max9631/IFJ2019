@@ -112,15 +112,18 @@ Token *defineIdentifier(Document *document) {
 		ch = nextCharacter(document);
 	}
 	TokenType type;
-	if(strcmp("def",string->value) == 0) type = KEYWORD_DEF;
-	else if(strcmp("else",string->value) == 0) type = KEYWORD_ELSE;
-	else if(strcmp("return",string->value) == 0) type = KEYWORD_RETURN;
-	else if(strcmp("if",string->value) == 0) type = KEYWORD_IF;
-	else if(strcmp("None",string->value) == 0) type = DATA_TOKEN_NONE;
-	else if(strcmp("while",string->value) == 0) type = KEYWORD_WHILE;
-	else if(strcmp("pass",string->value) == 0) type = KEYWORD_PASS;
-	else if(strcmp("True",string->value) == 0) type = DATA_TOKEN_BOOL;
-	else if(strcmp("False",string->value) == 0) type = DATA_TOKEN_BOOL;
+    if (stringEquals(string, "def")) type = KEYWORD_DEF;
+    else if (stringEquals(string, "else")) type = KEYWORD_ELSE;
+    else if (stringEquals(string, "return")) type = KEYWORD_RETURN;
+    else if (stringEquals(string, "if")) type = KEYWORD_IF;
+    else if (stringEquals(string, "None")) type = DATA_TOKEN_NONE;
+    else if (stringEquals(string, "while")) type = KEYWORD_WHILE;
+    else if (stringEquals(string, "pass")) type = KEYWORD_PASS;
+    else if (stringEquals(string, "True")) type = DATA_TOKEN_BOOL;
+    else if (stringEquals(string, "False")) type = DATA_TOKEN_BOOL;
+    else if (stringEquals(string, "and")) type = OPERATOR_AND;
+    else if (stringEquals(string, "or")) type = OPERATOR_OR;
+    else if (stringEquals(string, "not")) type = OPERATOR_NOT;
 	else return createToken(string, TOKEN_IDENTIFIER);
 	return createToken(string, type);
 }

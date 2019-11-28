@@ -81,6 +81,7 @@ typedef enum _OperationType {
     OPERATION_LESSOREQUALS,
     OPERATION_AND,
     OPERATION_OR,
+    OPERATION_NOT,
     OPERATION_IDIV
 } OperationType;
 

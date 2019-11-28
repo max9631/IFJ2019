@@ -135,7 +135,10 @@ void generateStatement(Generator *generator, StatementNode *statement) {
             break;
         case STATEMENT_EXPRESSION:;
             ExpressionNode *exprNode = (ExpressionNode *)statement->statement;
-            generateExpression(generator, exprNode);
+            if (exprNode->type == EXPRESSION_CALL) {
+                generateExpression(generator, exprNode);
+                instructionPopStack(generator->tmp1Var);
+            }
             break;
         case STATEMENT_ASSIGN:;
             AssignNode *assignNode = (AssignNode *)statement->statement;
@@ -261,7 +264,32 @@ void stackInstructionForOperationType(Generator *generator, OperationNode *opera
         case OPERATION_IDIV:
             instructionIDivStack();
             break;
+        case OPERATION_NOT:
+            instructionNotStack();
     }
+}
+
+bool isAritmeticalOperation(OperationNode *operation) {
+    switch (operation->type) {
+    case OPERATION_ADD:
+    case OPERATION_SUB:
+    case OPERATION_MUL:
+    case OPERATION_DIV:
+    case OPERATION_IDIV:
+        return true;
+            
+    case OPERATION_EQUALS:
+    case OPERATION_NOTEQUALS:
+    case OPERATION_GREATER:
+    case OPERATION_GREATEROREQUALS:
+    case OPERATION_LESS:
+    case OPERATION_LESSOREQUALS:
+    case OPERATION_AND:
+    case OPERATION_OR:
+    case OPERATION_NOT:
+        return false;
+    }
+    return false;
 }
 
 void generateExpression(Generator *generator, ExpressionNode *expression) {
@@ -276,12 +304,17 @@ void generateExpression(Generator *generator, ExpressionNode *expression) {
             break;
         case EXPRESSION_OPERATION:;
             OperationNode *operation = (OperationNode *) expression->expression;
-            generateExpression(generator, operation->value1);
-            generateExpression(generator, operation->value2);
             
-            instructionPushFrame();
-            instructionCall(generator->checkExpressionTypesFunctionLabel);
-            instructionPopFrame();
+            generateExpression(generator, operation->value1);
+            if (operation->type != OPERATION_NOT) {
+                generateExpression(generator, operation->value2);
+            }
+            
+            if (isAritmeticalOperation(operation)) {
+                instructionPushFrame();
+                instructionCall(generator->checkExpressionTypesFunctionLabel);
+                instructionPopFrame();
+            }
 
             // TODO: generate code for type checking. If data types of operand are not compatible, exit with code 4.
             stackInstructionForOperationType(generator, operation);
