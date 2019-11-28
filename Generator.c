@@ -119,6 +119,7 @@ void generateAssign(Generator *generator, AssignNode *assign) {
 }
 
 void generateStatement(Generator *generator, StatementNode *statement) {
+    if (statement == NULL) return;
     switch (statement->statementType) {
         case STATEMENT_IF:;
             CondNode *condNode = (CondNode *)statement->statement;
@@ -203,9 +204,9 @@ String *convertValueToIFJ(ValueNode *value, ExpressionDataType dataType) {
         switch (dataType) {
             case EXPRESSION_DATA_TYPE_NONE: return createString("nil@nil");
             case EXPRESSION_DATA_TYPE_INT: return createString("int@%s", value->value.intVal->value);
-            case EXPRESSION_DATA_TYPE_FLOAT: return createString("float@%s", value->value.floatVal->value);
-            case EXPRESSION_DATA_TYPE_BOOL: return createString("bool@%s", value->value.boolVal->value);
-            case EXPRESSION_DATA_TYPE_STRING: return createString("string@%s", convertToHexadecimalString(value->value.stringVal)->value);
+            case EXPRESSION_DATA_TYPE_FLOAT: return createString("float@%s", convertFloatToHexadecimal(value->value.floatVal)->value);
+            case EXPRESSION_DATA_TYPE_BOOL: return createString("bool@%s", convertBoolToLowercase(value->value.boolVal)->value);
+            case EXPRESSION_DATA_TYPE_STRING: return createString("string@%s", convertStringCharsToHexadecimal(value->value.stringVal)->value);
             case EXPRESSION_DATA_TYPE_UNKNOWN: return createString("nil@nil");
         }
     } else if (value->type == VALUE_VARIABLE) {
@@ -227,6 +228,16 @@ void stackInstructionForOperationType(Generator *generator, OperationNode *opera
             instructionMulStack();
             break;
         case OPERATION_DIV:
+            instructionPopStack(generator->tmp1Var);
+            instructionPushFrame();
+            instructionCall(generator->convertToFloatFunctionLabel);
+            instructionPopFrame();
+            
+            instructionPushStack(generator->tmp1Var);
+            instructionPushFrame();
+            instructionCall(generator->convertToFloatFunctionLabel);
+            instructionPopFrame();
+            
             instructionDivStack();
             break;
         case OPERATION_EQUALS:
@@ -270,27 +281,30 @@ void stackInstructionForOperationType(Generator *generator, OperationNode *opera
     }
 }
 
-bool isAritmeticalOperation(OperationNode *operation) {
+bool isOneOperandOperations(OperationNode *operation) {
+    return operation->type == OPERATION_NOT;
+}
+
+bool requiresFail(OperationNode *operation) {
     switch (operation->type) {
     case OPERATION_ADD:
     case OPERATION_SUB:
     case OPERATION_MUL:
     case OPERATION_DIV:
     case OPERATION_IDIV:
-        return true;
-            
-    case OPERATION_EQUALS:
-    case OPERATION_NOTEQUALS:
     case OPERATION_GREATER:
     case OPERATION_GREATEROREQUALS:
     case OPERATION_LESS:
     case OPERATION_LESSOREQUALS:
+        return true;
+    case OPERATION_EQUALS:
+    case OPERATION_NOTEQUALS:
     case OPERATION_AND:
     case OPERATION_OR:
     case OPERATION_NOT:
+    default:
         return false;
     }
-    return false;
 }
 
 void generateExpression(Generator *generator, ExpressionNode *expression) {
@@ -306,18 +320,24 @@ void generateExpression(Generator *generator, ExpressionNode *expression) {
         case EXPRESSION_OPERATION:;
             OperationNode *operation = (OperationNode *) expression->expression;
             
-            generateExpression(generator, operation->value1);
-            if (operation->type != OPERATION_NOT) {
-                generateExpression(generator, operation->value2);
+            if (isOneOperandOperations(operation)) {
+                generateExpression(generator, operation->value1);
+                stackInstructionForOperationType(generator, operation);
+                return;
             }
             
-            if (isAritmeticalOperation(operation)) {
-                instructionPushFrame();
-                instructionCall(generator->checkExpressionTypesFunctionLabel);
-                instructionPopFrame();
+            generateExpression(generator, operation->value1);
+            generateExpression(generator, operation->value2);
+            
+            if (requiresFail(operation)) {
+                instructionPushStack(createString("bool@true"));
+            } else {
+                instructionPushStack(createString("bool@false"));
             }
-
-            // TODO: generate code for type checking. If data types of operand are not compatible, exit with code 4.
+            instructionPushFrame();
+            instructionCall(generator->checkExpressionTypesFunctionLabel);
+            instructionPopFrame();
+            
             stackInstructionForOperationType(generator, operation);
             break;
         case EXPRESSION_CONVERSION_INT_TO_FLOAT:

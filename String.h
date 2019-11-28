@@ -46,6 +46,8 @@ void destroyString(String *str);
 
 int stringLength(char *str);
 
-String *convertToHexadecimalString(String *str);
+String *convertStringCharsToHexadecimal(String *fromStr);
+String *convertFloatToHexadecimal(String *fl);
+String *convertBoolToLowercase(String *fl);
 
 #endif
