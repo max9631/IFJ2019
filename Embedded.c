@@ -237,9 +237,9 @@ void generateSubStringFunction(Generator *generator) {
     String *index = createString("TF@i");
     String *length = createString("TF@length");
     
-    instructionDefVar(str);
-    instructionDefVar(subLen);
-    instructionDefVar(index);
+    instructionDefVar(str); //s
+    instructionDefVar(subLen); //delka
+    instructionDefVar(index); //index
     instructionDefVar(length);
     
     instructionPopStack(subLen);
@@ -250,8 +250,8 @@ void generateSubStringFunction(Generator *generator) {
     // TODO: check string
     instructionStrLen(length, str);
     
-    instructionLessThan(generator->tmp1Var, index, length);
-    instructionGreaterThan(generator->tmp2Var, index, createString("int@0"));
+    instructionGreaterThan(generator->tmp1Var, index, length);
+    instructionLessThan(generator->tmp2Var, index, createString("int@0"));
     instructionLessThan(generator->tmp3Var, subLen, createString("int@0"));
     
     // if
@@ -288,8 +288,9 @@ void generateSubStringFunction(Generator *generator) {
     instructionAndStack();
     instructionPushStack(createString("bool@false"));
     instructionJumpIfEqualsStack(whileEndLabel);
-    instructionGetChar(generator->tmp1Var, str, i);
+    instructionGetChar(generator->tmp1Var, str, i); 
     instructionConcat(finalStr, finalStr, generator->tmp1Var);
+    instructionAdd(i, i, createString("int@1"));
     instructionJump(whileLabel);
     
     instructionLabel(whileEndLabel);

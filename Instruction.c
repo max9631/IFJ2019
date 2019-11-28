@@ -47,24 +47,24 @@ void instructionClearStack() {
 }
 
 // Aritmeticke, relacni, booleovske a konverzni instrukce
-void instructionAdd(String *var) {
-    printf("ADD %s\n", var->value);
+void instructionAdd(String *var, String *symb1, String *symb2) {
+    printf("ADD %s %s %s\n", var->value, symb1->value, symb2->value);
 }
 
-void instructionSub(String *var) {
-    printf("SUB %s\n", var->value);
+void instructionSub(String *var, String *symb1, String *symb2) {
+    printf("SUB %s %s %s\n", var->value, symb1->value, symb2->value);
 }
 
-void instructionMul(String *var) {
-    printf("MUL %s\n", var->value);
+void instructionMul(String *var, String *symb1, String *symb2) {
+    printf("MUL %s %s %s \n", var->value, symb1->value, symb2->value);
 }
 
-void instructionDiv(String *var) {
-    printf("DIV %s\n", var->value);
+void instructionDiv(String *var, String *symb1, String *symb2) {
+    printf("DIV %s %s %s\n", var->value, symb1->value, symb2->value);
 }
 
-void instructionIDiv(String *var) {
-    printf("IDIV %s\n", var->value);
+void instructionIDiv(String *var, String *symb1, String *symb2) {
+    printf("IDIV %s %s %s\n", var->value, symb1->value, symb2->value);
 }
 
 void instructionAddStack() {
