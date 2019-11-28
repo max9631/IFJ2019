@@ -135,7 +135,10 @@ void generateStatement(Generator *generator, StatementNode *statement) {
             break;
         case STATEMENT_EXPRESSION:;
             ExpressionNode *exprNode = (ExpressionNode *)statement->statement;
-            generateExpression(generator, exprNode);
+            if (exprNode->type == EXPRESSION_CALL) {
+                generateExpression(generator, exprNode);
+                instructionPopStack(generator->tmp1Var);
+            }
             break;
         case STATEMENT_ASSIGN:;
             AssignNode *assignNode = (AssignNode *)statement->statement;
