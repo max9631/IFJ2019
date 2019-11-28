@@ -119,6 +119,7 @@ void generateAssign(Generator *generator, AssignNode *assign) {
 }
 
 void generateStatement(Generator *generator, StatementNode *statement) {
+    if (statement == NULL) return;
     switch (statement->statementType) {
         case STATEMENT_IF:;
             CondNode *condNode = (CondNode *)statement->statement;
