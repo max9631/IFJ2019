@@ -264,6 +264,8 @@ void stackInstructionForOperationType(Generator *generator, OperationNode *opera
         case OPERATION_IDIV:
             instructionIDivStack();
             break;
+        case OPERATION_NOT;
+            instructionNotStack();
     }
 }
 
@@ -279,8 +281,11 @@ void generateExpression(Generator *generator, ExpressionNode *expression) {
             break;
         case EXPRESSION_OPERATION:;
             OperationNode *operation = (OperationNode *) expression->expression;
+            
             generateExpression(generator, operation->value1);
-            generateExpression(generator, operation->value2);
+            if (operation->type != OPERATION_NOT) {
+                generateExpression(generator, operation->value2);
+            }
             
             instructionPushFrame();
             instructionCall(generator->checkExpressionTypesFunctionLabel);

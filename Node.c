@@ -115,6 +115,7 @@ OperationType operationTypeForToken(Token *token) {
     case OPERATOR_AND: return OPERATION_AND;
     case OPERATOR_OR: return OPERATION_OR;
     case OPERATOR_IDIV: return OPERATION_IDIV;
+    case OPERATOR_NOT: return OPERATION_NOT;
     default: handleError(SyntaxError, "Invalid Operation '%s'\nInvalid expression on line %d", token->value, token->line);
     }
     return OPERATION_OR;

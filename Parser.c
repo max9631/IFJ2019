@@ -234,7 +234,9 @@ ExpressionNode *parseOperation(ParserState *state, Stack *prefix, OperationType 
     PrefixItem *item;
     ExpressionNode *operands[2];
 
-    for (int i = 1; i >= 0; i--) {
+    bool isSingleValue = type == OPERATION_NOT;
+    int numOfOperands = isSingleValue ? 1 : 2;
+    for (int i = 1; i >= numOfOperands; i--) {
         item = (PrefixItem *) pop(prefix);
         if (item->type == PREFIX_OPERATOR_TOKEN) {
             Token *token = (Token *) item->prefix.operator;
@@ -246,7 +248,6 @@ ExpressionNode *parseOperation(ParserState *state, Stack *prefix, OperationType 
     }
 
     operation->value1 = operands[0];
-    operation->value2 = operands[1];
 
     if (operation->value2->dataType == EXPRESSION_DATA_TYPE_FLOAT && operation->value1->dataType == EXPRESSION_DATA_TYPE_INT) {
         operation->value1 = createExpressionNode(operation->value1, EXPRESSION_CONVERSION_INT_TO_FLOAT, EXPRESSION_DATA_TYPE_FLOAT);
@@ -260,6 +261,8 @@ ExpressionNode *parseOperation(ParserState *state, Stack *prefix, OperationType 
         if (operation->value2->dataType == EXPRESSION_DATA_TYPE_INT) {
             operation->value2 = createExpressionNode(operation->value2, EXPRESSION_CONVERSION_INT_TO_FLOAT, EXPRESSION_DATA_TYPE_FLOAT);
         }
+    if (!isSingleValue) {
+        operation->value2 = operands[1];
     }
 
     ExpressionDataType dataType = EXPRESSION_DATA_TYPE_UNKNOWN;
@@ -274,13 +277,14 @@ bool isTokenExpression(Token *token) {
 int priorityForOperator(TokenType type) {
     switch (type) {
         case OPERATOR_NOT:
+        case OPERATOR_AND:
+        case OPERATOR_OR:
+            return 4;
         case OPERATOR_NEQL:
         case OPERATOR_MORE:
         case OPERATOR_MOREEQL:
         case OPERATOR_LESS:
         case OPERATOR_LESSEQL:
-        case OPERATOR_AND:
-        case OPERATOR_OR:
         case OPERATOR_EQL:
             return 3;
         case OPERATOR_ADD:
