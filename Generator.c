@@ -264,7 +264,7 @@ void stackInstructionForOperationType(Generator *generator, OperationNode *opera
         case OPERATION_IDIV:
             instructionIDivStack();
             break;
-        case OPERATION_NOT;
+        case OPERATION_NOT:
             instructionNotStack();
     }
 }
@@ -287,6 +287,7 @@ bool isAritmeticalOperation(OperationNode *operation) {
     case OPERATION_AND:
     case OPERATION_OR:
     case OPERATION_NOT:
+        return false;
     }
     return false;
 }
