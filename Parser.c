@@ -246,25 +246,11 @@ ExpressionNode *parseOperation(ParserState *state, Stack *prefix, OperationType 
         } else
             handleError(SyntaxError, "Invalid expression on line %d", line);
     }
-
+    
     operation->value1 = operands[0];
-
-    if (operation->value2->dataType == EXPRESSION_DATA_TYPE_FLOAT && operation->value1->dataType == EXPRESSION_DATA_TYPE_INT) {
-        operation->value1 = createExpressionNode(operation->value1, EXPRESSION_CONVERSION_INT_TO_FLOAT, EXPRESSION_DATA_TYPE_FLOAT);
-    } else if (operation->value1->dataType == EXPRESSION_DATA_TYPE_FLOAT && operation->value2->dataType == EXPRESSION_DATA_TYPE_INT) {
-        operation->value2 = createExpressionNode(operation->value2, EXPRESSION_CONVERSION_INT_TO_FLOAT, EXPRESSION_DATA_TYPE_FLOAT);
-    }
-    if (operation->type == OPERATION_DIV) {
-        if (operation->value1->dataType == EXPRESSION_DATA_TYPE_INT) {
-            operation->value1 = createExpressionNode(operation->value1, EXPRESSION_CONVERSION_INT_TO_FLOAT, EXPRESSION_DATA_TYPE_FLOAT);
-        }
-        if (operation->value2->dataType == EXPRESSION_DATA_TYPE_INT) {
-            operation->value2 = createExpressionNode(operation->value2, EXPRESSION_CONVERSION_INT_TO_FLOAT, EXPRESSION_DATA_TYPE_FLOAT);
-        }
     if (!isSingleValue) {
         operation->value2 = operands[1];
     }
-
     ExpressionDataType dataType = EXPRESSION_DATA_TYPE_UNKNOWN;
     return createExpressionNode(operation, EXPRESSION_OPERATION, dataType);
 }
