@@ -228,6 +228,16 @@ void stackInstructionForOperationType(Generator *generator, OperationNode *opera
             instructionMulStack();
             break;
         case OPERATION_DIV:
+            instructionPopStack(generator->tmp1Var);
+            instructionPushFrame();
+            instructionCall(generator->convertToFloatFunctionLabel);
+            instructionPopFrame();
+            
+            instructionPushStack(generator->tmp1Var);
+            instructionPushFrame();
+            instructionCall(generator->convertToFloatFunctionLabel);
+            instructionPopFrame();
+            
             instructionDivStack();
             break;
         case OPERATION_EQUALS:
