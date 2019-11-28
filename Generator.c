@@ -269,6 +269,28 @@ void stackInstructionForOperationType(Generator *generator, OperationNode *opera
     }
 }
 
+bool isAritmeticalOperation(OperationNode *operation) {
+    switch (operation->type) {
+    case OPERATION_ADD:
+    case OPERATION_SUB:
+    case OPERATION_MUL:
+    case OPERATION_DIV:
+    case OPERATION_IDIV:
+        return true;
+            
+    case OPERATION_EQUALS:
+    case OPERATION_NOTEQUALS:
+    case OPERATION_GREATER:
+    case OPERATION_GREATEROREQUALS:
+    case OPERATION_LESS:
+    case OPERATION_LESSOREQUALS:
+    case OPERATION_AND:
+    case OPERATION_OR:
+    case OPERATION_NOT:
+    }
+    return false;
+}
+
 void generateExpression(Generator *generator, ExpressionNode *expression) {
     switch (expression->type) {
         case EXPRESSION_CALL:;
@@ -287,9 +309,11 @@ void generateExpression(Generator *generator, ExpressionNode *expression) {
                 generateExpression(generator, operation->value2);
             }
             
-            instructionPushFrame();
-            instructionCall(generator->checkExpressionTypesFunctionLabel);
-            instructionPopFrame();
+            if (isAritmeticalOperation(operation)) {
+                instructionPushFrame();
+                instructionCall(generator->checkExpressionTypesFunctionLabel);
+                instructionPopFrame();
+            }
 
             // TODO: generate code for type checking. If data types of operand are not compatible, exit with code 4.
             stackInstructionForOperationType(generator, operation);
