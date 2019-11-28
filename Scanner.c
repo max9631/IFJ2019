@@ -196,9 +196,8 @@ int getDecimalChFromHexaCharsOnLine(int hex1, int hex2, int line) {
 
 String *recordStringUntilChar(Document *document, int endChar) {
 	int ch = document->currentChar;
-	String *string = createStringFromChar(ch);
+	String *string = createString("");
 	bool isEscaping = false;
-	ch = nextCharacter(document);
 	while (ch != endChar || isEscaping) {
         if (ch == (int) '\\') {
             isEscaping = true;
