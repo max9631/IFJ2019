@@ -166,6 +166,7 @@ void generatePrint(Generator *generator, CallNode *call) {
         instructionWrite(generator->tmp1Var);
     }
     instructionWrite(createString("string@\\010"));
+    instructionPushStack(createString("nil@nil"));
 }
 
 void generateInput(Generator *generator, String *type) {
