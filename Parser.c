@@ -226,6 +226,7 @@ bool isTokenOperator(Token *token) {
         token->type == OPERATOR_EQL ||
         token->type == OPERATOR_DIV ||
         token->type == OPERATOR_IDIV ||
+        token->type == OPERATOR_NOT ||
         token->type == OPERATOR_MUL;
 }
 
@@ -235,8 +236,8 @@ ExpressionNode *parseOperation(ParserState *state, Stack *prefix, OperationType 
     ExpressionNode *operands[2];
 
     bool isSingleValue = type == OPERATION_NOT;
-    int numOfOperands = isSingleValue ? 1 : 2;
-    for (int i = 1; i >= numOfOperands; i--) {
+    int startVal = isSingleValue ? 0 : 1;
+    for (int i = startVal; i >= 0; i--) {
         item = (PrefixItem *) pop(prefix);
         if (item->type == PREFIX_OPERATOR_TOKEN) {
             Token *token = (Token *) item->prefix.operator;
