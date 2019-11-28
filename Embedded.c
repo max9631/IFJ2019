@@ -5,16 +5,19 @@ void generateCheckExpressionTypesFunction(Generator *generator) {
     instructionLabel(generator->checkExpressionTypesFunctionLabel);
     instructionCreateFrame();
     
+    String *needsFail = createString("TF@needsFail");
     String *arg1 = createString("TF@arg1");
     String *arg2 = createString("TF@arg2");
     String *type1 = createString("TF@type1");
     String *type2 = createString("TF@type2");
     
+    instructionDefVar(needsFail);
     instructionDefVar(arg1);
     instructionDefVar(arg2);
     instructionDefVar(type1);
     instructionDefVar(type2);
     
+    instructionPopStack(needsFail);
     instructionPopStack(arg2);
     instructionPopStack(arg1);
     instructionType(type1, arg1);
@@ -58,7 +61,14 @@ void generateCheckExpressionTypesFunction(Generator *generator) {
     
     instructionLabel(rightCheckLabel);
     
+    String *doesntNeedFailLabel = createString("_%d_does_not_need_to_fail", generator->labelCount++);
+    instructionJumpIfNotEquals(doesntNeedFailLabel, needsFail, createString("bool@true"));
     instructionExit(4);
+    instructionLabel(doesntNeedFailLabel);
+    
+    instructionPushStack(arg1);
+    instructionPushStack(arg2);
+    instructionReturn();
 }
 
 void generateCheckTypeFunction(Generator *generator) {
