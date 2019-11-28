@@ -59,7 +59,7 @@ int stringLength(char *str) {
 
 bool isValidHexaChar(int c) { return (c > 64 && c < 91) || (c > 96 && c < 123) || (c > 47 && c < 58); } // a-z || A-Z || 0-9
 
-String *convertToHexadecimalString(String *fromStr) {
+String *convertStringCharsToHexadecimal(String *fromStr) {
     String *str = createString("");
     for (int i = 0; i < fromStr->lenght; i++) {
         int ch = fromStr->value[i];
@@ -75,5 +75,25 @@ String *convertToHexadecimalString(String *fromStr) {
             }
         }
     }
+    return str;
+}
+
+String *convertFloatToHexadecimal(String *fl) {
+    String *str = (String *) malloc(sizeof(String));
+    if (str == NULL) handleError(InternalError, "String Error: Could not initialize memory");
+    size_t size = snprintf(NULL, 0, "%a", atof(fl->value)) + 1;
+    str->value = (char *) malloc(size);
+    snprintf(str->value, size, "%a", atof(fl->value));
+    str->lenght = stringLength(str->value);
+    return str;
+}
+
+String *convertBoolToLowercase(String *fl) {
+    String *str = (String *) malloc(sizeof(String));
+    if (str == NULL) handleError(InternalError, "String Error: Could not initialize memory");
+    bool isTrue = stringEquals(fl, "True");
+    str->lenght = isTrue ? 4 : 5;
+    str->value = (char *) malloc(str->lenght * sizeof(char));
+    str->value = isTrue ? "true" : "false";
     return str;
 }
