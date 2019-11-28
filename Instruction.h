@@ -19,11 +19,11 @@ void instructionPopStack(String *var);
 void instructionClearStack(void);
 
 // Aritmeticke, relacni, booleovske a konverzni instrukce
-void instructionAdd(String *var);
-void instructionSub(String *var);
-void instructionMul(String *var);
-void instructionDiv(String *var);
-void instructionIDiv(String *var);
+void instructionAdd(String *var, String *symb1, String *symb2);
+void instructionSub(String *var, String *symb1, String *symb2);
+void instructionMul(String *var, String *symb1, String *symb2);
+void instructionDiv(String *var, String *symb1, String *symb2);
+void instructionIDiv(String *var, String *symb1, String *symb2);
 void instructionAddStack(void);
 void instructionSubStack(void);
 void instructionMulStack(void);
