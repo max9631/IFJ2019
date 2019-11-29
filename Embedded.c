@@ -153,7 +153,7 @@ void generateConvertNilToNoneString(Generator *generator) {
     String *notNilLabel = createString("_%d_not_nil_conversion", generator->labelCount);
     instructionLabel(generator->convertNilToNoneStrLabel);
     instructionPopStack(generator->tmp1Var);
-    instructionJumpIfEquals(notNilLabel, generator->tmp1Var, createString("nil@nil"));
+    instructionJumpIfNotEquals(notNilLabel, generator->tmp1Var, createString("nil@nil"));
     instructionPushStack(createString("string@None"));
     instructionReturn();
     instructionLabel(notNilLabel);
