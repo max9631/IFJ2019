@@ -349,6 +349,7 @@ void scan(List *list, Document *document) {
 			addTokenToList(token, list);
 		}
 	}
+    addTokenToList(createTokenWithLine(NULL, TOKEN_EOL, document->line), list);
     while (document->indents->count != 1) {
         popStack(document->indents);
         addTokenToList(createTokenWithLine(NULL, TOKEN_DEINDENT, document->line), list);
