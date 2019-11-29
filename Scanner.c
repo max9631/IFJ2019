@@ -7,6 +7,7 @@ Document *createDocument(FILE *file) {
 	document->column = 0;
 	document->line = 0;
 	document->currentChar = (int) '\n';
+	document->indentMult = 0;
 	nextCharacter(document);
     return document;
 }
@@ -257,9 +258,19 @@ Token *defineOperator(Document *document, int c) {
 void generateIndent(List *list, Document *document) {
 	int sum = 0;
 	int ch = document->currentChar;
+	bool indendationOk = true;
 	while (isSpace(ch)) {
 		sum++;
 		ch = nextCharacter(document);
+	}
+	if(document->indentMult == 0)
+		document->indentMult = sum;
+		
+	if(document->indentMult != 0){
+		if((sum % document->indentMult) == 0 || sum == 0)
+			sum /= document->indentMult;
+		else
+			indendationOk = false;
 	}
 	if(isComment(ch))
 		return;
@@ -267,7 +278,7 @@ void generateIndent(List *list, Document *document) {
 		return;
 	if (sum == document->lastIndent)
 		return;
-	if (sum > document->lastIndent + 1)
+	if (sum > document->lastIndent + 1 || !(indendationOk))
 		handleError(SyntaxError, "Wrong number of indents at line %d column %d", document->line, document->column);
 	else if (sum == document->lastIndent + 1) {
 		addTokenToList(createTokenWithLine(NULL, TOKEN_INDENT, document->line), list);

@@ -17,6 +17,7 @@ typedef struct Document {
 	int lastIndent;
 	int line;
 	int column;
+	int indentMult;
 } Document;
 
 Document *createDocument(FILE *file);
