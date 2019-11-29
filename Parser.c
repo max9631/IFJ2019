@@ -151,7 +151,11 @@ StatementNode *parseStatement(ParserState *state, BodyNode *body) {
             if (peek(state->list)->type != TOKEN_EOL)
                 return createStatementNode(parseExpression(state, body), STATEMENT_RETURN);
             return createStatementNode(NULL, STATEMENT_RETURN);
-    default: return createStatementNode(parseExpression(state, body), STATEMENT_EXPRESSION);
+    default:
+        if (isTokenExpression(nextToken))
+            return createStatementNode(parseExpression(state, body), STATEMENT_EXPRESSION);
+        handleError(SyntaxError, "Invalid syntax on line %d", nextToken->line);
+        return NULL;
     }
 }
 
