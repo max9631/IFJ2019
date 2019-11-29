@@ -232,7 +232,7 @@ ExpressionNode *parseOperation(ParserState *state, Stack *prefix, OperationType 
     bool isSingleValue = type == OPERATION_NOT;
     int startVal = isSingleValue ? 0 : 1;
     for (int i = startVal; i >= 0; i--) {
-        item = (PrefixItem *) pop(prefix);
+        item = (PrefixItem *) popStack(prefix);
         if (item->type == PREFIX_OPERATOR_TOKEN) {
             Token *token = (Token *) item->prefix.operator;
             operands[i] = parseOperation(state, prefix, operationTypeForToken(token), line, body);
@@ -295,30 +295,30 @@ ExpressionNode *parseExpression(ParserState *state, BodyNode *body) {
     while (isTokenExpression(peek(state->list))) {
         token = peek(state->list);
         if (isTokenValue(token)) {
-            push(prefix, createPrefixItem(parseValue(state, body), PREFIX_VALUE_EXPRESSION));
+            pushStack(prefix, createPrefixItem(parseValue(state, body), PREFIX_VALUE_EXPRESSION));
         } else if (isTokenOperator(token)) {
             Token *token = popToken(state->list);
             while (operators->count != 0 && hasStackHigherOrEqualPrecedence(operators, token->type))
-                push(prefix, createPrefixItem(pop(operators), PREFIX_OPERATOR_TOKEN));
-            push(operators, token);
+                pushStack(prefix, createPrefixItem(popStack(operators), PREFIX_OPERATOR_TOKEN));
+            pushStack(operators, token);
         } else if (token->type == TOKEN_OPAREN) {
             parensCount++;
-            push(operators, popToken(state->list));
+            pushStack(operators, popToken(state->list));
         } else if (token->type == TOKEN_CPAREN) {
             if (parensCount == 0)
                 break;
             popToken(state->list);
             Token *operator;
-            while (operators->count != 0 && (operator = pop(operators))->type != TOKEN_OPAREN ) {
-                push(prefix, createPrefixItem(operator, PREFIX_OPERATOR_TOKEN));
+            while (operators->count != 0 && (operator = popStack(operators))->type != TOKEN_OPAREN ) {
+                pushStack(prefix, createPrefixItem(operator, PREFIX_OPERATOR_TOKEN));
             }
             parensCount--;
         }
     }
     while(operators->count != 0)
-        push(prefix, createPrefixItem(pop(operators), PREFIX_OPERATOR_TOKEN));
+        pushStack(prefix, createPrefixItem(popStack(operators), PREFIX_OPERATOR_TOKEN));
     destroyStack(operators);
-    PrefixItem *item = (PrefixItem *) pop(prefix);
+    PrefixItem *item = (PrefixItem *) popStack(prefix);
     if (item == NULL)
         handleError(SyntaxError, "Invalid expression on line %d", line);
     if(item->type == PREFIX_OPERATOR_TOKEN) {
