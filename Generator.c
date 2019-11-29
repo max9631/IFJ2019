@@ -14,6 +14,35 @@ Generator *createGenerator() {
     return generator;
 }
 
+void generateDefVarInBody(BodyNode *body) {
+    for (int i = 0; i < body->statementsCount; i++) {
+        StatementNode *statement = body->statements[i];
+        if (statement == NULL || statement->statement == NULL) continue;
+        switch (statement->statementType) {
+        case STATEMENT_ASSIGN:;
+            AssignNode *assign = (AssignNode *)statement->statement;
+            if (assign->cretesVariable) {
+                char *frame = assign->isGlobal ? "GF" : "TF";
+                instructionDefVar(createString("%s@%s", frame, assign->identifier->value));
+            }
+            break;
+        case STATEMENT_WHILE:;
+            WhileNode *node = (WhileNode *)statement->statement;
+            generateDefVarInBody(node->body);
+            break;
+        case STATEMENT_IF:;
+            CondNode *condition = (CondNode *)statement->statement;
+            generateDefVarInBody(condition->trueBody);
+            generateDefVarInBody(condition->falseBody);
+            break;
+        case STATEMENT_EXPRESSION:
+        case STATEMENT_RETURN:
+        case STATEMENT_PASS:
+            continue;
+        }
+    }
+}
+
 void generateMain(Generator *generator, MainNode *main) {
     instructionIFJSign();
     instructionDefVar(generator->tmp1Var);
@@ -31,6 +60,7 @@ void generateMain(Generator *generator, MainNode *main) {
     for (int i = 0; i < main->functionsCount; i++)
         generateFunc(generator, main->functions[i]);
     instructionLabel(createString("_ifj_start"));
+    generateDefVarInBody(main->body);
     generateBody(generator, main->body);
 }
 
@@ -47,6 +77,7 @@ void generateFunc(Generator *generator, FuncNode *function) {
         instructionDefVar(identifier);
         instructionPopStack(identifier);
     }
+    generateDefVarInBody(function->body);
     generateBody(generator, function->body);
     instructionPushStack(createString("nil@nil"));
     instructionReturn();
@@ -92,9 +123,6 @@ void generateWhile(Generator *generator, WhileNode *whileNode) {
 void generateAssign(Generator *generator, AssignNode *assign) {
     char *frame = assign->isGlobal ? "GF" : "TF";
     String *identifier = createString("%s@%s", frame, assign->identifier->value);
-    if (assign->cretesVariable) {
-        instructionDefVar(identifier);
-    }
     if (assign->operator != ASSIGN_NONE) {
         instructionPushStack(identifier);
     }
