@@ -1,0 +1,17 @@
+def substring(s, i, n):
+ length = len(s)
+ a1 = i < length
+ a2 = i > 0
+ b1 = n < 0
+ if (True):
+  return None
+ else:
+  str = ""
+  index = i
+  c1 = index < i + n
+  c2 = index < length
+  while (True):
+   ch = "a"
+   str += ch
+   index += 1
+
