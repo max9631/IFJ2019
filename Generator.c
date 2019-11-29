@@ -11,6 +11,7 @@ Generator *createGenerator() {
     generator->checkTypeFunctionLabel = createString("_EmbeddedTypeCheck");
     generator->convertToFloatFunctionLabel = createString("_EmbeddedConvertToFloat");
     generator->addOrConcatFunction = createString("_EmbeddedAddOrConcatFunction");
+    generator->convertNilToNoneStrLabel = createString("_EmbeddedConvertNilToStr");
     return generator;
 }
 
@@ -51,6 +52,7 @@ void generateMain(Generator *generator, MainNode *main) {
     instructionDefVar(generator->tmp3Var);
     instructionCreateFrame();
     instructionJump(createString("_ifj_start"));
+    generateConvertNilToNoneString(generator);
     generateCheckExpressionTypesFunction(generator);
     generateCheckTypeFunction(generator);
     generateConvertToFloatFunction(generator);
@@ -191,8 +193,8 @@ void generatePrint(Generator *generator, CallNode *call) {
     for (int i = 0; i < call->argsCount; i++) {
         if (i != 0) instructionWrite(createString("string@\\032"));
         generateExpression(generator, call->expressions[i]);
+        instructionCall(generator->convertNilToNoneStrLabel);
         instructionPopStack(generator->tmp1Var);
-        // TODO: check if not nil
         instructionWrite(generator->tmp1Var);
     }
     instructionWrite(createString("string@\\010"));

@@ -10,6 +10,7 @@ typedef struct _Generator {
     String *checkTypeFunctionLabel;
     String *convertToFloatFunctionLabel;
     String *addOrConcatFunction;
+    String *convertNilToNoneStrLabel;
     
     String *tmp1Var;
     String *tmp2Var;

@@ -149,6 +149,19 @@ void generateAddOrConcat(Generator *generator) {
     
 }
 
+void generateConvertNilToNoneString(Generator *generator) {
+    String *notNilLabel = createString("_%d_not_nil_conversion", generator->labelCount);
+    instructionLabel(generator->convertNilToNoneStrLabel);
+    instructionPopStack(generator->tmp1Var);
+    instructionJumpIfEquals(notNilLabel, generator->tmp1Var, createString("nil@nil"));
+    instructionPushStack(createString("string@None"));
+    instructionReturn();
+    instructionLabel(notNilLabel);
+    instructionPushStack(generator->tmp1Var);
+    instructionReturn();
+    
+}
+
 void generateChrFunction(Generator *generator) {
     int condID = generator->labelCount++;
     String *elseLabel = createString("_%d_if_else", condID);
