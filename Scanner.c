@@ -29,7 +29,7 @@ int nextCharacter(Document *document) {
 }
 
 bool isNewLine(Document *document) { return document->column == 0; }
-bool isEndOfLine(int c) { return c == (int) '\n'; }
+bool isEndOfLine(int c) { return c == (int) '\n' || c == 13; }
 
 bool isNumber(int c) { return c > 47 && c < 58; } // 0-9
 bool isCharacter(int c) { return (c > 64 && c < 91) || (c > 96 && c < 123); } // a-z || A-Z
