@@ -3,15 +3,17 @@
 Document *createDocument(FILE *file) {
 	Document *document = (Document *) malloc(sizeof(Document));
 	document->file = file;
-	document->lastIndent = 0;
 	document->column = 0;
 	document->line = 0;
 	document->currentChar = (int) '\n';
+    document->indents = createStack();
+    pushStack(document->indents, (void *) 0);
 	nextCharacter(document);
     return document;
 }
 
 void destroyDocument(Document *document) {
+    destroyStack(document->indents);
 	if (document != NULL) free(document);
 }
 
@@ -255,7 +257,7 @@ Token *defineOperator(Document *document, int c) {
 }
 
 void generateIndent(List *list, Document *document) {
-	int sum = 0;
+	long sum = 0;
 	int ch = document->currentChar;
 	while (isSpace(ch)) {
 		sum++;
@@ -265,20 +267,23 @@ void generateIndent(List *list, Document *document) {
 		return;
 	if (isEndOfLine(ch))
 		return;
-	if (sum == document->lastIndent)
+    long lastIndent = (long) topStack(document->indents);
+	if (sum == lastIndent)
 		return;
-	if (sum > document->lastIndent + 1)
-		handleError(SyntaxError, "Wrong number of indents at line %d column %d", document->line, document->column);
-	else if (sum == document->lastIndent + 1) {
-		addTokenToList(createTokenWithLine(NULL, TOKEN_INDENT, document->line), list);
-	} else if (sum < document->lastIndent) {
-		int d = document->lastIndent - sum;
-        for (int i = 0; i < d; i++) {
-			addTokenToList(createTokenWithLine(NULL, TOKEN_DEINDENT, document->line), list);
+    else if (sum > lastIndent) {
+        pushStack(document->indents, (void *) sum);
+        addTokenToList(createTokenWithLine(NULL, TOKEN_INDENT, document->line), list);
+    } else if (sum < lastIndent){
+        while (sum < lastIndent) {
+            popStack(document->indents);
+            addTokenToList(createTokenWithLine(NULL, TOKEN_DEINDENT, document->line), list);
             addTokenToList(createTokenWithLine(NULL, TOKEN_EOL, document->line), list);
+            lastIndent = (long) topStack(document->indents);
         }
-	}
-	document->lastIndent = sum;
+        if (sum != lastIndent) {
+            handleError(SyntaxError, "Wrong number of indents at line %d column %d", document->line, document->column);
+        }
+    }
 }
 
 Token * defineOneCharToken(Document *document, int ch, TokenType type) {
@@ -344,7 +349,8 @@ void scan(List *list, Document *document) {
 			addTokenToList(token, list);
 		}
 	}
-    for (int i = 0; i < document->lastIndent; i++) {
+    while (document->indents->count != 1) {
+        popStack(document->indents);
         addTokenToList(createTokenWithLine(NULL, TOKEN_DEINDENT, document->line), list);
         addTokenToList(createTokenWithLine(NULL, TOKEN_EOL, document->line), list);
     }

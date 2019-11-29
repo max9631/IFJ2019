@@ -8,13 +8,17 @@ Stack *createStack() {
     return stack;
 }
 
-void push(Stack *stack, void *item) {
+void *topStack(Stack *stack) {
+    return stack->items[stack->count - 1];
+}
+
+void pushStack(Stack *stack, void *item) {
     stack->count++;
     stack->items = realloc(stack->items, stack->count * sizeof(void *));
     stack->items[stack->count - 1] = item;
 }
 
-void *pop(Stack *stack) {
+void *popStack(Stack *stack) {
     if (stack->count == 0) return NULL;
     void *item = stack->items[stack->count-1];
     stack->items[stack->count-1] = NULL;

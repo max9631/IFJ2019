@@ -1,4 +1,4 @@
-#ifndef Stack_H
+#ifndef STACK_H
 #define STACK_H
 #include <stdlib.h>
 
@@ -8,8 +8,9 @@ typedef struct _Stack {
 } Stack;
 
 Stack *createStack(void);
-void push(Stack *stack, void *item);
-void *pop(Stack *stack);
+void *topStack(Stack *stack);
+void pushStack(Stack *stack, void *item);
+void *popStack(Stack *stack);
 void destroyStack(Stack *stack);
 
 #endif

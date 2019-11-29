@@ -83,6 +83,7 @@ ExpressionNode *createExpressionNode(void *expression, ExpressionType type, Expr
 BodyNode *createBodyNode(BodyNode *parrentBody, HashTable *symtable, bool isGlobal) {
     BodyNode *node = (BodyNode *) malloc(sizeof(BodyNode));
     node->symTable = symtable;
+    node->statementsCount = 0;
     if (node->symTable == NULL)
         node->symTable = createSymTable();
     node->parrentBody = parrentBody;

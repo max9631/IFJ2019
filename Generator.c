@@ -17,7 +17,8 @@ Generator *createGenerator() {
 void generateDefVarInBody(BodyNode *body) {
     for (int i = 0; i < body->statementsCount; i++) {
         StatementNode *statement = body->statements[i];
-        if (statement == NULL || statement->statement == NULL) continue;
+        if (statement == NULL) continue;
+        if (statement->statement == NULL) continue;
         switch (statement->statementType) {
         case STATEMENT_ASSIGN:;
             AssignNode *assign = (AssignNode *)statement->statement;

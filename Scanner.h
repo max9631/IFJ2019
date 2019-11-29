@@ -10,11 +10,12 @@
 #include "Token.h"
 #include "Error.h"
 #include "Resource.h"
+#include "Stack.h"
 
 typedef struct Document {
 	FILE *file;
 	int currentChar;
-	int lastIndent;
+    Stack *indents;
 	int line;
 	int column;
 } Document;
