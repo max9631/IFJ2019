@@ -140,23 +140,22 @@ Token *defineString(Document *document) {
 
 Token *defineDoubleQuoteString(Document *document) {
 	int ch = nextCharacter(document);
-	bool isMultilineString = false;
 	if (isDoubleQuote(ch)) {
 		ch = nextCharacter(document);
 		if (isDoubleQuote(ch)) {
-			isMultilineString = true;
 			ch = nextCharacter(document);
 		} else {
-			return createToken(createString(""), DATA_TOKEN_STRING);
+			handleError(LexError, "Incorrect number of \"");
 		}
+	} else {
+		handleError(LexError, "Incorrect number of \"");
 	}
+	
 	String *string = recordStringUntilChar(document, (int) '"');
-	if (isMultilineString) {
-		for (int i = 0; i < 2; i++) {
-			ch = nextCharacter(document);
-			if (!isDoubleQuote(ch)) {
-				handleError(LexError, "Incorrect string end");
-			}
+	for (int i = 0; i < 2; i++) {
+		ch = nextCharacter(document);
+		if (!isDoubleQuote(ch)) {
+			handleError(LexError, "Incorrect string end");
 		}
 	}
 	nextCharacter(document);
@@ -203,7 +202,7 @@ String *recordStringUntilChar(Document *document, int endChar) {
 	int ch = document->currentChar;
 	String *string = createString("");
 	bool isEscaping = false;
-	while (ch != endChar || isEscaping) {
+	while ((ch != endChar || isEscaping) && ch != EOF) {
         if (ch == (int) '\\') {
             isEscaping = true;
             ch = nextCharacter(document);
@@ -227,6 +226,8 @@ String *recordStringUntilChar(Document *document, int endChar) {
     
 		ch = nextCharacter(document);
 	}
+	if(ch == EOF)
+		handleError(LexError, "Wrong number of %c. Missing closing %c", endChar, endChar);
 	return string;
 }
 
