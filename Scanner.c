@@ -146,7 +146,6 @@ Token *defineDoubleQuoteString(Document *document) {
 			ch = nextCharacter(document);
 		} else {
 			handleError(LexError, "Incorrect number of \"");
-			//return createToken(createString(""), DATA_TOKEN_STRING);
 		}
 	} else {
 		handleError(LexError, "Incorrect number of \"");
