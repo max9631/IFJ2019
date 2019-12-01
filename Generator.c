@@ -23,6 +23,8 @@ void generateDefVarInBody(BodyNode *body) {
         switch (statement->statementType) {
         case STATEMENT_ASSIGN:;
             AssignNode *assign = (AssignNode *)statement->statement;
+                if (assign->meta->referenceCount == 0)
+                    continue;
             if (assign->cretesVariable) {
                 char *frame = assign->isGlobal ? "GF" : "TF";
                 instructionDefVar(createString("%s@%s", frame, assign->identifier->value));
@@ -73,6 +75,8 @@ void generateBody(Generator *generator, BodyNode *body) {
 }
 
 void generateFunc(Generator *generator, FuncNode *function) {
+    if (function->meta->referenceCount == 0)
+        return;
     instructionLabel(function->name);
     instructionCreateFrame();
     for(int i = function->argsCount-1; i >= 0; i-- ) {
