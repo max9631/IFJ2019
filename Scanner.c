@@ -64,9 +64,10 @@ bool isOperator(int c) {
 
 Token *skipUntilNewLine(Document *document) {
 	int ch = document->currentChar;
-	while (ch != (int) '\n')
+	while (ch != (int) '\n' && ch != EOF)
 		ch = nextCharacter(document);
-    nextCharacter(document);
+    if (ch == (int) '\n')
+        nextCharacter(document);
 	return createToken(createStringFromChar(ch), TOKEN_EOL);
 }
 
