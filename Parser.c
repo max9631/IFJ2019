@@ -183,6 +183,7 @@ CallNode *parseCall(ParserState *state, BodyNode *body) {
     FunctionMeta *meta = getFunctionMeta(state->main->funcTable, identifier->value->value);
     if (argsCount != meta->argsCount && !meta->hasVariableArgsCount)
         handleError(SemanticArgumentError, "Wrong number of arguments one line %d. Should be %d, but got %d", identifier->line, meta->argsCount, argsCount);
+    meta->referenceCount++;
     consume(state->list, TOKEN_CPAREN);
     return call;
 }
@@ -195,6 +196,9 @@ ExpressionNode *parseValue(ParserState *state, BodyNode *body) {
             return createExpressionNode(parseCall(state, body), EXPRESSION_CALL, EXPRESSION_DATA_TYPE_UNKNOWN);
         if (!containsSymbol(body, token->value))
             handleError(SemanticIdentifierError, "Uknown identier '%s' on line %d", token->value->value, token->line);
+        BodyNode *bodyWithIdentifier = findBodyForIdentifier(body, token->value);
+        SymbolMeta *meta = getSymbolMeta(bodyWithIdentifier->symTable, token->value->value);
+        meta->referenceCount++;
         return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_VARIABLE, body->isGlobal), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_UNKNOWN);
     case DATA_TOKEN_INT: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT, false), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_INT);
     case DATA_TOKEN_FLOAT: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT, false), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_FLOAT);

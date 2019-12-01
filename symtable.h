@@ -22,7 +22,6 @@ typedef struct SymbolMeta {
 typedef union HashTableValue {
     FunctionMeta *func;
     SymbolMeta *symbol;
-//    String *string;
     int intValue;
 } HashTableValue;
 
@@ -56,5 +55,6 @@ FunctionMeta *getFunctionMeta(HashTable *table, char* key);
 // HashTable of Functions
 HashTable *createSymbolTable(void);
 void insertHashTableSymbol(HashTable *table, char* key);
+SymbolMeta *getSymbolMeta(HashTable *table, char* key);
 
 #endif

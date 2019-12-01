@@ -141,3 +141,8 @@ void insertHashTableSymbol(HashTable *table, char* key) {
     value.symbol->referenceCount = 0;
     insertHashTableItem(table, key, value);
 }
+
+
+SymbolMeta *getSymbolMeta(HashTable *table, char* key) {
+    return getHashTableItem(table, key)->data.symbol;
+}
