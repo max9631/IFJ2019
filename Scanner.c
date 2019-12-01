@@ -7,7 +7,7 @@ Document *createDocument(FILE *file) {
 	document->line = 0;
 	document->currentChar = (int) '\n';
     document->indents = createStack();
-    pushStack(document->indents, (void *) 0);
+    pushIntToStack(document->indents, 0);
 	nextCharacter(document);
     return document;
 }
@@ -258,7 +258,7 @@ Token *defineOperator(Document *document, int c) {
 }
 
 void generateIndent(List *list, Document *document) {
-	long sum = 0;
+	int sum = 0;
 	int ch = document->currentChar;
 	while (isSpace(ch)) {
 		sum++;
@@ -268,18 +268,18 @@ void generateIndent(List *list, Document *document) {
 		return;
 	if (isEndOfLine(ch))
 		return;
-    long lastIndent = (long) topStack(document->indents);
+    int lastIndent = topStack(document->indents).intValue;
 	if (sum == lastIndent)
 		return;
     else if (sum > lastIndent) {
-        pushStack(document->indents, (void *) sum);
+        pushIntToStack(document->indents, sum);
         addTokenToList(createTokenWithLine(NULL, TOKEN_INDENT, document->line), list);
     } else if (sum < lastIndent){
         while (sum < lastIndent) {
             popStack(document->indents);
             addTokenToList(createTokenWithLine(NULL, TOKEN_DEINDENT, document->line), list);
             addTokenToList(createTokenWithLine(NULL, TOKEN_EOL, document->line), list);
-            lastIndent = (long) topStack(document->indents);
+            lastIndent = topStack(document->indents).intValue;
         }
         if (sum != lastIndent) {
             handleError(SyntaxError, "Wrong number of indents at line %d column %d", document->line, document->column);
