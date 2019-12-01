@@ -119,6 +119,7 @@ typedef struct _AssignNode {
     AssignOperator operator;
     bool cretesVariable;
     bool isGlobal;
+    SymbolMeta *meta;
 } AssignNode;
 
 typedef struct _BodyNode {
@@ -134,6 +135,7 @@ typedef struct _FuncNode {
     int argsCount;
     String **args;
     BodyNode *body;
+    FunctionMeta *meta;
 } FuncNode;
 
 typedef struct _CondNode {
@@ -158,10 +160,10 @@ PrefixItem *createPrefixItem(void *value, PrefixType type);
 OperationNode *createOperationNode(OperationType type);
 ValueNode *createValueNode(String *str, ValueType type, bool isGlobal);
 CallNode *createCallNode(String *identifier);
-FuncNode *createFuncNode(String *name, BodyNode *body);
+FuncNode *createFuncNode(String *name, BodyNode *body, FunctionMeta *meta);
 CondNode *createCondNode(ExpressionNode *condition, BodyNode *trueBody, BodyNode *falseBody);
 WhileNode *createWhileNode(ExpressionNode *condition, BodyNode *body);
-AssignNode *createAssignNode(String *identifier, AssignOperator operator, ExpressionNode *expression, bool cretesVariable, bool isGlobal);
+AssignNode *createAssignNode(String *identifier, AssignOperator operator, ExpressionNode *expression, SymbolMeta *meta, bool cretesVariable, bool isGlobal);
 StatementNode *createStatementNode(void *statement, StatementType type);
 ExpressionNode *createExpressionNode(void *expressions, ExpressionType type, ExpressionDataType dataType);
 BodyNode *createBodyNode(BodyNode *parrentBody, HashTable *symtable, bool isGlobal);

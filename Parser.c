@@ -58,7 +58,7 @@ FuncNode *parseFunc(ParserState *state, BodyNode *body) {
         handleError(SemanticIdentifierError, "Invalid redeclaration of a function '%s' on line %d", name->value->value, name->line);
     }
     consume(list, TOKEN_OPAREN);
-    FuncNode *function = createFuncNode(name->value, NULL);
+    FuncNode *function = createFuncNode(name->value, NULL, NULL);
     int argsCount = 0;
     while(true) {
         Token *variable = consume(list, TOKEN_IDENTIFIER);
@@ -75,6 +75,8 @@ FuncNode *parseFunc(ParserState *state, BodyNode *body) {
         }
     }
     registerFunction(state, name->value, argsCount);
+    FunctionMeta *meta = getFunctionMeta(state->main->funcTable, name->value->value);
+    function->meta = meta;
     consume(list, TOKEN_COLON);
     consume(list, TOKEN_EOL);
     consume(list, TOKEN_INDENT);
@@ -125,12 +127,13 @@ AssignNode *parseAssign(ParserState *state, BodyNode *body) {
         registerSymbol(body, identifier->value);
     }
     TokenType type = popToken(state->list)->type;
+    SymbolMeta *meta = getSymbolMeta(body->symTable, identifier->value->value);
     switch (type) {
-    case OPERATOR_ASSIGN: return createAssignNode(identifier->value, ASSIGN_NONE, parseExpression(state, body), createsVar, isGlobal);
-    case OPERATOR_DIV_ASSIGN: return createAssignNode(identifier->value, ASSIGN_DIV, parseExpression(state, body), createsVar, isGlobal);
-    case OPERATOR_MUL_ASSIGN: return createAssignNode(identifier->value, ASSIGN_MUL, parseExpression(state, body), createsVar, isGlobal);
-    case OPERATOR_ADD_ASSIGN: return createAssignNode(identifier->value, ASSIGN_ADD, parseExpression(state, body), createsVar, isGlobal);
-    case OPERATOR_SUB_ASSIGN: return createAssignNode(identifier->value, ASSIGN_SUB, parseExpression(state, body), createsVar, isGlobal);
+    case OPERATOR_ASSIGN: return createAssignNode(identifier->value, ASSIGN_NONE, parseExpression(state, body), meta, createsVar, isGlobal);
+    case OPERATOR_DIV_ASSIGN: return createAssignNode(identifier->value, ASSIGN_DIV, parseExpression(state, body), meta, createsVar, isGlobal);
+    case OPERATOR_MUL_ASSIGN: return createAssignNode(identifier->value, ASSIGN_MUL, parseExpression(state, body), meta, createsVar, isGlobal);
+    case OPERATOR_ADD_ASSIGN: return createAssignNode(identifier->value, ASSIGN_ADD, parseExpression(state, body), meta, createsVar, isGlobal);
+    case OPERATOR_SUB_ASSIGN: return createAssignNode(identifier->value, ASSIGN_SUB, parseExpression(state, body), meta, createsVar, isGlobal);
     default: handleError(SyntaxError, "Expected assign operator, but got %s", convertTokenTypeToString(type));
     }
     return NULL;
@@ -183,6 +186,7 @@ CallNode *parseCall(ParserState *state, BodyNode *body) {
     FunctionMeta *meta = getFunctionMeta(state->main->funcTable, identifier->value->value);
     if (argsCount != meta->argsCount && !meta->hasVariableArgsCount)
         handleError(SemanticArgumentError, "Wrong number of arguments one line %d. Should be %d, but got %d", identifier->line, meta->argsCount, argsCount);
+    meta->referenceCount++;
     consume(state->list, TOKEN_CPAREN);
     return call;
 }
@@ -195,6 +199,9 @@ ExpressionNode *parseValue(ParserState *state, BodyNode *body) {
             return createExpressionNode(parseCall(state, body), EXPRESSION_CALL, EXPRESSION_DATA_TYPE_UNKNOWN);
         if (!containsSymbol(body, token->value))
             handleError(SemanticIdentifierError, "Uknown identier '%s' on line %d", token->value->value, token->line);
+        BodyNode *bodyWithIdentifier = findBodyForIdentifier(body, token->value);
+        SymbolMeta *meta = getSymbolMeta(bodyWithIdentifier->symTable, token->value->value);
+        meta->referenceCount++;
         return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_VARIABLE, body->isGlobal), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_UNKNOWN);
     case DATA_TOKEN_INT: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT, false), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_INT);
     case DATA_TOKEN_FLOAT: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT, false), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_FLOAT);
