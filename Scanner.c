@@ -298,11 +298,11 @@ void removeDuplicitEOLsFromList(List *list) {
     ListItem *item = list->first;
     bool lastWasEOL = false;
     while (item != NULL) {
-        Token *token = (Token *) item->value;
+        Token *token = item->value.token;
         if (token->type == TOKEN_EOL) {
             if (lastWasEOL) {
                 lastItem->nextItem = item->nextItem;
-                Token *lastManStanding = (Token *)item->value;
+                Token *lastManStanding = item->value.token;
                 destroyToken(lastManStanding);
                 destroyListItem(item);
                 item = lastItem;

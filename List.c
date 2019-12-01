@@ -7,10 +7,10 @@ List *createList() {
     return list;
 }
 
-bool addToList(void *item, List *list) {
+bool addToList(ListValue value, List *list) {
     ListItem *listItem = (ListItem *) malloc(sizeof(List));
     listItem->nextItem = NULL;
-    listItem->value = item;
+    listItem->value = value;
     if (listItem == NULL) return false;
     if (isEmpty(list)) {
         list->first = listItem;
@@ -22,16 +22,20 @@ bool addToList(void *item, List *list) {
     return true;
 }
 
-void *popList(List *list) {
-    if (list->first == NULL) return NULL;
+ListValue popList(List *list) {
+    if (list->first == NULL) {
+        ListValue value;
+        value.token = NULL;
+        return value;
+    }
     ListItem *listItem = list->first;
     list->first = listItem->nextItem;
     if (list->first == NULL) {
         list->last = NULL;
     }
-    void *item = listItem->value;
+    ListValue value = listItem->value;
     destroyListItem(listItem);
-    return item;
+    return value;
 }
 
 bool isEmpty(List *list) {
@@ -52,11 +56,13 @@ void destroyList(List *list) {
 }
 
 bool addTokenToList(Token *token, List *list) {
-    return addToList(token, list);
+    ListValue value;
+    value.token = token;
+    return addToList(value, list);
 }
 
 Token *popToken(List *list) {
-    return (Token *)popList(list);
+    return popList(list).token;
 }
 
 Token *peek(List *list) {
@@ -73,7 +79,7 @@ Token *peekNext(List *list, int offset) {
         return NULL;
 
     if(offset == 0)
-        return (Token *)item->value;
+        return item->value.token;
 
     for(int i = 0; i < offset; i++) {
         item = item->nextItem;
@@ -82,7 +88,7 @@ Token *peekNext(List *list, int offset) {
             return NULL;
     }
 
-    return (Token *)item->value;
+    return item->value.token;
 }
 
 void printList(List *list) {
@@ -93,7 +99,7 @@ void printList(List *list) {
     ListItem *item = list->first;
     printf("Token List:\n");
     while(item != NULL) {
-        Token *token = item->value;
+        Token *token = item->value.token;
         String *type = convertTokenTypeToString(token->type);
         printf("%d: %s \t %s\n",
            token->line,
