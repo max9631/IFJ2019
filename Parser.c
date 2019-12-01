@@ -23,7 +23,7 @@ void DestroyParserState(ParserState *state) {
 }
 
 MainNode *parseTokens(ParserState *state) {
-    state->main = createMainNode(createBodyNode(NULL, createSymTable(), true));
+    state->main = createMainNode(createBodyNode(NULL, createSymbolTable(), true));
     BodyNode *body = state->main->body;
     while (peek(state->list)->type != TOKEN_EOF) {
         if (peek(state->list)->type != TOKEN_EOL) {
@@ -78,7 +78,7 @@ FuncNode *parseFunc(ParserState *state, BodyNode *body) {
     consume(list, TOKEN_COLON);
     consume(list, TOKEN_EOL);
     consume(list, TOKEN_INDENT);
-    function->body = parseBody(state, body, function->args, function->argsCount, createSymTable(), false);
+    function->body = parseBody(state, body, function->args, function->argsCount, createSymbolTable(), false);
     consume(list, TOKEN_DEINDENT);
     return function;
 }
@@ -119,6 +119,7 @@ AssignNode *parseAssign(ParserState *state, BodyNode *body) {
     bool createsVar = true;
     bool isGlobal = body->isGlobal;
     if (containsSymbol(body, identifier->value)) {
+        getHashTableItem(body->symTable, identifier->value->value)->data.symbol->referenceCount++;
         createsVar = false;
     } else {
         registerSymbol(body, identifier->value);
@@ -164,6 +165,7 @@ CallNode *parseCall(ParserState *state, BodyNode *body) {
     if (!containsFunction(state, identifier->value)) {
         handleError(SemanticIdentifierError, "Unknown function identifier '%s' on line %d", identifier->value->value, identifier->line);
     }
+    getFunctionMeta(state->main->funcTable, identifier->value->value)->referenceCount++;
     CallNode *call = createCallNode(identifier->value);
     consume(state->list, TOKEN_OPAREN);
     long argsCount = 0;
@@ -178,9 +180,9 @@ CallNode *parseCall(ParserState *state, BodyNode *body) {
             consume(state->list, TOKEN_COMMA);
         }
     }
-    long correctNumberOfArguments = getArgumentsCountForFuntion(state, identifier->value);
-    if (argsCount != correctNumberOfArguments && correctNumberOfArguments != __LONG_MAX__)
-        handleError(SemanticArgumentError, "Wrong number of arguments one line %d. Should be %d, but got %d", identifier->line, correctNumberOfArguments, argsCount);
+    FunctionMeta *meta = getFunctionMeta(state->main->funcTable, identifier->value->value);
+    if (argsCount != meta->argsCount && !meta->hasVariableArgsCount)
+        handleError(SemanticArgumentError, "Wrong number of arguments one line %d. Should be %d, but got %d", identifier->line, meta->argsCount, argsCount);
     consume(state->list, TOKEN_CPAREN);
     return call;
 }
@@ -351,21 +353,12 @@ BodyNode *findBodyForIdentifier(BodyNode *body, String *identifier) {
     return body;
 }
 
-long getArgumentsCountForFuntion(ParserState *state, String *functionName) {
-    HashTableItem *item = getHashTableItem(state->main->funcTable, functionName->value);
-    long currentCount = (long) item->data;
-    return currentCount;
-}
-
-
 void registerSymbol(BodyNode *body, String *identifier) {
-    insertHashTableItem(body->symTable, identifier->value, NULL);
+    insertHashTableSymbol(body->symTable, identifier->value);
 }
 
 void registerFunction(ParserState *state, String *identifier, int argsCount) {
-    long bigCount = (long)argsCount;
-    void *data = (void *)bigCount;
-    insertHashTableItem(state->main->funcTable, identifier->value, data);
+    insertHashTableFunction(state->main->funcTable, identifier->value, argsCount);
 }
 
 /* --------------- DEBUG Functions ----------------- */

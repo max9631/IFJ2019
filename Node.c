@@ -85,7 +85,7 @@ BodyNode *createBodyNode(BodyNode *parrentBody, HashTable *symtable, bool isGlob
     node->symTable = symtable;
     node->statementsCount = 0;
     if (node->symTable == NULL)
-        node->symTable = createSymTable();
+        node->symTable = createSymbolTable();
     node->parrentBody = parrentBody;
     node->statements = NULL;
     node->isGlobal = isGlobal;
@@ -95,7 +95,7 @@ BodyNode *createBodyNode(BodyNode *parrentBody, HashTable *symtable, bool isGlob
 MainNode *createMainNode(BodyNode *body) {
     MainNode *node = (MainNode *) malloc(sizeof(MainNode));
     node->body = body;
-    node->funcTable = createFuncTable();
+    node->funcTable = createFunctionTable();
     node->functionsCount = 0;
     node->functions = NULL;
     return node;
