@@ -58,7 +58,7 @@ FuncNode *parseFunc(ParserState *state, BodyNode *body) {
         handleError(SemanticIdentifierError, "Invalid redeclaration of a function '%s' on line %d", name->value->value, name->line);
     }
     consume(list, TOKEN_OPAREN);
-    FuncNode *function = createFuncNode(name->value, NULL);
+    FuncNode *function = createFuncNode(name->value, NULL, NULL);
     int argsCount = 0;
     while(true) {
         Token *variable = consume(list, TOKEN_IDENTIFIER);
@@ -75,6 +75,8 @@ FuncNode *parseFunc(ParserState *state, BodyNode *body) {
         }
     }
     registerFunction(state, name->value, argsCount);
+    FunctionMeta *meta = getFunctionMeta(state->main->funcTable, name->value->value);
+    function->meta = meta;
     consume(list, TOKEN_COLON);
     consume(list, TOKEN_EOL);
     consume(list, TOKEN_INDENT);
@@ -125,12 +127,13 @@ AssignNode *parseAssign(ParserState *state, BodyNode *body) {
         registerSymbol(body, identifier->value);
     }
     TokenType type = popToken(state->list)->type;
+    SymbolMeta *meta = getSymbolMeta(body->symTable, identifier->value->value);
     switch (type) {
-    case OPERATOR_ASSIGN: return createAssignNode(identifier->value, ASSIGN_NONE, parseExpression(state, body), createsVar, isGlobal);
-    case OPERATOR_DIV_ASSIGN: return createAssignNode(identifier->value, ASSIGN_DIV, parseExpression(state, body), createsVar, isGlobal);
-    case OPERATOR_MUL_ASSIGN: return createAssignNode(identifier->value, ASSIGN_MUL, parseExpression(state, body), createsVar, isGlobal);
-    case OPERATOR_ADD_ASSIGN: return createAssignNode(identifier->value, ASSIGN_ADD, parseExpression(state, body), createsVar, isGlobal);
-    case OPERATOR_SUB_ASSIGN: return createAssignNode(identifier->value, ASSIGN_SUB, parseExpression(state, body), createsVar, isGlobal);
+    case OPERATOR_ASSIGN: return createAssignNode(identifier->value, ASSIGN_NONE, parseExpression(state, body), meta, createsVar, isGlobal);
+    case OPERATOR_DIV_ASSIGN: return createAssignNode(identifier->value, ASSIGN_DIV, parseExpression(state, body), meta, createsVar, isGlobal);
+    case OPERATOR_MUL_ASSIGN: return createAssignNode(identifier->value, ASSIGN_MUL, parseExpression(state, body), meta, createsVar, isGlobal);
+    case OPERATOR_ADD_ASSIGN: return createAssignNode(identifier->value, ASSIGN_ADD, parseExpression(state, body), meta, createsVar, isGlobal);
+    case OPERATOR_SUB_ASSIGN: return createAssignNode(identifier->value, ASSIGN_SUB, parseExpression(state, body), meta, createsVar, isGlobal);
     default: handleError(SyntaxError, "Expected assign operator, but got %s", convertTokenTypeToString(type));
     }
     return NULL;
