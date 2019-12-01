@@ -1,14 +1,18 @@
 #ifndef LIST_H
 #define LIST_H
-#include <stdbool.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "String.h"
 #include "Token.h"
 #include "Resource.h"
 
+typedef union ListValue {
+    Token *token;
+} ListValue;
+
 typedef struct ListItem {
     struct ListItem *nextItem;
-    void *value;
+    ListValue value;
 } ListItem;
 
 typedef struct List {
@@ -17,8 +21,8 @@ typedef struct List {
 } List;
 
 
-bool addToList(void *item, List *list);
-void *popList(List *list);
+bool addToList(ListValue value, List *list);
+ListValue popList(List *list);
 bool isEmpty(List *list);
 void destroyListItem(ListItem *item);
 void destroyList(List *list);

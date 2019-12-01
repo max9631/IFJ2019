@@ -7,7 +7,7 @@ Document *createDocument(FILE *file) {
 	document->line = 0;
 	document->currentChar = (int) '\n';
     document->indents = createStack();
-    pushStack(document->indents, (void *) 0);
+    pushIntToStack(document->indents, 0);
 	nextCharacter(document);
     return document;
 }
@@ -64,9 +64,10 @@ bool isOperator(int c) {
 
 Token *skipUntilNewLine(Document *document) {
 	int ch = document->currentChar;
-	while (ch != (int) '\n')
+	while (ch != (int) '\n' && ch != EOF)
 		ch = nextCharacter(document);
-    nextCharacter(document);
+    if (ch == (int) '\n')
+        nextCharacter(document);
 	return createToken(createStringFromChar(ch), TOKEN_EOL);
 }
 
@@ -258,7 +259,7 @@ Token *defineOperator(Document *document, int c) {
 }
 
 void generateIndent(List *list, Document *document) {
-	long sum = 0;
+	int sum = 0;
 	int ch = document->currentChar;
 	while (isSpace(ch)) {
 		sum++;
@@ -268,18 +269,18 @@ void generateIndent(List *list, Document *document) {
 		return;
 	if (isEndOfLine(ch))
 		return;
-    long lastIndent = (long) topStack(document->indents);
+    int lastIndent = topStack(document->indents).intValue;
 	if (sum == lastIndent)
 		return;
     else if (sum > lastIndent) {
-        pushStack(document->indents, (void *) sum);
+        pushIntToStack(document->indents, sum);
         addTokenToList(createTokenWithLine(NULL, TOKEN_INDENT, document->line), list);
     } else if (sum < lastIndent){
         while (sum < lastIndent) {
             popStack(document->indents);
             addTokenToList(createTokenWithLine(NULL, TOKEN_DEINDENT, document->line), list);
             addTokenToList(createTokenWithLine(NULL, TOKEN_EOL, document->line), list);
-            lastIndent = (long) topStack(document->indents);
+            lastIndent = topStack(document->indents).intValue;
         }
         if (sum != lastIndent) {
             handleError(SyntaxError, "Wrong number of indents at line %d column %d", document->line, document->column);
@@ -298,11 +299,11 @@ void removeDuplicitEOLsFromList(List *list) {
     ListItem *item = list->first;
     bool lastWasEOL = false;
     while (item != NULL) {
-        Token *token = (Token *) item->value;
+        Token *token = item->value.token;
         if (token->type == TOKEN_EOL) {
             if (lastWasEOL) {
                 lastItem->nextItem = item->nextItem;
-                Token *lastManStanding = (Token *)item->value;
+                Token *lastManStanding = item->value.token;
                 destroyToken(lastManStanding);
                 destroyListItem(item);
                 item = lastItem;

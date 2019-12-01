@@ -23,7 +23,7 @@ void DestroyParserState(ParserState *state) {
 }
 
 MainNode *parseTokens(ParserState *state) {
-    state->main = createMainNode(createBodyNode(NULL, createSymTable(), true));
+    state->main = createMainNode(createBodyNode(NULL, createSymbolTable(), true));
     BodyNode *body = state->main->body;
     while (peek(state->list)->type != TOKEN_EOF) {
         if (peek(state->list)->type != TOKEN_EOL) {
@@ -78,7 +78,7 @@ FuncNode *parseFunc(ParserState *state, BodyNode *body) {
     consume(list, TOKEN_COLON);
     consume(list, TOKEN_EOL);
     consume(list, TOKEN_INDENT);
-    function->body = parseBody(state, body, function->args, function->argsCount, createSymTable(), false);
+    function->body = parseBody(state, body, function->args, function->argsCount, createSymbolTable(), false);
     consume(list, TOKEN_DEINDENT);
     return function;
 }
@@ -119,6 +119,7 @@ AssignNode *parseAssign(ParserState *state, BodyNode *body) {
     bool createsVar = true;
     bool isGlobal = body->isGlobal;
     if (containsSymbol(body, identifier->value)) {
+        getHashTableItem(body->symTable, identifier->value->value)->data.symbol->referenceCount++;
         createsVar = false;
     } else {
         registerSymbol(body, identifier->value);
@@ -164,6 +165,7 @@ CallNode *parseCall(ParserState *state, BodyNode *body) {
     if (!containsFunction(state, identifier->value)) {
         handleError(SemanticIdentifierError, "Unknown function identifier '%s' on line %d", identifier->value->value, identifier->line);
     }
+    getFunctionMeta(state->main->funcTable, identifier->value->value)->referenceCount++;
     CallNode *call = createCallNode(identifier->value);
     consume(state->list, TOKEN_OPAREN);
     long argsCount = 0;
@@ -178,9 +180,9 @@ CallNode *parseCall(ParserState *state, BodyNode *body) {
             consume(state->list, TOKEN_COMMA);
         }
     }
-    long correctNumberOfArguments = getArgumentsCountForFuntion(state, identifier->value);
-    if (argsCount != correctNumberOfArguments && correctNumberOfArguments != __LONG_MAX__)
-        handleError(SemanticArgumentError, "Wrong number of arguments one line %d. Should be %d, but got %d", identifier->line, correctNumberOfArguments, argsCount);
+    FunctionMeta *meta = getFunctionMeta(state->main->funcTable, identifier->value->value);
+    if (argsCount != meta->argsCount && !meta->hasVariableArgsCount)
+        handleError(SemanticArgumentError, "Wrong number of arguments one line %d. Should be %d, but got %d", identifier->line, meta->argsCount, argsCount);
     consume(state->list, TOKEN_CPAREN);
     return call;
 }
@@ -236,7 +238,7 @@ ExpressionNode *parseOperation(ParserState *state, Stack *prefix, OperationType 
     bool isSingleValue = type == OPERATION_NOT;
     int startVal = isSingleValue ? 0 : 1;
     for (int i = startVal; i >= 0; i--) {
-        item = (PrefixItem *) popStack(prefix);
+        item = popStack(prefix).prefixItem;
         if (item->type == PREFIX_OPERATOR_TOKEN) {
             Token *token = (Token *) item->prefix.operator;
             operands[i] = parseOperation(state, prefix, operationTypeForToken(token), line, body);
@@ -285,7 +287,7 @@ int priorityForOperator(TokenType type) {
 }
 
 bool hasStackHigherOrEqualPrecedence(Stack *operators, TokenType type) {
-    Token *top = (Token *)operators->items[operators->count - 1];
+    Token *top = topStack(operators).token;
     return priorityForOperator(top->type) >= priorityForOperator(type);
 }
 
@@ -299,30 +301,30 @@ ExpressionNode *parseExpression(ParserState *state, BodyNode *body) {
     while (isTokenExpression(peek(state->list))) {
         token = peek(state->list);
         if (isTokenValue(token)) {
-            pushStack(prefix, createPrefixItem(parseValue(state, body), PREFIX_VALUE_EXPRESSION));
+            pushPrefixToStack(prefix, createPrefixItem(parseValue(state, body), PREFIX_VALUE_EXPRESSION));
         } else if (isTokenOperator(token)) {
             Token *token = popToken(state->list);
             while (operators->count != 0 && hasStackHigherOrEqualPrecedence(operators, token->type))
-                pushStack(prefix, createPrefixItem(popStack(operators), PREFIX_OPERATOR_TOKEN));
-            pushStack(operators, token);
+                pushPrefixToStack(prefix, createPrefixItem(popStack(operators).token, PREFIX_OPERATOR_TOKEN));
+            pushTokenToStack(operators, token);
         } else if (token->type == TOKEN_OPAREN) {
             parensCount++;
-            pushStack(operators, popToken(state->list));
+            pushTokenToStack(operators, popToken(state->list));
         } else if (token->type == TOKEN_CPAREN) {
             if (parensCount == 0)
                 break;
             popToken(state->list);
             Token *operator;
-            while (operators->count != 0 && (operator = popStack(operators))->type != TOKEN_OPAREN ) {
-                pushStack(prefix, createPrefixItem(operator, PREFIX_OPERATOR_TOKEN));
+            while (operators->count != 0 && (operator = popStack(operators).token)->type != TOKEN_OPAREN ) {
+                pushPrefixToStack(prefix, createPrefixItem(operator, PREFIX_OPERATOR_TOKEN));
             }
             parensCount--;
         }
     }
     while(operators->count != 0)
-        pushStack(prefix, createPrefixItem(popStack(operators), PREFIX_OPERATOR_TOKEN));
+        pushPrefixToStack(prefix, createPrefixItem(popStack(operators).token, PREFIX_OPERATOR_TOKEN));
     destroyStack(operators);
-    PrefixItem *item = (PrefixItem *) popStack(prefix);
+    PrefixItem *item = popStack(prefix).prefixItem;
     if (item == NULL)
         handleError(SyntaxError, "Invalid expression on line %d", line);
     if(item->type == PREFIX_OPERATOR_TOKEN) {
@@ -351,21 +353,12 @@ BodyNode *findBodyForIdentifier(BodyNode *body, String *identifier) {
     return body;
 }
 
-long getArgumentsCountForFuntion(ParserState *state, String *functionName) {
-    HashTableItem *item = getHashTableItem(state->main->funcTable, functionName->value);
-    long currentCount = (long) item->data;
-    return currentCount;
-}
-
-
 void registerSymbol(BodyNode *body, String *identifier) {
-    insertHashTableItem(body->symTable, identifier->value, NULL);
+    insertHashTableSymbol(body->symTable, identifier->value);
 }
 
 void registerFunction(ParserState *state, String *identifier, int argsCount) {
-    long bigCount = (long)argsCount;
-    void *data = (void *)bigCount;
-    insertHashTableItem(state->main->funcTable, identifier->value, data);
+    insertHashTableFunction(state->main->funcTable, identifier->value, argsCount);
 }
 
 /* --------------- DEBUG Functions ----------------- */
