@@ -334,6 +334,9 @@ ExpressionNode *parseExpression(ParserState *state, BodyNode *body) {
     while(operators->count != 0)
         pushPrefixToStack(prefix, createPrefixItem(popStack(operators).token, PREFIX_OPERATOR_TOKEN));
     destroyStack(operators);
+    if (prefix->count == 0) {
+        handleError(SyntaxError, "Expected expression on line %d", line);
+    }
     PrefixItem *item = popStack(prefix).prefixItem;
     if (item == NULL)
         handleError(SyntaxError, "Invalid expression on line %d", line);
