@@ -195,7 +195,7 @@ int getDecimalValueFromHexaChar(int hex) {
 
 int getDecimalChFromHexaCharsOnLine(int hex1, int hex2, int line) {
     if (!isHexadecimal(hex1) || !isHexadecimal(hex2)) {
-        handleError(SyntaxError, "Expected hexadecimal notation after \\x in string on line %d", line);
+        handleError(LexError, "Expected hexadecimal notation after \\x in string on line %d", line);
     }
     int dec1 = getDecimalValueFromHexaChar(hex1);
     int dec2 = getDecimalValueFromHexaChar(hex2);
@@ -286,7 +286,7 @@ void generateIndent(List *list, Document *document) {
             lastIndent = topStack(document->indents).intValue;
         }
         if (sum != lastIndent) {
-            handleError(SyntaxError, "Wrong number of indents at line %d column %d", document->line, document->column);
+            handleError(LexError, "Wrong number of indents at line %d column %d", document->line, document->column);
         }
     }
 }
@@ -346,7 +346,7 @@ void scan(List *list, Document *document) {
 		else if (isTerminator(current)) nextCharacter(document);
 		else {
 			msg("%c is value of %d\n", current, current);
-			handleError(SyntaxError, "Invalid number syntax on line %d, column %d", document->line, document->column);
+			handleError(LexError, "Invalid number syntax on line %d, column %d", document->line, document->column);
 		}
 		if (token != NULL) {
 			msg("new token: %s\n", token->value->value);
