@@ -257,6 +257,7 @@ Token *defineOperator(Document *document, int c) {
     } else if (type == OPERATOR_DIV && isDevision(nextCH)) {
         appendCharacter(string, nextCH);
         type = OPERATOR_IDIV;
+        nextCharacter(document);
     }
 	return createToken(string, type); 
 }
