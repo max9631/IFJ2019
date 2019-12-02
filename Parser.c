@@ -59,6 +59,7 @@ FuncNode *parseFunc(ParserState *state, BodyNode *body) {
     }
     consume(list, TOKEN_OPAREN);
     FuncNode *function = createFuncNode(name->value, NULL, NULL);
+    registerFunction(state, name->value, 0);
     int argsCount = 0;
     while(peek(list)->type != TOKEN_CPAREN) {
         Token *variable = consume(list, TOKEN_IDENTIFIER);
@@ -248,6 +249,8 @@ ExpressionNode *parseOperation(ParserState *state, Stack *prefix, OperationType 
     bool isSingleValue = type == OPERATION_NOT;
     int startVal = isSingleValue ? 0 : 1;
     for (int i = startVal; i >= 0; i--) {
+        if (prefix->count == 0)
+            handleError(SyntaxError, "Invalid expression on line %d", line);
         item = popStack(prefix).prefixItem;
         if (item->type == PREFIX_OPERATOR_TOKEN) {
             Token *token = (Token *) item->prefix.operator;
