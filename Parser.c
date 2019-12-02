@@ -120,6 +120,8 @@ AssignNode *parseAssign(ParserState *state, BodyNode *body) {
     Token *identifier = consume(state->list, TOKEN_IDENTIFIER);
     bool createsVar = true;
     bool isGlobal = body->isGlobal;
+    if (contains(state->main->funcTable, identifier->value->value))
+        handleError(SemanticIdentifierError, "Identifier %s on line %d is allready taken.", identifier->value->value, identifier->line);
     if (containsSymbol(body, identifier->value)) {
         getHashTableItem(body->symTable, identifier->value->value)->data.symbol->referenceCount++;
         createsVar = false;
@@ -165,10 +167,6 @@ StatementNode *parseStatement(ParserState *state, BodyNode *body) {
 
 CallNode *parseCall(ParserState *state, BodyNode *body) {
     Token* identifier = consume(state->list, TOKEN_IDENTIFIER);
-    if (!containsFunction(state, identifier->value)) {
-        handleError(SemanticIdentifierError, "Unknown function identifier '%s' on line %d", identifier->value->value, identifier->line);
-    }
-    getFunctionMeta(state->main->funcTable, identifier->value->value)->referenceCount++;
     CallNode *call = createCallNode(identifier->value);
     consume(state->list, TOKEN_OPAREN);
     long argsCount = 0;
@@ -183,11 +181,14 @@ CallNode *parseCall(ParserState *state, BodyNode *body) {
             consume(state->list, TOKEN_COMMA);
         }
     }
+    consume(state->list, TOKEN_CPAREN);
+    if (!containsFunction(state, identifier->value)) {
+        handleError(SemanticIdentifierError, "Unknown function identifier '%s' on line %d", identifier->value->value, identifier->line);
+    }
     FunctionMeta *meta = getFunctionMeta(state->main->funcTable, identifier->value->value);
     if (argsCount != meta->argsCount && !meta->hasVariableArgsCount)
         handleError(SemanticArgumentError, "Wrong number of arguments one line %d. Should be %d, but got %d", identifier->line, meta->argsCount, argsCount);
     meta->referenceCount++;
-    consume(state->list, TOKEN_CPAREN);
     return call;
 }
 
@@ -197,6 +198,8 @@ ExpressionNode *parseValue(ParserState *state, BodyNode *body) {
     case TOKEN_IDENTIFIER:
         if (peekNext(state->list, 1)->type == TOKEN_OPAREN)
             return createExpressionNode(parseCall(state, body), EXPRESSION_CALL, EXPRESSION_DATA_TYPE_UNKNOWN);
+        if (contains(state->main->funcTable, token->value->value))
+            handleError(SemanticIdentifierError, "Invalid function call '%s' on line %d", token->value->value, token->line);
         if (!containsSymbol(body, token->value))
             handleError(SemanticIdentifierError, "Uknown identier '%s' on line %d", token->value->value, token->line);
         BodyNode *bodyWithIdentifier = findBodyForIdentifier(body, token->value);
