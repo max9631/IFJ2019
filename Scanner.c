@@ -100,6 +100,9 @@ Token *defineValue(Document *document) {
 		appendCharacter(string, c);
 		c = nextCharacter(document);
 	}
+    if (dotOccuredLast || isCharacter(c)) {
+        handleError(LexError, "Invalid number syntax");
+    }
 	TokenType type = DATA_TOKEN_INT;
 	if (dotOccured)
 		type = DATA_TOKEN_FLOAT;
