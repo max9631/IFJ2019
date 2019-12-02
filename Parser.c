@@ -60,12 +60,11 @@ FuncNode *parseFunc(ParserState *state, BodyNode *body) {
     consume(list, TOKEN_OPAREN);
     FuncNode *function = createFuncNode(name->value, NULL, NULL);
     int argsCount = 0;
-    while(true) {
+    while(peek(list)->type != TOKEN_CPAREN) {
         Token *variable = consume(list, TOKEN_IDENTIFIER);
         addFunctionArgument(function, variable->value);
         argsCount++;
         if(isNextTokenOfType(list, TOKEN_CPAREN)) {
-            consume(list, TOKEN_CPAREN);
             break;
         } else if (isNextTokenOfType(list, TOKEN_COMMA)) {
             consume(list, TOKEN_COMMA);
@@ -74,6 +73,7 @@ FuncNode *parseFunc(ParserState *state, BodyNode *body) {
             handleError(SyntaxError, "Expected ')' or ',' in function declaration %s on line %d", name->value->value, variable->line);
         }
     }
+    consume(list, TOKEN_CPAREN);
     registerFunction(state, name->value, argsCount);
     FunctionMeta *meta = getFunctionMeta(state->main->funcTable, name->value->value);
     function->meta = meta;
