@@ -6,13 +6,13 @@ int main(int argc, char *argv[]) {
 
     inDebugMode = false;
     FILE *file;
-    if (inDebugMode) {
+    #ifdef IS_XCODE
         file = fopen(argv[1], "r");
         if (file == NULL)
             handleError(2, "Invalid file name");
-    } else {
+    #else
         file = stdin;
-    }
+    #endif
 	document = createDocument(file);
 	tokenList = createList();
 	scan(tokenList, document);
