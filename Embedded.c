@@ -231,6 +231,30 @@ void generateTypeSafeAddFunction(Generator *generator) {
         instructionReturn();
     instructionLabel(notConcat);
     
+    String *notBool = createString("_%d_if_not_concat", generator->labelCount++);
+    instructionJumpIfNotEquals(notBool, arg1Type, createString("string@bool"));
+        String *bool1IntIsFalse = createString("_%d_if_bool_is_false", generator->labelCount++);
+        String *bool1IntIsFalseEnd = createString("_%d_if_bool_is_false_end", generator->labelCount++);
+        String *bool2IntIsFalse = createString("_%d_if_bool_is_false", generator->labelCount++);
+        String *bool2IntIsFalseEnd = createString("_%d_if_bool_is_false_end", generator->labelCount++);
+    
+        instructionJumpIfNotEquals(bool1IntIsFalse, arg1, createString("bool@true"));
+            instructionMove(arg1, createString("int@1"));
+            instructionJump(bool1IntIsFalseEnd);
+        instructionLabel(bool1IntIsFalse);
+            instructionMove(arg1, createString("int@0"));
+        instructionLabel(bool1IntIsFalseEnd);
+        instructionPushStack(arg2);
+        instructionReturn();
+    
+        instructionJumpIfNotEquals(bool2IntIsFalse, arg2, createString("bool@true"));
+            instructionMove(arg2, createString("int@1"));
+            instructionJump(bool2IntIsFalseEnd);
+        instructionLabel(bool2IntIsFalse);
+            instructionMove(arg2, createString("int@0"));
+        instructionLabel(bool2IntIsFalseEnd);
+    instructionLabel(notBool);
+    
     instructionAdd(generator->tmp1Var, arg1, arg2);
     instructionPushStack(generator->tmp1Var);
     instructionReturn();
@@ -270,6 +294,30 @@ void generateTypeSafeSubFunction(Generator *generator) {
         instructionExit(4);
     instructionLabel(notString);
     
+    String *notBool = createString("_%d_if_not_concat", generator->labelCount++);
+    instructionJumpIfNotEquals(notBool, arg1Type, createString("string@bool"));
+        String *bool1IntIsFalse = createString("_%d_if_bool_is_false", generator->labelCount++);
+        String *bool1IntIsFalseEnd = createString("_%d_if_bool_is_false_end", generator->labelCount++);
+        String *bool2IntIsFalse = createString("_%d_if_bool_is_false", generator->labelCount++);
+        String *bool2IntIsFalseEnd = createString("_%d_if_bool_is_false_end", generator->labelCount++);
+    
+        instructionJumpIfNotEquals(bool1IntIsFalse, arg1, createString("bool@true"));
+            instructionMove(arg1, createString("int@1"));
+            instructionJump(bool1IntIsFalseEnd);
+        instructionLabel(bool1IntIsFalse);
+            instructionMove(arg1, createString("int@0"));
+        instructionLabel(bool1IntIsFalseEnd);
+        instructionPushStack(arg2);
+        instructionReturn();
+    
+        instructionJumpIfNotEquals(bool2IntIsFalse, arg2, createString("bool@true"));
+            instructionMove(arg2, createString("int@1"));
+            instructionJump(bool2IntIsFalseEnd);
+        instructionLabel(bool2IntIsFalse);
+            instructionMove(arg2, createString("int@0"));
+        instructionLabel(bool2IntIsFalseEnd);
+    instructionLabel(notBool);
+    
     instructionSub(generator->tmp1Var, arg1, arg2);
     instructionPushStack(generator->tmp1Var);
     instructionReturn();
@@ -308,6 +356,30 @@ void generateTypeSafeMulFunction(Generator *generator) {
     instructionJumpIfNotEquals(notString, arg1Type, createString("string@string"));
         instructionExit(4);
     instructionLabel(notString);
+    
+    String *notBool = createString("_%d_if_not_concat", generator->labelCount++);
+    instructionJumpIfNotEquals(notBool, arg1Type, createString("string@bool"));
+        String *bool1IntIsFalse = createString("_%d_if_bool_is_false", generator->labelCount++);
+        String *bool1IntIsFalseEnd = createString("_%d_if_bool_is_false_end", generator->labelCount++);
+        String *bool2IntIsFalse = createString("_%d_if_bool_is_false", generator->labelCount++);
+        String *bool2IntIsFalseEnd = createString("_%d_if_bool_is_false_end", generator->labelCount++);
+    
+        instructionJumpIfNotEquals(bool1IntIsFalse, arg1, createString("bool@true"));
+            instructionMove(arg1, createString("int@1"));
+            instructionJump(bool1IntIsFalseEnd);
+        instructionLabel(bool1IntIsFalse);
+            instructionMove(arg1, createString("int@0"));
+        instructionLabel(bool1IntIsFalseEnd);
+        instructionPushStack(arg2);
+        instructionReturn();
+    
+        instructionJumpIfNotEquals(bool2IntIsFalse, arg2, createString("bool@true"));
+            instructionMove(arg2, createString("int@1"));
+            instructionJump(bool2IntIsFalseEnd);
+        instructionLabel(bool2IntIsFalse);
+            instructionMove(arg2, createString("int@0"));
+        instructionLabel(bool2IntIsFalseEnd);
+    instructionLabel(notBool);
     
     instructionMul(generator->tmp1Var, arg1, arg2);
     instructionPushStack(generator->tmp1Var);
