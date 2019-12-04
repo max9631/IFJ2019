@@ -442,14 +442,42 @@ void generateTypeSafeIdivFunction(Generator *generator) {
     instructionType(arg2Type, arg2);
     
     String *notBool = createString("_%d_if_not_concat", generator->labelCount++);
+    instructionJumpIfNotEquals(notBool, arg1Type, createString("string@bool"));
+        String *bool1IntIsFalse = createString("_%d_if_bool_is_false", generator->labelCount++);
+        String *bool1IntIsFalseEnd = createString("_%d_if_bool_is_false_end", generator->labelCount++);
+        String *bool2IntIsFalse = createString("_%d_if_bool_is_false", generator->labelCount++);
+        String *bool2IntIsFalseEnd = createString("_%d_if_bool_is_false_end", generator->labelCount++);
+    
+        instructionJumpIfNotEquals(bool1IntIsFalse, arg1, createString("bool@true"));
+            instructionMove(arg1, createString("int@1"));
+            instructionJump(bool1IntIsFalseEnd);
+        instructionLabel(bool1IntIsFalse);
+            instructionMove(arg1, createString("int@0"));
+        instructionLabel(bool1IntIsFalseEnd);
+        instructionPushStack(arg2);
+        instructionReturn();
+    
+        instructionJumpIfNotEquals(bool2IntIsFalse, arg2, createString("bool@true"));
+            instructionMove(arg2, createString("int@1"));
+            instructionJump(bool2IntIsFalseEnd);
+        instructionLabel(bool2IntIsFalse);
+            instructionMove(arg2, createString("int@0"));
+        instructionLabel(bool2IntIsFalseEnd);
+    instructionLabel(notBool);
+    
+    String *notInt = createString("_%d_if_not_int");
     instructionEquals(generator->tmp1Var, arg1Type, createString("string@int"));
     instructionEquals(generator->tmp2Var, arg2Type, createString("string@int"));
     instructionAnd(generator->tmp3Var, generator->tmp2Var, generator->tmp1Var);
-    instructionJumpIfNotEquals(notBool, generator->tmp3Var, createString("bool@true"));
+    instructionJumpIfNotEquals(notInt, generator->tmp3Var, createString("bool@true"));
+        String *notDevisionByZero = createString("_%d_not_devision_by_zero", generator->labelCount++);
+        instructionJumpIfNotEquals(notDevisionByZero, arg2, createString("int@0"));
+            instructionExit(9);
+        instructionLabel(notDevisionByZero);
         instructionIDiv(generator->tmp1Var, arg1, arg2);
         instructionPushStack(generator->tmp1Var);
         instructionReturn();
-    instructionLabel(notBool);
+    instructionLabel(notInt);
     instructionExit(4);
 }
 
