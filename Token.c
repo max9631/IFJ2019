@@ -45,6 +45,8 @@ String *convertTokenTypeToString(TokenType type) {
     case OPERATOR_MUL: return createString("OPERATOR_MUL");
     case OPERATOR_MUL_ASSIGN: return createString("OPERATOR_MUL_ASSIGN");
     case OPERATOR_IDIV: return createString("OPERATOR_IDIV");
+    case OPERATOR_AND: return createString("OPERATOR_AND");
+    case OPERATOR_OR: return createString("OPERATOR_OR");
     case TOKEN_OPAREN: return createString("TOKEN_OPAREN");
     case TOKEN_CPAREN: return createString("TOKEN_CPAREN");
     case TOKEN_COMMA: return createString("TOKEN_COMMA");

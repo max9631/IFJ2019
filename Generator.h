@@ -6,11 +6,22 @@
 
 typedef struct _Generator {
     int labelCount;
-    String *checkExpressionTypesFunctionLabel;
-    String *checkTypeFunctionLabel;
-    String *convertToFloatFunctionLabel;
-    String *addOrConcatFunction;
-    String *convertNilToNoneStrLabel;
+    String *implicitConversionFunction;
+    String *checkIfTypeTypeFunction;
+    String *checkIfNotTypeTypeFunction;
+    String *convertToFloatFunction;
+    String *convertNilToNoneStrFunction;
+    
+    String *typeSafeAddFunction;
+    String *typeSafeSubFunction;
+    String *typeSafeMulFunction;
+    String *typeSafeDivFunction;
+    String *typeSafeEqualsFunction;
+    String *typeSafeGreaterFunction;
+    String *typeSafeLessFunction;
+    String *typeSafeAndFunction;
+    String *typeSafeOrFunction;
+    String *typeSafeIdivFunction;
     
     String *tmp1Var;
     String *tmp2Var;
