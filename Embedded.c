@@ -649,6 +649,26 @@ void generateTypeSafeOrFunction(Generator *generator) {
     instructionExit(4);
 }
 
+void generateTypeSafeNotFunction(Generator *generator) {
+    instructionLabel(generator->typeSafeNotFunction);
+    instructionCreateFrame();
+    
+    String *arg = createString("TF@arg");
+    String *argType = createString("TF@argType");
+    
+    instructionDefVar(arg);
+    instructionDefVar(argType);
+    instructionPopStack(arg);
+    instructionType(argType, arg);
+    
+    String *notBool = createString("_%d_if_not_bool", generator->labelCount++);
+    instructionJumpIfNotEquals(notBool, argType, createString("bool@true"));
+        instructionNot(generator->tmp1Var, arg);
+        instructionPushStack(generator->tmp1Var);
+        instructionReturn();
+    instructionLabel(notBool);
+    instructionExit(4);
+}
 
 void generateConvertNilToNoneString(Generator *generator) {
     String *notNilLabel = createString("_%d_not_nil_conversion", generator->labelCount);

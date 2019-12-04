@@ -119,8 +119,8 @@ void instructionOr(String *var, String *sym1, String *sym2) {
     printf("OR %s %s %s\n", var->value, sym1->value, sym2->value);
 }
 
-void instructionNot(String *var) {
-    printf("NOT %s\n", var->value);
+void instructionNot(String *var, String *sym) {
+    printf("NOT %s %s\n", var->value, sym->value);
 }
 
 void instructionAndStack() {

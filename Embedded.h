@@ -20,6 +20,7 @@ void generateTypeSafeLessFunction(Generator *generator);
 void generateTypeSafeAndFunction(Generator *generator);
 void generateTypeSafeOrFunction(Generator *generator);
 void generateTypeSafeIdivFunction(Generator *generator);
+void generateTypeSafeNotFunction(Generator *generator);
 
 void generateChrFunction(Generator *generator);
 void generateOrdFunction(Generator *generator);

@@ -37,7 +37,7 @@ void instructionEqualsStack(void);
 void instructionLessThanStack(void);
 void instructionAnd(String *var, String *sym1, String *sym2);
 void instructionOr(String *var, String *sym1, String *sym2);
-void instructionNot(String *var);
+void instructionNot(String *var, String *sym);
 void instructionAndStack(void);
 void instructionOrStack(void);
 void instructionNotStack(void);

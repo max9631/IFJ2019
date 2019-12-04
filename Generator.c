@@ -17,6 +17,7 @@ Generator *createGenerator() {
     generator->typeSafeAndFunction = createString("_EmbeddedTypeSafeAndFunction");
     generator->typeSafeOrFunction = createString("_EmbeddedTypeSafeOrFunction");
     generator->typeSafeIdivFunction = createString("_EmbeddedTypeSafeIdivFunction");
+    generator->typeSafeNotFunction = createString("_EmbeddedTypeSafeNotFunction");
     
     generator->implicitConversionFunction = createString("_EmbeddedExpressionTypeCheck");
     generator->checkIfTypeTypeFunction = createString("_EmbeddedCheckIfType");
@@ -354,9 +355,9 @@ void stackInstructionForOperationType(Generator *generator, OperationNode *opera
             instructionPopFrame();
             break;
         case OPERATION_NOT:
-//            instructionPushFrame();
-//            instructionCall(generator->typeSafeAddFunction);
-//            instructionPopFrame();
+        instructionPushFrame();
+        instructionCall(generator->typeSafeNotFunction);
+        instructionPopFrame();
             break;
     }
 }

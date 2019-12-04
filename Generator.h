@@ -22,6 +22,7 @@ typedef struct _Generator {
     String *typeSafeAndFunction;
     String *typeSafeOrFunction;
     String *typeSafeIdivFunction;
+    String *typeSafeNotFunction;
     
     String *tmp1Var;
     String *tmp2Var;
