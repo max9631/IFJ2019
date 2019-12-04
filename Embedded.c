@@ -365,7 +365,7 @@ void generateTypeSafeIdivFunction(Generator *generator) {
     instructionType(arg1Type, arg1);
     instructionType(arg2Type, arg2);
     
-    String *notBool = createString("_%d_if_not_bool");
+    String *notBool = createString("_%d_if_not_concat", generator->labelCount++);
     instructionEquals(generator->tmp1Var, arg1Type, createString("string@int"));
     instructionEquals(generator->tmp2Var, arg2Type, createString("string@int"));
     instructionAnd(generator->tmp3Var, generator->tmp2Var, generator->tmp1Var);
@@ -503,7 +503,7 @@ void generateTypeSafeAndFunction(Generator *generator) {
     instructionType(arg1Type, arg1);
     instructionType(arg2Type, arg2);
     
-    String *notBool = createString("_%d_if_not_bool");
+    String *notBool = createString("_%d_if_not_bool", generator->labelCount++);
     instructionEquals(generator->tmp1Var, arg1Type, createString("string@bool"));
     instructionEquals(generator->tmp2Var, arg2Type, createString("string@bool"));
     instructionAnd(generator->tmp3Var, generator->tmp2Var, generator->tmp1Var);
@@ -533,7 +533,7 @@ void generateTypeSafeOrFunction(Generator *generator) {
     instructionType(arg1Type, arg1);
     instructionType(arg2Type, arg2);
     
-    String *notBool = createString("_%d_if_not_bool");
+    String *notBool = createString("_%d_if_not_bool", generator->labelCount++);
     instructionEquals(generator->tmp1Var, arg1Type, createString("string@bool"));
     instructionEquals(generator->tmp2Var, arg2Type, createString("string@bool"));
     instructionAnd(generator->tmp3Var, generator->tmp2Var, generator->tmp1Var);
