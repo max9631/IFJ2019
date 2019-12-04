@@ -360,6 +360,10 @@ void generateTypeSafeIdivFunction(Generator *generator) {
     String *arg1Type = createString("TF@arg1Type");
     String *arg2Type = createString("TF@arg2Type");
     
+    instructionDefVar(arg1);
+    instructionDefVar(arg2);
+    instructionDefVar(arg1Type);
+    instructionDefVar(arg2Type);
     instructionPopStack(arg2);
     instructionPopStack(arg1);
     instructionType(arg1Type, arg1);
