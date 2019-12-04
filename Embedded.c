@@ -185,10 +185,10 @@ void generateConvertToFloatFunction(Generator *generator) {
     instructionJumpIfNotEquals(notBoolLabel, type, createString("string@bool"));
         String *boolFalse = createString("_%d_bollFalse");
         instructionJumpIfNotEquals(boolFalse, arg, createString("bool@true"));
-            instructionPushStack(createString("float@1.0p+0"));
+            instructionPushStack(createString("float@0x1p+0"));
             instructionReturn();
         instructionLabel(boolFalse);
-        instructionPushStack(createString("float@0.0p+0"));
+        instructionPushStack(createString("float@0x0p+00"));
         instructionReturn();
     instructionLabel(notBoolLabel);
     
@@ -340,7 +340,7 @@ void generateTypeSafeDivFunction(Generator *generator) {
     instructionPopStack(arg2);
     
     String *notDevisionByZero = createString("_%d_not_devision_by_zero", generator->labelCount++);
-    instructionJumpIfNotEquals(notDevisionByZero, arg2, createString("float@0.0p+0"));
+    instructionJumpIfNotEquals(notDevisionByZero, arg2, createString("float@0x0p+0"));
         instructionExit(9);
     instructionLabel(notDevisionByZero);
     
