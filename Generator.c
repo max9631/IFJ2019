@@ -318,11 +318,14 @@ void stackInstructionForOperationType(Generator *generator, OperationNode *opera
             instructionPushFrame();
             instructionCall(generator->typeSafeGreaterFunction);
             instructionPopFrame();
-//            instructionGreaterThanStack();
-//            generateExpression(generator, operation->value1);
-//            generateExpression(generator, operation->value2);
-//            instructionEqualsStack();
-//            instructionOrStack();
+            
+            generateExpression(generator, operation->value1);
+            generateExpression(generator, operation->value2);
+            
+            instructionPushFrame();
+            instructionCall(generator->typeSafeEqualsFunction);
+            instructionPopFrame();
+            instructionOrStack();
             break;
         case OPERATION_LESS:
             instructionPushFrame();
@@ -333,11 +336,14 @@ void stackInstructionForOperationType(Generator *generator, OperationNode *opera
             instructionPushFrame();
             instructionCall(generator->typeSafeLessFunction);
             instructionPopFrame();
-//            instructionGreaterThanStack();
-//            generateExpression(generator, operation->value1);
-//            generateExpression(generator, operation->value2);
-//            instructionEqualsStack();
-//            instructionOrStack();
+            
+            generateExpression(generator, operation->value1);
+            generateExpression(generator, operation->value2);
+            
+            instructionPushFrame();
+            instructionCall(generator->typeSafeEqualsFunction);
+            instructionPopFrame();
+            instructionOrStack();
             break;
         case OPERATION_AND:
             instructionPushFrame();
