@@ -244,8 +244,6 @@ void generateTypeSafeAddFunction(Generator *generator) {
         instructionLabel(bool1IntIsFalse);
             instructionMove(arg1, createString("int@0"));
         instructionLabel(bool1IntIsFalseEnd);
-        instructionPushStack(arg2);
-        instructionReturn();
     
         instructionJumpIfNotEquals(bool2IntIsFalse, arg2, createString("bool@true"));
             instructionMove(arg2, createString("int@1"));
@@ -307,8 +305,6 @@ void generateTypeSafeSubFunction(Generator *generator) {
         instructionLabel(bool1IntIsFalse);
             instructionMove(arg1, createString("int@0"));
         instructionLabel(bool1IntIsFalseEnd);
-        instructionPushStack(arg2);
-        instructionReturn();
     
         instructionJumpIfNotEquals(bool2IntIsFalse, arg2, createString("bool@true"));
             instructionMove(arg2, createString("int@1"));
@@ -370,8 +366,6 @@ void generateTypeSafeMulFunction(Generator *generator) {
         instructionLabel(bool1IntIsFalse);
             instructionMove(arg1, createString("int@0"));
         instructionLabel(bool1IntIsFalseEnd);
-        instructionPushStack(arg2);
-        instructionReturn();
     
         instructionJumpIfNotEquals(bool2IntIsFalse, arg2, createString("bool@true"));
             instructionMove(arg2, createString("int@1"));
@@ -454,8 +448,6 @@ void generateTypeSafeIdivFunction(Generator *generator) {
         instructionLabel(bool1IntIsFalse);
             instructionMove(arg1, createString("int@0"));
         instructionLabel(bool1IntIsFalseEnd);
-        instructionPushStack(arg2);
-        instructionReturn();
     
         instructionJumpIfNotEquals(bool2IntIsFalse, arg2, createString("bool@true"));
             instructionMove(arg2, createString("int@1"));
