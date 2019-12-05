@@ -81,10 +81,10 @@ void generateImplicitConversionFunction(Generator *generator) {
         String *boolFloatIsFalse = createString("_%d_if_bool_is_false", generator->labelCount++);
         String *boolFloatsFalseEnd = createString("_%d_if_bool_is_false_end", generator->labelCount++);
         instructionJumpIfNotEquals(boolFloatIsFalse, arg1, createString("bool@true"));
-            instructionPushStack(createString("int@1"));
+            instructionPushStack(createString("float@0x1p+0"));
             instructionJump(boolFloatsFalseEnd);
         instructionLabel(boolFloatIsFalse);
-            instructionPushStack(createString("int@0"));
+            instructionPushStack(createString("float@0x0p+0"));
         instructionLabel(boolFloatsFalseEnd);
         instructionPushStack(arg2);
         instructionReturn();
@@ -98,10 +98,10 @@ void generateImplicitConversionFunction(Generator *generator) {
         String *floatBoolIsFalse = createString("_%d_if_bool_is_false", generator->labelCount++);
         instructionPushStack(arg1);
         instructionJumpIfNotEquals(floatBoolIsFalse, arg2, createString("bool@true"));
-            instructionPushStack(createString("int@1"));
+            instructionPushStack(createString("float@0x1p+0"));
             instructionReturn();
         instructionLabel(floatBoolIsFalse);
-        instructionPushStack(createString("int@0"));
+        instructionPushStack(createString("float@0x0p+0"));
         instructionReturn();
     instructionLabel(notFloatBool);
     
@@ -244,8 +244,7 @@ void generateTypeSafeAddFunction(Generator *generator) {
         instructionLabel(bool1IntIsFalse);
             instructionMove(arg1, createString("int@0"));
         instructionLabel(bool1IntIsFalseEnd);
-        instructionPushStack(arg2);
-        instructionReturn();
+        instructionType(arg1Type, arg1);
     
         instructionJumpIfNotEquals(bool2IntIsFalse, arg2, createString("bool@true"));
             instructionMove(arg2, createString("int@1"));
@@ -253,6 +252,7 @@ void generateTypeSafeAddFunction(Generator *generator) {
         instructionLabel(bool2IntIsFalse);
             instructionMove(arg2, createString("int@0"));
         instructionLabel(bool2IntIsFalseEnd);
+        instructionType(arg2Type, arg2);
     instructionLabel(notBool);
     
     instructionAdd(generator->tmp1Var, arg1, arg2);
@@ -307,8 +307,7 @@ void generateTypeSafeSubFunction(Generator *generator) {
         instructionLabel(bool1IntIsFalse);
             instructionMove(arg1, createString("int@0"));
         instructionLabel(bool1IntIsFalseEnd);
-        instructionPushStack(arg2);
-        instructionReturn();
+        instructionType(arg1Type, arg1);
     
         instructionJumpIfNotEquals(bool2IntIsFalse, arg2, createString("bool@true"));
             instructionMove(arg2, createString("int@1"));
@@ -316,6 +315,7 @@ void generateTypeSafeSubFunction(Generator *generator) {
         instructionLabel(bool2IntIsFalse);
             instructionMove(arg2, createString("int@0"));
         instructionLabel(bool2IntIsFalseEnd);
+        instructionType(arg2Type, arg2);
     instructionLabel(notBool);
     
     instructionSub(generator->tmp1Var, arg1, arg2);
@@ -370,8 +370,7 @@ void generateTypeSafeMulFunction(Generator *generator) {
         instructionLabel(bool1IntIsFalse);
             instructionMove(arg1, createString("int@0"));
         instructionLabel(bool1IntIsFalseEnd);
-        instructionPushStack(arg2);
-        instructionReturn();
+        instructionType(arg1Type, arg1);
     
         instructionJumpIfNotEquals(bool2IntIsFalse, arg2, createString("bool@true"));
             instructionMove(arg2, createString("int@1"));
@@ -379,6 +378,7 @@ void generateTypeSafeMulFunction(Generator *generator) {
         instructionLabel(bool2IntIsFalse);
             instructionMove(arg2, createString("int@0"));
         instructionLabel(bool2IntIsFalseEnd);
+        instructionType(arg1Type, arg1);
     instructionLabel(notBool);
     
     instructionMul(generator->tmp1Var, arg1, arg2);
@@ -441,6 +441,11 @@ void generateTypeSafeIdivFunction(Generator *generator) {
     instructionType(arg1Type, arg1);
     instructionType(arg2Type, arg2);
     
+    String *areSame = createString("_%d_are_Same", generator->labelCount++);
+    instructionJumpIfEquals(areSame, arg1Type, arg2Type);
+        instructionExit(4);
+    instructionLabel(areSame);
+    
     String *notBool = createString("_%d_if_not_concat", generator->labelCount++);
     instructionJumpIfNotEquals(notBool, arg1Type, createString("string@bool"));
         String *bool1IntIsFalse = createString("_%d_if_bool_is_false", generator->labelCount++);
@@ -454,8 +459,7 @@ void generateTypeSafeIdivFunction(Generator *generator) {
         instructionLabel(bool1IntIsFalse);
             instructionMove(arg1, createString("int@0"));
         instructionLabel(bool1IntIsFalseEnd);
-        instructionPushStack(arg2);
-        instructionReturn();
+        instructionType(arg1Type, arg1);
     
         instructionJumpIfNotEquals(bool2IntIsFalse, arg2, createString("bool@true"));
             instructionMove(arg2, createString("int@1"));
@@ -463,6 +467,7 @@ void generateTypeSafeIdivFunction(Generator *generator) {
         instructionLabel(bool2IntIsFalse);
             instructionMove(arg2, createString("int@0"));
         instructionLabel(bool2IntIsFalseEnd);
+        instructionType(arg2Type, arg2);
     instructionLabel(notBool);
     
     String *notInt = createString("_%d_if_not_int");
@@ -804,18 +809,40 @@ void generateSubStringFunction(Generator *generator) {
     instructionDefVar(length);
     
     instructionPopStack(subLen);
-    // TODO: check int
     instructionPopStack(index);
-    // TODO: check int
     instructionPopStack(str);
-    // TODO: check string
+    
+    // Check if subLen is int
+    instructionPushStack(subLen);
+    instructionPushStack(createString("string@int"));
+    instructionPushFrame();
+    instructionCall(generator->checkIfTypeTypeFunction);
+    instructionPopFrame();
+    instructionPopStack(generator->tmp1Var);
+    
+    // Check if index is int
+    instructionPushStack(index);
+    instructionPushStack(createString("string@int"));
+    instructionPushFrame();
+    instructionCall(generator->checkIfTypeTypeFunction);
+    instructionPopFrame();
+    instructionPopStack(generator->tmp1Var);
+    
+    // Check if str is int
+    instructionPushStack(str);
+    instructionPushStack(createString("string@string"));
+    instructionPushFrame();
+    instructionCall(generator->checkIfTypeTypeFunction);
+    instructionPopFrame();
+    instructionPopStack(generator->tmp1Var);
+    
     instructionStrLen(length, str);
     
     instructionGreaterThan(generator->tmp1Var, index, length);
     instructionLessThan(generator->tmp2Var, index, createString("int@0"));
     instructionLessThan(generator->tmp3Var, subLen, createString("int@0"));
     
-    // if
+    
     instructionPushStack(generator->tmp1Var);
     instructionPushStack(generator->tmp2Var);
     instructionAndStack();
@@ -823,10 +850,8 @@ void generateSubStringFunction(Generator *generator) {
     instructionOrStack();
     instructionPushStack(createString("bool@false"));
     instructionJumpIfEqualsStack(elseLabel);
-    // if true
-    instructionPushStack(createString("nil@nil"));
-    instructionReturn();
-    // else not true
+        instructionPushStack(createString("nil@nil"));
+        instructionReturn();
     instructionLabel(elseLabel);
     
     String *finalStr = createString("TF@ch");
@@ -849,15 +874,13 @@ void generateSubStringFunction(Generator *generator) {
     instructionAndStack();
     instructionPushStack(createString("bool@false"));
     instructionJumpIfEqualsStack(whileEndLabel);
-    instructionGetChar(generator->tmp1Var, str, i); 
-    instructionConcat(finalStr, finalStr, generator->tmp1Var);
-    instructionAdd(i, i, createString("int@1"));
+        instructionGetChar(generator->tmp1Var, str, i);
+        instructionConcat(finalStr, finalStr, generator->tmp1Var);
+        instructionAdd(i, i, createString("int@1"));
     instructionJump(whileLabel);
-    
-    instructionLabel(whileEndLabel);
-    instructionPushStack(finalStr);
-    instructionReturn();
-    
+        instructionLabel(whileEndLabel);
+        instructionPushStack(finalStr);
+        instructionReturn();
     instructionLabel(endLabel);
     
     instructionPushStack(createString("nil@nil"));
