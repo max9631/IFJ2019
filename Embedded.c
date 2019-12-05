@@ -809,18 +809,40 @@ void generateSubStringFunction(Generator *generator) {
     instructionDefVar(length);
     
     instructionPopStack(subLen);
-    // TODO: check int
     instructionPopStack(index);
-    // TODO: check int
     instructionPopStack(str);
-    // TODO: check string
+    
+    // Check if subLen is int
+    instructionPushStack(subLen);
+    instructionPushStack(createString("string@int"));
+    instructionPushFrame();
+    instructionCall(generator->checkIfTypeTypeFunction);
+    instructionPopFrame();
+    instructionPopStack(generator->tmp1Var);
+    
+    // Check if index is int
+    instructionPushStack(index);
+    instructionPushStack(createString("string@int"));
+    instructionPushFrame();
+    instructionCall(generator->checkIfTypeTypeFunction);
+    instructionPopFrame();
+    instructionPopStack(generator->tmp1Var);
+    
+    // Check if str is int
+    instructionPushStack(str);
+    instructionPushStack(createString("string@string"));
+    instructionPushFrame();
+    instructionCall(generator->checkIfTypeTypeFunction);
+    instructionPopFrame();
+    instructionPopStack(generator->tmp1Var);
+    
     instructionStrLen(length, str);
     
     instructionGreaterThan(generator->tmp1Var, index, length);
     instructionLessThan(generator->tmp2Var, index, createString("int@0"));
     instructionLessThan(generator->tmp3Var, subLen, createString("int@0"));
     
-    // if
+    
     instructionPushStack(generator->tmp1Var);
     instructionPushStack(generator->tmp2Var);
     instructionAndStack();
@@ -828,10 +850,8 @@ void generateSubStringFunction(Generator *generator) {
     instructionOrStack();
     instructionPushStack(createString("bool@false"));
     instructionJumpIfEqualsStack(elseLabel);
-    // if true
-    instructionPushStack(createString("nil@nil"));
-    instructionReturn();
-    // else not true
+        instructionPushStack(createString("nil@nil"));
+        instructionReturn();
     instructionLabel(elseLabel);
     
     String *finalStr = createString("TF@ch");
@@ -854,15 +874,13 @@ void generateSubStringFunction(Generator *generator) {
     instructionAndStack();
     instructionPushStack(createString("bool@false"));
     instructionJumpIfEqualsStack(whileEndLabel);
-    instructionGetChar(generator->tmp1Var, str, i); 
-    instructionConcat(finalStr, finalStr, generator->tmp1Var);
-    instructionAdd(i, i, createString("int@1"));
+        instructionGetChar(generator->tmp1Var, str, i);
+        instructionConcat(finalStr, finalStr, generator->tmp1Var);
+        instructionAdd(i, i, createString("int@1"));
     instructionJump(whileLabel);
-    
-    instructionLabel(whileEndLabel);
-    instructionPushStack(finalStr);
-    instructionReturn();
-    
+        instructionLabel(whileEndLabel);
+        instructionPushStack(finalStr);
+        instructionReturn();
     instructionLabel(endLabel);
     
     instructionPushStack(createString("nil@nil"));
