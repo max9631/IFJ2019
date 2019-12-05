@@ -81,10 +81,10 @@ void generateImplicitConversionFunction(Generator *generator) {
         String *boolFloatIsFalse = createString("_%d_if_bool_is_false", generator->labelCount++);
         String *boolFloatsFalseEnd = createString("_%d_if_bool_is_false_end", generator->labelCount++);
         instructionJumpIfNotEquals(boolFloatIsFalse, arg1, createString("bool@true"));
-            instructionPushStack(createString("int@1"));
+            instructionPushStack(createString("float@0x1p+0"));
             instructionJump(boolFloatsFalseEnd);
         instructionLabel(boolFloatIsFalse);
-            instructionPushStack(createString("int@0"));
+            instructionPushStack(createString("float@0x0p+0"));
         instructionLabel(boolFloatsFalseEnd);
         instructionPushStack(arg2);
         instructionReturn();
@@ -98,10 +98,10 @@ void generateImplicitConversionFunction(Generator *generator) {
         String *floatBoolIsFalse = createString("_%d_if_bool_is_false", generator->labelCount++);
         instructionPushStack(arg1);
         instructionJumpIfNotEquals(floatBoolIsFalse, arg2, createString("bool@true"));
-            instructionPushStack(createString("int@1"));
+            instructionPushStack(createString("float@0x1p+0"));
             instructionReturn();
         instructionLabel(floatBoolIsFalse);
-        instructionPushStack(createString("int@0"));
+        instructionPushStack(createString("float@0x0p+0"));
         instructionReturn();
     instructionLabel(notFloatBool);
     
