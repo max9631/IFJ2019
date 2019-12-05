@@ -410,15 +410,6 @@ void generateExpression(Generator *generator, ExpressionNode *expression) {
             
             generateExpression(generator, operation->value1);
             generateExpression(generator, operation->value2);
-//
-//            if (requiresFail(operation)) {
-//                instructionPushStack(createString("bool@true"));
-//            } else {
-//                instructionPushStack(createString("bool@false"));
-//            }
-//            instructionPushFrame();
-//            instructionCall(generator->implicitConversionFunction);
-//            instructionPopFrame();
             
             stackInstructionForOperationType(generator, operation);
             break;
