@@ -64,10 +64,12 @@ bool isOperator(int c) {
 
 Token *skipUntilNewLine(Document *document) {
 	int ch = document->currentChar;
-	while (ch != (int) '\n' && ch != EOF)
+    while (ch != (int) '\n' && ch != EOF) {
 		ch = nextCharacter(document);
-    if (ch == (int) '\n')
+    }
+    if (ch == (int) '\n') {
         nextCharacter(document);
+    }
 	return createToken(createStringFromChar(ch), TOKEN_EOL);
 }
 
@@ -149,10 +151,10 @@ Token *defineDoubleQuoteString(Document *document) {
 		if (isDoubleQuote(ch)) {
 			ch = nextCharacter(document);
 		} else {
-			handleError(LexError, "Incorrect number of \"");
+			handleError(LexError, "Incorrect string symbol on line %d. Did you mean of \"\"\"?", document->line);
 		}
 	} else {
-		handleError(LexError, "Incorrect number of \"");
+		handleError(LexError, "Incorrect string symbol on line %d. Did you mean of \"\"\"?", document->line);
 	}
 	
 	String *string = recordStringUntilChar(document, (int) '"');

@@ -7,11 +7,23 @@ Generator *createGenerator() {
     generator->tmp2Var = createString("GF@IFJ_TMP2");
     generator->tmp3Var = createString("GF@IFJ_TMP3");
     
-    generator->checkExpressionTypesFunctionLabel = createString("_EmbeddedExpressionTypeCheck");
-    generator->checkTypeFunctionLabel = createString("_EmbeddedTypeCheck");
-    generator->convertToFloatFunctionLabel = createString("_EmbeddedConvertToFloat");
-    generator->addOrConcatFunction = createString("_EmbeddedAddOrConcatFunction");
-    generator->convertNilToNoneStrLabel = createString("_EmbeddedConvertNilToStr");
+    generator->typeSafeAddFunction = createString("_EmbeddedTypeSafeAddFunction");
+    generator->typeSafeSubFunction = createString("_EmbeddedTypeSafeSubFunction");
+    generator->typeSafeMulFunction = createString("_EmbeddedTypeSafeMulFunction");
+    generator->typeSafeDivFunction = createString("_EmbeddedTypeSafeDivFunction");
+    generator->typeSafeEqualsFunction = createString("_EmbeddedTypeSafeEqualsFunction");
+    generator->typeSafeGreaterFunction = createString("_EmbeddedTypeSafeGreaterFunction");
+    generator->typeSafeLessFunction = createString("_EmbeddedTypeSafeLessFunction");
+    generator->typeSafeAndFunction = createString("_EmbeddedTypeSafeAndFunction");
+    generator->typeSafeOrFunction = createString("_EmbeddedTypeSafeOrFunction");
+    generator->typeSafeIdivFunction = createString("_EmbeddedTypeSafeIdivFunction");
+    generator->typeSafeNotFunction = createString("_EmbeddedTypeSafeNotFunction");
+    
+    generator->implicitConversionFunction = createString("_EmbeddedExpressionTypeCheck");
+    generator->checkIfTypeTypeFunction = createString("_EmbeddedCheckIfType");
+    generator->checkIfNotTypeTypeFunction= createString("_EmbeddedCheckIfNotType");
+    generator->convertToFloatFunction = createString("_EmbeddedConvertToFloat");
+    generator->convertNilToNoneStrFunction = createString("_EmbeddedConvertNilToStr");
     return generator;
 }
 
@@ -23,8 +35,6 @@ void generateDefVarInBody(BodyNode *body) {
         switch (statement->statementType) {
         case STATEMENT_ASSIGN:;
             AssignNode *assign = (AssignNode *)statement->statement;
-                if (assign->meta->referenceCount == 0)
-                    continue;
             if (assign->cretesVariable) {
                 char *frame = assign->isGlobal ? "GF" : "TF";
                 instructionDefVar(createString("%s@%s", frame, assign->identifier->value));
@@ -55,10 +65,22 @@ void generateMain(Generator *generator, MainNode *main) {
     instructionCreateFrame();
     instructionJump(createString("_ifj_start"));
     generateConvertNilToNoneString(generator);
-    generateCheckExpressionTypesFunction(generator);
-    generateCheckTypeFunction(generator);
+    generateImplicitConversionFunction(generator);
+    generateCheckIfTypeFunction(generator);
+    generateCheckIfNotTypeFunction(generator);
     generateConvertToFloatFunction(generator);
-    generateAddOrConcat(generator);
+
+    generateTypeSafeAddFunction(generator);
+    generateTypeSafeSubFunction(generator);
+    generateTypeSafeMulFunction(generator);
+    generateTypeSafeDivFunction(generator);
+    generateTypeSafeEqualsFunction(generator);
+    generateTypeSafeGreaterFunction(generator);
+    generateTypeSafeLessFunction(generator);
+    generateTypeSafeAndFunction(generator);
+    generateTypeSafeOrFunction(generator);
+    generateTypeSafeIdivFunction(generator);
+    
     generateChrFunction(generator);
     generateOrdFunction(generator);
     generateSubStringFunction(generator);
@@ -75,8 +97,6 @@ void generateBody(Generator *generator, BodyNode *body) {
 }
 
 void generateFunc(Generator *generator, FuncNode *function) {
-    if (function->meta->referenceCount == 0)
-        return;
     instructionLabel(function->name);
     instructionCreateFrame();
     for(int i = function->argsCount-1; i >= 0; i-- ) {
@@ -197,7 +217,7 @@ void generatePrint(Generator *generator, CallNode *call) {
     for (int i = 0; i < call->argsCount; i++) {
         if (i != 0) instructionWrite(createString("string@\\032"));
         generateExpression(generator, call->expressions[i]);
-        instructionCall(generator->convertNilToNoneStrLabel);
+        instructionCall(generator->convertNilToNoneStrFunction);
         instructionPopStack(generator->tmp1Var);
         instructionWrite(generator->tmp1Var);
     }
@@ -254,65 +274,92 @@ String *convertValueToIFJ(ValueNode *value, ExpressionDataType dataType) {
 void stackInstructionForOperationType(Generator *generator, OperationNode *operation) {
     switch (operation->type) {
         case OPERATION_ADD:
-            instructionCall(generator->addOrConcatFunction);
+            instructionPushFrame();
+            instructionCall(generator->typeSafeAddFunction);
+            instructionPopFrame();
             break;
         case OPERATION_SUB:
-            instructionSubStack();
+            instructionPushFrame();
+            instructionCall(generator->typeSafeSubFunction);
+            instructionPopFrame();
             break;
         case OPERATION_MUL:
-            instructionMulStack();
+            instructionPushFrame();
+            instructionCall(generator->typeSafeMulFunction);
+            instructionPopFrame();
             break;
         case OPERATION_DIV:
-            instructionPopStack(generator->tmp1Var);
             instructionPushFrame();
-            instructionCall(generator->convertToFloatFunctionLabel);
+            instructionCall(generator->typeSafeDivFunction);
             instructionPopFrame();
-            
-            instructionPushStack(generator->tmp1Var);
+            break;
+        case OPERATION_IDIV:
             instructionPushFrame();
-            instructionCall(generator->convertToFloatFunctionLabel);
+            instructionCall(generator->typeSafeIdivFunction);
             instructionPopFrame();
-            
-            instructionDivStack();
             break;
         case OPERATION_EQUALS:
-            instructionEqualsStack();
+            instructionPushFrame();
+            instructionCall(generator->typeSafeEqualsFunction);
+            instructionPopFrame();
             break;
         case OPERATION_NOTEQUALS:
-            instructionEqualsStack();
+            instructionPushFrame();
+            instructionCall(generator->typeSafeEqualsFunction);
+            instructionPopFrame();
             instructionNotStack();
             break;
         case OPERATION_GREATER:
-            instructionGreaterThanStack();
+            instructionPushFrame();
+            instructionCall(generator->typeSafeGreaterFunction);
+            instructionPopFrame();
             break;
         case OPERATION_GREATEROREQUALS:
-            instructionGreaterThanStack();
+            instructionPushFrame();
+            instructionCall(generator->typeSafeGreaterFunction);
+            instructionPopFrame();
+            
             generateExpression(generator, operation->value1);
             generateExpression(generator, operation->value2);
-            instructionEqualsStack();
+            
+            instructionPushFrame();
+            instructionCall(generator->typeSafeEqualsFunction);
+            instructionPopFrame();
             instructionOrStack();
             break;
         case OPERATION_LESS:
-            instructionLessThanStack();
+            instructionPushFrame();
+            instructionCall(generator->typeSafeLessFunction);
+            instructionPopFrame();
             break;
         case OPERATION_LESSOREQUALS:
-            instructionLessThanStack();
+            instructionPushFrame();
+            instructionCall(generator->typeSafeLessFunction);
+            instructionPopFrame();
+            
             generateExpression(generator, operation->value1);
             generateExpression(generator, operation->value2);
-            instructionEqualsStack();
+            
+            instructionPushFrame();
+            instructionCall(generator->typeSafeEqualsFunction);
+            instructionPopFrame();
             instructionOrStack();
             break;
         case OPERATION_AND:
-            instructionAndStack();
+            instructionPushFrame();
+            instructionCall(generator->typeSafeAndFunction);
+            instructionPopFrame();
             break;
         case OPERATION_OR:
-            instructionOrStack();
-            break;
-        case OPERATION_IDIV:
-            instructionIDivStack();
+            instructionPushFrame();
+            instructionCall(generator->typeSafeOrFunction);
+            instructionPopFrame();
             break;
         case OPERATION_NOT:
-            instructionNotStack();
+        instructionPushFrame();
+        instructionCall(generator->typeSafeNotFunction);
+        instructionPopFrame();
+            break;
     }
 }
 
@@ -363,15 +410,6 @@ void generateExpression(Generator *generator, ExpressionNode *expression) {
             
             generateExpression(generator, operation->value1);
             generateExpression(generator, operation->value2);
-            
-            if (requiresFail(operation)) {
-                instructionPushStack(createString("bool@true"));
-            } else {
-                instructionPushStack(createString("bool@false"));
-            }
-            instructionPushFrame();
-            instructionCall(generator->checkExpressionTypesFunctionLabel);
-            instructionPopFrame();
             
             stackInstructionForOperationType(generator, operation);
             break;

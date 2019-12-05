@@ -115,12 +115,12 @@ void instructionAnd(String *var, String *sym1, String *sym2) {
     printf("AND %s %s %s\n", var->value, sym1->value, sym2->value);
 }
 
-void instructionOr(String *var) {
-    printf("OR %s\n", var->value);
+void instructionOr(String *var, String *sym1, String *sym2) {
+    printf("OR %s %s %s\n", var->value, sym1->value, sym2->value);
 }
 
-void instructionNot(String *var) {
-    printf("NOT %s\n", var->value);
+void instructionNot(String *var, String *sym) {
+    printf("NOT %s %s\n", var->value, sym->value);
 }
 
 void instructionAndStack() {
@@ -135,20 +135,20 @@ void instructionNotStack() {
     printf("NOTS\n");
 }
 
-void instructionIntToFloat(String *var) {
-    printf("INT2FLOAT %s\n", var->value);
+void instructionIntToFloat(String *var, String *sym) {
+    printf("INT2FLOAT %s %s\n", var->value, sym->value);
 }
 
-void instructionFloatToInt(String *var) {
-    printf("FLOAT2INT %s\n", var->value);
+void instructionFloatToInt(String *var, String *sym) {
+    printf("FLOAT2INT %s %s\n", var->value, sym->value);
 }
 
 void instructionIntToChar(String *var, String *strchar) {
     printf("INT2CHAR %s %s\n", var->value, strchar->value);
 }
 
-void instructionStringToInt(String *var) {
-    printf("STRI2INT %s\n", var->value);
+void instructionStringToInt(String *var, String *sym1, String *sym2) {
+    printf("STRI2INT %s %s %s\n", var->value, sym1->value, sym2->value);
 }
 
 void instructionIntToFloatStack() {
