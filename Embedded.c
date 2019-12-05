@@ -435,6 +435,11 @@ void generateTypeSafeIdivFunction(Generator *generator) {
     instructionType(arg1Type, arg1);
     instructionType(arg2Type, arg2);
     
+    String *areSame = createString("_%d_are_Same", generator->labelCount++);
+    instructionJumpIfEquals(areSame, arg1Type, arg2Type);
+        instructionExit(4);
+    instructionLabel(areSame);
+    
     String *notBool = createString("_%d_if_not_concat", generator->labelCount++);
     instructionJumpIfNotEquals(notBool, arg1Type, createString("string@bool"));
         String *bool1IntIsFalse = createString("_%d_if_bool_is_false", generator->labelCount++);
