@@ -244,6 +244,7 @@ void generateTypeSafeAddFunction(Generator *generator) {
         instructionLabel(bool1IntIsFalse);
             instructionMove(arg1, createString("int@0"));
         instructionLabel(bool1IntIsFalseEnd);
+        instructionType(arg1Type, arg1);
     
         instructionJumpIfNotEquals(bool2IntIsFalse, arg2, createString("bool@true"));
             instructionMove(arg2, createString("int@1"));
@@ -251,6 +252,7 @@ void generateTypeSafeAddFunction(Generator *generator) {
         instructionLabel(bool2IntIsFalse);
             instructionMove(arg2, createString("int@0"));
         instructionLabel(bool2IntIsFalseEnd);
+        instructionType(arg2Type, arg2);
     instructionLabel(notBool);
     
     instructionAdd(generator->tmp1Var, arg1, arg2);
@@ -305,6 +307,7 @@ void generateTypeSafeSubFunction(Generator *generator) {
         instructionLabel(bool1IntIsFalse);
             instructionMove(arg1, createString("int@0"));
         instructionLabel(bool1IntIsFalseEnd);
+        instructionType(arg1Type, arg1);
     
         instructionJumpIfNotEquals(bool2IntIsFalse, arg2, createString("bool@true"));
             instructionMove(arg2, createString("int@1"));
@@ -312,6 +315,7 @@ void generateTypeSafeSubFunction(Generator *generator) {
         instructionLabel(bool2IntIsFalse);
             instructionMove(arg2, createString("int@0"));
         instructionLabel(bool2IntIsFalseEnd);
+        instructionType(arg2Type, arg2);
     instructionLabel(notBool);
     
     instructionSub(generator->tmp1Var, arg1, arg2);
@@ -366,6 +370,7 @@ void generateTypeSafeMulFunction(Generator *generator) {
         instructionLabel(bool1IntIsFalse);
             instructionMove(arg1, createString("int@0"));
         instructionLabel(bool1IntIsFalseEnd);
+        instructionType(arg1Type, arg1);
     
         instructionJumpIfNotEquals(bool2IntIsFalse, arg2, createString("bool@true"));
             instructionMove(arg2, createString("int@1"));
@@ -373,6 +378,7 @@ void generateTypeSafeMulFunction(Generator *generator) {
         instructionLabel(bool2IntIsFalse);
             instructionMove(arg2, createString("int@0"));
         instructionLabel(bool2IntIsFalseEnd);
+        instructionType(arg1Type, arg1);
     instructionLabel(notBool);
     
     instructionMul(generator->tmp1Var, arg1, arg2);
@@ -453,6 +459,7 @@ void generateTypeSafeIdivFunction(Generator *generator) {
         instructionLabel(bool1IntIsFalse);
             instructionMove(arg1, createString("int@0"));
         instructionLabel(bool1IntIsFalseEnd);
+        instructionType(arg1Type, arg1);
     
         instructionJumpIfNotEquals(bool2IntIsFalse, arg2, createString("bool@true"));
             instructionMove(arg2, createString("int@1"));
@@ -460,6 +467,7 @@ void generateTypeSafeIdivFunction(Generator *generator) {
         instructionLabel(bool2IntIsFalse);
             instructionMove(arg2, createString("int@0"));
         instructionLabel(bool2IntIsFalseEnd);
+        instructionType(arg2Type, arg2);
     instructionLabel(notBool);
     
     String *notInt = createString("_%d_if_not_int");
