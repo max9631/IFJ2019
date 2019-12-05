@@ -158,16 +158,24 @@ void generateAssign(Generator *generator, AssignNode *assign) {
         case ASSIGN_NONE:
             break;
         case ASSIGN_ADD:
-            instructionAddStack();
+            instructionPushFrame();
+            instructionCall(generator->typeSafeAddFunction);
+            instructionPopFrame();
             break;
         case ASSIGN_SUB:
-            instructionSubStack();
+            instructionPushFrame();
+            instructionCall(generator->typeSafeSubFunction);
+            instructionPopFrame();
             break;
         case ASSIGN_DIV:
-            instructionDivStack();
+            instructionPushFrame();
+            instructionCall(generator->typeSafeDivFunction);
+            instructionPopFrame();
             break;
         case ASSIGN_MUL:
-            instructionMulStack();
+            instructionPushFrame();
+            instructionCall(generator->typeSafeMulFunction);
+            instructionPopFrame();
             break;
     }
     instructionPopStack(identifier);
