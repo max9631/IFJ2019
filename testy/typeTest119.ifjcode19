@@ -1,0 +1,555 @@
+.IFJcode19
+DEFVAR GF@IFJ_TMP1
+DEFVAR GF@IFJ_TMP2
+DEFVAR GF@IFJ_TMP3
+CREATEFRAME
+JUMP _ifj_start
+LABEL _EmbeddedConvertNilToStr
+POPS GF@IFJ_TMP1
+JUMPIFNEQ _0_not_nil_conversion GF@IFJ_TMP1 nil@nil
+PUSHS string@None
+RETURN
+LABEL _0_not_nil_conversion
+PUSHS GF@IFJ_TMP1
+RETURN
+LABEL _EmbeddedExpressionTypeCheck
+CREATEFRAME
+DEFVAR TF@arg1
+DEFVAR TF@arg2
+DEFVAR TF@type1
+DEFVAR TF@type2
+POPS TF@arg2
+POPS TF@arg1
+TYPE TF@type1 TF@arg1
+TYPE TF@type2 TF@arg2
+EQ GF@IFJ_TMP1 TF@type1 string@int
+EQ GF@IFJ_TMP2 TF@type2 string@float
+AND GF@IFJ_TMP3 GF@IFJ_TMP1 GF@IFJ_TMP2
+JUMPIFNEQ _0_if_not_int_float GF@IFJ_TMP3 bool@true
+PUSHS TF@arg1
+INT2FLOATS
+PUSHS TF@arg2
+RETURN
+LABEL _0_if_not_int_float
+EQ GF@IFJ_TMP1 TF@type1 string@float
+EQ GF@IFJ_TMP2 TF@type2 string@int
+AND GF@IFJ_TMP3 GF@IFJ_TMP1 GF@IFJ_TMP2
+JUMPIFNEQ _1_if_not_float_int GF@IFJ_TMP3 bool@true
+PUSHS TF@arg1
+PUSHS TF@arg2
+INT2FLOATS
+RETURN
+LABEL _1_if_not_float_int
+EQ GF@IFJ_TMP1 TF@type1 string@bool
+EQ GF@IFJ_TMP2 TF@type2 string@int
+AND GF@IFJ_TMP3 GF@IFJ_TMP1 GF@IFJ_TMP2
+JUMPIFNEQ _2_if_not_bool_int GF@IFJ_TMP3 bool@true
+JUMPIFNEQ _3_if_bool_is_false TF@arg1 bool@true
+PUSHS int@1
+JUMP _4_if_bool_is_false_end
+LABEL _3_if_bool_is_false
+PUSHS int@0
+LABEL _4_if_bool_is_false_end
+PUSHS TF@arg2
+RETURN
+LABEL _2_if_not_bool_int
+EQ GF@IFJ_TMP1 TF@type1 string@int
+EQ GF@IFJ_TMP2 TF@type2 string@bool
+AND GF@IFJ_TMP3 GF@IFJ_TMP1 GF@IFJ_TMP2
+JUMPIFNEQ _5_if_not_int_bool GF@IFJ_TMP3 bool@true
+PUSHS TF@arg1
+JUMPIFNEQ _6_if_bool_is_false TF@arg2 bool@true
+PUSHS int@1
+RETURN
+LABEL _6_if_bool_is_false
+PUSHS int@0
+RETURN
+LABEL _5_if_not_int_bool
+EQ GF@IFJ_TMP1 TF@type1 string@bool
+EQ GF@IFJ_TMP2 TF@type2 string@float
+AND GF@IFJ_TMP3 GF@IFJ_TMP1 GF@IFJ_TMP2
+JUMPIFNEQ _7_if_not_bool_float GF@IFJ_TMP3 bool@true
+JUMPIFNEQ _8_if_bool_is_false TF@arg1 bool@true
+PUSHS int@1
+JUMP _9_if_bool_is_false_end
+LABEL _8_if_bool_is_false
+PUSHS int@0
+LABEL _9_if_bool_is_false_end
+PUSHS TF@arg2
+RETURN
+LABEL _7_if_not_bool_float
+EQ GF@IFJ_TMP1 TF@type1 string@float
+EQ GF@IFJ_TMP2 TF@type2 string@bool
+AND GF@IFJ_TMP3 GF@IFJ_TMP1 GF@IFJ_TMP2
+JUMPIFNEQ _10_if_not_float_bool GF@IFJ_TMP3 bool@true
+PUSHS TF@arg1
+JUMPIFNEQ _11_if_bool_is_false TF@arg2 bool@true
+PUSHS int@1
+RETURN
+LABEL _11_if_bool_is_false
+PUSHS int@0
+RETURN
+LABEL _10_if_not_float_bool
+PUSHS TF@arg1
+PUSHS TF@arg2
+RETURN
+LABEL _EmbeddedCheckIfType
+CREATEFRAME
+DEFVAR TF@type
+DEFVAR TF@arg
+DEFVAR TF@argType
+POPS TF@type
+POPS TF@arg
+TYPE TF@argType TF@arg
+JUMPIFNEQ _12_type_check_error TF@argType TF@type
+PUSHS TF@arg
+RETURN
+LABEL _12_type_check_error
+EXIT int@4
+LABEL _EmbeddedCheckIfNotType
+CREATEFRAME
+DEFVAR TF@type
+DEFVAR TF@arg
+DEFVAR TF@argType
+POPS TF@type
+POPS TF@arg
+TYPE TF@argType TF@arg
+JUMPIFEQ _13_type_check_error TF@argType TF@type
+PUSHS TF@arg
+RETURN
+LABEL _13_type_check_error
+EXIT int@4
+LABEL _EmbeddedConvertToFloat
+CREATEFRAME
+DEFVAR TF@arg
+DEFVAR TF@type
+POPS TF@arg
+TYPE TF@type TF@arg
+JUMPIFNEQ _14_not_float_cond TF@type string@float
+PUSHS TF@arg
+RETURN
+LABEL _14_not_float_cond
+JUMPIFNEQ _15_not_int_cond TF@type string@int
+PUSHS TF@arg
+INT2FLOATS
+RETURN
+LABEL _15_not_int_cond
+JUMPIFNEQ _16_not_bool_cond TF@type string@bool
+JUMPIFNEQ _73896_bollFalse TF@arg bool@true
+PUSHS float@0x1p+0
+RETURN
+LABEL _73896_bollFalse
+PUSHS float@0x0p+00
+RETURN
+LABEL _16_not_bool_cond
+EXIT int@4
+LABEL _EmbeddedTypeSafeAddFunction
+CALL _EmbeddedExpressionTypeCheck
+CREATEFRAME
+DEFVAR TF@arg1
+DEFVAR TF@arg2
+DEFVAR TF@arg1Type
+DEFVAR TF@arg2Type
+POPS TF@arg2
+POPS TF@arg1
+TYPE TF@arg1Type TF@arg1
+TYPE TF@arg2Type TF@arg2
+JUMPIFEQ _17_are_Same TF@arg1Type TF@arg2Type
+EXIT int@4
+LABEL _17_are_Same
+JUMPIFNEQ _18_if_not_nil TF@arg1Type string@nil
+EXIT int@4
+LABEL _18_if_not_nil
+JUMPIFNEQ _19_if_not_concat TF@arg1Type string@string
+CONCAT GF@IFJ_TMP1 TF@arg1 TF@arg2
+PUSHS GF@IFJ_TMP1
+RETURN
+LABEL _19_if_not_concat
+JUMPIFNEQ _20_if_not_concat TF@arg1Type string@bool
+JUMPIFNEQ _21_if_bool_is_false TF@arg1 bool@true
+MOVE TF@arg1 int@1
+JUMP _22_if_bool_is_false_end
+LABEL _21_if_bool_is_false
+MOVE TF@arg1 int@0
+LABEL _22_if_bool_is_false_end
+PUSHS TF@arg2
+RETURN
+JUMPIFNEQ _23_if_bool_is_false TF@arg2 bool@true
+MOVE TF@arg2 int@1
+JUMP _24_if_bool_is_false_end
+LABEL _23_if_bool_is_false
+MOVE TF@arg2 int@0
+LABEL _24_if_bool_is_false_end
+LABEL _20_if_not_concat
+ADD GF@IFJ_TMP1 TF@arg1 TF@arg2
+PUSHS GF@IFJ_TMP1
+RETURN
+LABEL _EmbeddedTypeSafeSubFunction
+CALL _EmbeddedExpressionTypeCheck
+CREATEFRAME
+DEFVAR TF@arg1
+DEFVAR TF@arg2
+DEFVAR TF@arg1Type
+DEFVAR TF@arg2Type
+POPS TF@arg2
+POPS TF@arg1
+TYPE TF@arg1Type TF@arg1
+TYPE TF@arg2Type TF@arg2
+JUMPIFEQ _25_are_Same TF@arg1Type TF@arg2Type
+EXIT int@4
+LABEL _25_are_Same
+JUMPIFNEQ _26_if_not_nil TF@arg1Type string@nil
+EXIT int@4
+LABEL _26_if_not_nil
+JUMPIFNEQ _27_if_not_string TF@arg1Type string@string
+EXIT int@4
+LABEL _27_if_not_string
+JUMPIFNEQ _28_if_not_concat TF@arg1Type string@bool
+JUMPIFNEQ _29_if_bool_is_false TF@arg1 bool@true
+MOVE TF@arg1 int@1
+JUMP _30_if_bool_is_false_end
+LABEL _29_if_bool_is_false
+MOVE TF@arg1 int@0
+LABEL _30_if_bool_is_false_end
+PUSHS TF@arg2
+RETURN
+JUMPIFNEQ _31_if_bool_is_false TF@arg2 bool@true
+MOVE TF@arg2 int@1
+JUMP _32_if_bool_is_false_end
+LABEL _31_if_bool_is_false
+MOVE TF@arg2 int@0
+LABEL _32_if_bool_is_false_end
+LABEL _28_if_not_concat
+SUB GF@IFJ_TMP1 TF@arg1 TF@arg2
+PUSHS GF@IFJ_TMP1
+RETURN
+LABEL _EmbeddedTypeSafeMulFunction
+CALL _EmbeddedExpressionTypeCheck
+CREATEFRAME
+DEFVAR TF@arg1
+DEFVAR TF@arg2
+DEFVAR TF@arg1Type
+DEFVAR TF@arg2Type
+POPS TF@arg2
+POPS TF@arg1
+TYPE TF@arg1Type TF@arg1
+TYPE TF@arg2Type TF@arg2
+JUMPIFEQ _33_are_Same TF@arg1Type TF@arg2Type
+EXIT int@4
+LABEL _33_are_Same
+JUMPIFNEQ _34_if_not_nil TF@arg1Type string@nil
+EXIT int@4
+LABEL _34_if_not_nil
+JUMPIFNEQ _35_if_not_string TF@arg1Type string@string
+EXIT int@4
+LABEL _35_if_not_string
+JUMPIFNEQ _36_if_not_concat TF@arg1Type string@bool
+JUMPIFNEQ _37_if_bool_is_false TF@arg1 bool@true
+MOVE TF@arg1 int@1
+JUMP _38_if_bool_is_false_end
+LABEL _37_if_bool_is_false
+MOVE TF@arg1 int@0
+LABEL _38_if_bool_is_false_end
+PUSHS TF@arg2
+RETURN
+JUMPIFNEQ _39_if_bool_is_false TF@arg2 bool@true
+MOVE TF@arg2 int@1
+JUMP _40_if_bool_is_false_end
+LABEL _39_if_bool_is_false
+MOVE TF@arg2 int@0
+LABEL _40_if_bool_is_false_end
+LABEL _36_if_not_concat
+MUL GF@IFJ_TMP1 TF@arg1 TF@arg2 
+PUSHS GF@IFJ_TMP1
+RETURN
+LABEL _EmbeddedTypeSafeDivFunction
+CALL _EmbeddedExpressionTypeCheck
+CREATEFRAME
+DEFVAR TF@arg1
+DEFVAR TF@arg2
+POPS TF@arg2
+POPS TF@arg1
+PUSHS TF@arg1
+PUSHFRAME
+CALL _EmbeddedConvertToFloat
+POPFRAME
+POPS TF@arg1
+PUSHS TF@arg2
+PUSHFRAME
+CALL _EmbeddedConvertToFloat
+POPFRAME
+POPS TF@arg2
+JUMPIFNEQ _41_not_devision_by_zero TF@arg2 float@0x0p+0
+EXIT int@9
+LABEL _41_not_devision_by_zero
+DIV GF@IFJ_TMP1 TF@arg1 TF@arg2
+PUSHS GF@IFJ_TMP1
+RETURN
+LABEL _EmbeddedTypeSafeEqualsFunction
+CALL _EmbeddedExpressionTypeCheck
+CREATEFRAME
+DEFVAR TF@arg1
+DEFVAR TF@arg2
+DEFVAR TF@arg1Type
+DEFVAR TF@arg2Type
+POPS TF@arg2
+POPS TF@arg1
+TYPE TF@arg1Type TF@arg1
+TYPE TF@arg2Type TF@arg2
+EQ GF@IFJ_TMP1 TF@arg1Type string@nil
+EQ GF@IFJ_TMP2 TF@arg2Type string@nil
+OR GF@IFJ_TMP3 GF@IFJ_TMP1 GF@IFJ_TMP2
+JUMPIFNEQ _42_are_nil GF@IFJ_TMP3 bool@true
+EQ GF@IFJ_TMP1 TF@arg1 TF@arg2
+PUSHS GF@IFJ_TMP1
+RETURN
+LABEL _42_are_nil
+JUMPIFEQ _43_are_Same TF@arg1Type TF@arg2Type
+EXIT int@4
+LABEL _43_are_Same
+EQ GF@IFJ_TMP1 TF@arg1 TF@arg2
+PUSHS GF@IFJ_TMP1
+RETURN
+LABEL _EmbeddedTypeSafeGreaterFunction
+CALL _EmbeddedExpressionTypeCheck
+CREATEFRAME
+DEFVAR TF@arg1
+DEFVAR TF@arg2
+DEFVAR TF@arg1Type
+DEFVAR TF@arg2Type
+POPS TF@arg2
+POPS TF@arg1
+TYPE TF@arg1Type TF@arg1
+TYPE TF@arg2Type TF@arg2
+JUMPIFEQ _44_are_Same TF@arg1Type TF@arg2Type
+EXIT int@4
+LABEL _44_are_Same
+JUMPIFNEQ _45_if_not_nil TF@arg1Type string@nil
+EXIT int@4
+LABEL _45_if_not_nil
+GT GF@IFJ_TMP1 TF@arg1 TF@arg2
+PUSHS GF@IFJ_TMP1
+RETURN
+LABEL _EmbeddedTypeSafeLessFunction
+CALL _EmbeddedExpressionTypeCheck
+CREATEFRAME
+DEFVAR TF@arg1
+DEFVAR TF@arg2
+DEFVAR TF@arg1Type
+DEFVAR TF@arg2Type
+POPS TF@arg2
+POPS TF@arg1
+TYPE TF@arg1Type TF@arg1
+TYPE TF@arg2Type TF@arg2
+JUMPIFEQ _46_are_Same TF@arg1Type TF@arg2Type
+EXIT int@4
+LABEL _46_are_Same
+JUMPIFNEQ _47_if_not_nil TF@arg1Type string@nil
+EXIT int@4
+LABEL _47_if_not_nil
+LT GF@IFJ_TMP1 TF@arg1 TF@arg2
+PUSHS GF@IFJ_TMP1
+RETURN
+LABEL _EmbeddedTypeSafeAndFunction
+CREATEFRAME
+DEFVAR TF@arg1
+DEFVAR TF@arg2
+DEFVAR TF@arg1Type
+DEFVAR TF@arg2Type
+POPS TF@arg2
+POPS TF@arg1
+TYPE TF@arg1Type TF@arg1
+TYPE TF@arg2Type TF@arg2
+EQ GF@IFJ_TMP1 TF@arg1Type string@bool
+EQ GF@IFJ_TMP2 TF@arg2Type string@bool
+AND GF@IFJ_TMP3 GF@IFJ_TMP2 GF@IFJ_TMP1
+JUMPIFNEQ _48_if_not_bool GF@IFJ_TMP3 bool@true
+OR GF@IFJ_TMP1 TF@arg1 TF@arg2
+PUSHS GF@IFJ_TMP1
+RETURN
+LABEL _48_if_not_bool
+EXIT int@4
+LABEL _EmbeddedTypeSafeOrFunction
+CREATEFRAME
+DEFVAR TF@arg1
+DEFVAR TF@arg2
+DEFVAR TF@arg1Type
+DEFVAR TF@arg2Type
+POPS TF@arg2
+POPS TF@arg1
+TYPE TF@arg1Type TF@arg1
+TYPE TF@arg2Type TF@arg2
+EQ GF@IFJ_TMP1 TF@arg1Type string@bool
+EQ GF@IFJ_TMP2 TF@arg2Type string@bool
+AND GF@IFJ_TMP3 GF@IFJ_TMP2 GF@IFJ_TMP1
+JUMPIFNEQ _49_if_not_bool GF@IFJ_TMP3 bool@true
+OR GF@IFJ_TMP1 TF@arg1 TF@arg2
+PUSHS GF@IFJ_TMP1
+RETURN
+LABEL _49_if_not_bool
+EXIT int@4
+LABEL _EmbeddedTypeSafeIdivFunction
+CALL _EmbeddedExpressionTypeCheck
+CREATEFRAME
+DEFVAR TF@arg1
+DEFVAR TF@arg2
+DEFVAR TF@arg1Type
+DEFVAR TF@arg2Type
+POPS TF@arg2
+POPS TF@arg1
+TYPE TF@arg1Type TF@arg1
+TYPE TF@arg2Type TF@arg2
+JUMPIFNEQ _50_if_not_concat TF@arg1Type string@bool
+JUMPIFNEQ _51_if_bool_is_false TF@arg1 bool@true
+MOVE TF@arg1 int@1
+JUMP _52_if_bool_is_false_end
+LABEL _51_if_bool_is_false
+MOVE TF@arg1 int@0
+LABEL _52_if_bool_is_false_end
+PUSHS TF@arg2
+RETURN
+JUMPIFNEQ _53_if_bool_is_false TF@arg2 bool@true
+MOVE TF@arg2 int@1
+JUMP _54_if_bool_is_false_end
+LABEL _53_if_bool_is_false
+MOVE TF@arg2 int@0
+LABEL _54_if_bool_is_false_end
+LABEL _50_if_not_concat
+EQ GF@IFJ_TMP1 TF@arg1Type string@int
+EQ GF@IFJ_TMP2 TF@arg2Type string@int
+AND GF@IFJ_TMP3 GF@IFJ_TMP2 GF@IFJ_TMP1
+JUMPIFNEQ _73896_if_not_int GF@IFJ_TMP3 bool@true
+JUMPIFNEQ _55_not_devision_by_zero TF@arg2 int@0
+EXIT int@9
+LABEL _55_not_devision_by_zero
+IDIV GF@IFJ_TMP1 TF@arg1 TF@arg2
+PUSHS GF@IFJ_TMP1
+RETURN
+LABEL _73896_if_not_int
+EXIT int@4
+LABEL chr
+CREATEFRAME
+DEFVAR tf@position
+POPS tf@position
+PUSHS tf@position
+PUSHS string@int
+PUSHFRAME
+CALL _EmbeddedCheckIfType
+POPFRAME
+POPS GF@IFJ_TMP1
+PUSHS tf@position
+PUSHS int@0
+LTS
+PUSHS tf@position
+PUSHS int@255
+GTS
+ANDS
+PUSHS bool@false
+JUMPIFEQS _56_if_else
+PUSHS nil@nil
+JUMP _56_if_end
+LABEL _56_if_else
+PUSHS tf@position
+INT2CHARS
+LABEL _56_if_end
+RETURN
+LABEL ord
+CREATEFRAME
+DEFVAR tf@str
+DEFVAR tf@position
+DEFVAR tf@len
+POPS tf@position
+POPS tf@str
+PUSHS tf@str
+PUSHS string@string
+PUSHFRAME
+CALL _EmbeddedCheckIfType
+POPFRAME
+POPS GF@IFJ_TMP1
+PUSHS tf@position
+PUSHS string@int
+PUSHFRAME
+CALL _EmbeddedCheckIfType
+POPFRAME
+POPS GF@IFJ_TMP1
+STRLEN tf@len tf@str
+PUSHS tf@position
+PUSHS int@0
+LTS
+PUSHS tf@position
+PUSHS tf@len
+GTS
+ANDS
+PUSHS bool@false
+JUMPIFEQS _57_if_else
+PUSHS nil@nil
+JUMP _57_if_end
+LABEL _57_if_else
+STRI2INT GF@IFJ_TMP1 tf@str tf@position
+PUSHS GF@IFJ_TMP1
+LABEL _57_if_end
+RETURN
+LABEL substr
+CREATEFRAME
+DEFVAR TF@s
+DEFVAR TF@n
+DEFVAR TF@i
+DEFVAR TF@length
+POPS TF@n
+POPS TF@i
+POPS TF@s
+STRLEN TF@length TF@s
+GT GF@IFJ_TMP1 TF@i TF@length
+LT GF@IFJ_TMP2 TF@i int@0
+LT GF@IFJ_TMP3 TF@n int@0
+PUSHS GF@IFJ_TMP1
+PUSHS GF@IFJ_TMP2
+ANDS
+PUSHS GF@IFJ_TMP3
+ORS
+PUSHS bool@false
+JUMPIFEQS _58_if_else
+PUSHS nil@nil
+RETURN
+LABEL _58_if_else
+DEFVAR TF@ch
+MOVE TF@ch string@
+DEFVAR TF@index
+MOVE TF@index TF@i
+LABEL _59_while
+PUSHS TF@index
+PUSHS TF@i
+PUSHS TF@n
+ADDS
+LTS
+PUSHS TF@index
+PUSHS TF@length
+LTS
+ANDS
+PUSHS bool@false
+JUMPIFEQS _59_while_end
+GETCHAR GF@IFJ_TMP1 TF@s TF@index
+CONCAT TF@ch TF@ch GF@IFJ_TMP1
+ADD TF@index TF@index int@1
+JUMP _59_while
+LABEL _59_while_end
+PUSHS TF@ch
+RETURN
+LABEL _58_if_end
+PUSHS nil@nil
+RETURN
+LABEL _ifj_start
+DEFVAR GF@res
+PUSHS bool@true
+PUSHS bool@true
+PUSHFRAME
+CALL _EmbeddedTypeSafeIdivFunction
+POPFRAME
+POPS GF@res
+PUSHS GF@res
+CALL _EmbeddedConvertNilToStr
+POPS GF@IFJ_TMP1
+WRITE GF@IFJ_TMP1
+WRITE string@\010
+PUSHS nil@nil
+POPS GF@IFJ_TMP1

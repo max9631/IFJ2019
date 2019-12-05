@@ -1,0 +1,3 @@
+res = True or 2.0
+print(res)
+

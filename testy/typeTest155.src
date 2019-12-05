@@ -1,0 +1,3 @@
+res = 1 != None
+print(res)
+
