@@ -8,20 +8,39 @@ Stack *createStack() {
     return stack;
 }
 
-void *topStack(Stack *stack) {
+StackItem topStack(Stack *stack) {
     return stack->items[stack->count - 1];
 }
 
-void pushStack(Stack *stack, void *item) {
+void pushStack(Stack *stack, StackItem item) {
     stack->count++;
     stack->items = realloc(stack->items, stack->count * sizeof(void *));
     stack->items[stack->count - 1] = item;
 }
 
-void *popStack(Stack *stack) {
-    if (stack->count == 0) return NULL;
-    void *item = stack->items[stack->count-1];
-    stack->items[stack->count-1] = NULL;
+void pushIntToStack(Stack *stack, int i) {
+    StackItem item;
+    item.intValue = i;
+    pushStack(stack, item);
+}
+
+void pushPrefixToStack(Stack *stack, PrefixItem *prefix) {
+    StackItem item;
+    item.prefixItem = prefix;
+    pushStack(stack, item);
+}
+
+void pushTokenToStack(Stack *stack, Token *token) {
+    StackItem item;
+    item.token = token;
+    pushStack(stack, item);
+}
+
+StackItem popStack(Stack *stack) {
+    StackItem item;
+    item.intValue = 0;
+    if (stack->count == 0) return item;
+    item = stack->items[stack->count-1];
     stack->count--;
     stack->items = realloc(stack->items, stack->count * sizeof(void *));
     return item;
@@ -31,3 +50,4 @@ void destroyStack(Stack *stack) {
     if (stack->count > 0) free(stack->items);
     free(stack);
 }
+

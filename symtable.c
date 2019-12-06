@@ -16,23 +16,69 @@ HashTable *createHashTable () {
     return table;
 }
 
-HashTable *createFuncTable() {
-	HashTable *table = createHashTable();
-	insertHashTableItem(table, "print", (void *) __LONG_MAX__);
-	insertHashTableItem(table, "inputi", (void *) 0x0);
-	insertHashTableItem(table, "inputs", (void *) 0x0);
-	insertHashTableItem(table, "inputf", (void *) 0x0);
-	insertHashTableItem(table, "len", (void *) 0x1);
-    insertHashTableItem(table, "substr", (void *) 0x3);
-    insertHashTableItem(table, "ord", (void *) 0x2);
-    insertHashTableItem(table, "chr", (void *) 0x1);
-	return table;
+void destroyHashTable(HashTable *table) {
+    if (table == NULL) return;
+    for (int i = 0; i < HTSIZE; i++) {
+        HashTableItem *item = (*table)[i];
+        while (item != NULL) {
+            HashTableItem *tmp = item->ptrnext;
+            if (item != NULL) {
+                if (item->key != NULL) free(item->key);
+                free(item);
+            }
+            item = tmp;
+        }
+        (*table)[i] = NULL;
+    }
 }
 
-HashTable *createSymTable() {
-	return createHashTable();
+HashTableItem* getHashTableItem(HashTable *table, char *key) {
+	if (table == NULL) return NULL;
+	HashTableItem *item = (*table)[indexForKey(key)];
+	while (item != NULL && strcmp(item->key, key) != 0) item = item->ptrnext;
+	if (item == NULL) return NULL;
+	return item;
 }
 
+HashTableItem *insertHashTableItem(HashTable *table, char *key, HashTableValue data) {
+	if (table == NULL) return NULL;
+	HashTableItem *item = getHashTableItem(table, key);
+	if (item != NULL) {
+		item->data = data;
+		return item;
+	}
+	HashTableItem *newItem = (HashTableItem *) malloc(sizeof(HashTableItem));
+	if (newItem == NULL) return NULL;
+    newItem->key = malloc(strlen(key) * sizeof(char));
+	newItem->key = strcpy(newItem->key, key);
+	newItem->data = data;
+	newItem->ptrnext = (*table)[indexForKey(key)];
+	(*table)[indexForKey(key)] = newItem;
+    return newItem;
+}
+
+bool contains(HashTable *table, char *key) {
+    return getHashTableItem(table, key) != NULL;
+}
+
+void removeHashTableItem(HashTable *table, char *key) {
+	if (table == NULL) return;
+	int index = indexForKey(key);
+	HashTableItem *lastItem = NULL;
+	HashTableItem *item = (*table)[index];
+	while (item != NULL && item->key != key) {
+		lastItem = item;
+		item = item->ptrnext;
+	}
+	if (item == NULL) return;
+	if (lastItem != NULL)
+		lastItem->ptrnext = item->ptrnext;
+	else
+		(*table)[index] = item->ptrnext;
+    if (item == NULL) return;
+    if (item->key != NULL) free(item->key);
+    free(item);
+}
 
 HashTable *copyHashTable(HashTable *table) {
     HashTable *copy = createHashTable();
@@ -58,72 +104,45 @@ HashTable *mergeHashTables(HashTable *table1, HashTable *table2) {
     return mergeTable;
 }
 
-HashTableItem* getHashTableItem(HashTable *table, char *key) {
-	if (table == NULL) return NULL;
-	HashTableItem *item = (*table)[indexForKey(key)];
-	while (item != NULL && strcmp(item->key, key) != 0) item = item->ptrnext;
-	if (item == NULL) return NULL;
-	return item;
+HashTable *createFunctionTable() {
+    HashTable *table = createHashTable();
+    HashTableItem *print = insertHashTableFunction(table, "print", 0);
+    print->data.func->hasVariableArgsCount = true;
+    insertHashTableFunction(table, "inputi", 0);
+    insertHashTableFunction(table, "inputs", 0);
+    insertHashTableFunction(table, "inputf", 0);
+    insertHashTableFunction(table, "len", 1);
+    insertHashTableFunction(table, "substr", 3);
+    insertHashTableFunction(table, "ord", 2);
+    insertHashTableFunction(table, "chr", 1);
+    return table;
 }
 
-void insertHashTableItem(HashTable *table, char *key, void *data) {
-	if (table == NULL) return;
-	HashTableItem *item = getHashTableItem(table, key);
-	if (item != NULL) {
-		item->data = data;
-		return;
-	}
-	HashTableItem *newItem = (HashTableItem *) malloc(sizeof(HashTableItem));
-	if (newItem == NULL) return;
-    newItem->key = malloc(strlen(key) * sizeof(char));
-	newItem->key = strcpy(newItem->key, key);
-	newItem->data = data;
-	newItem->ptrnext = (*table)[indexForKey(key)];
-	(*table)[indexForKey(key)] = newItem;
+HashTableItem *insertHashTableFunction(HashTable *table, char* key, int numberOfArguments) {
+    HashTableValue value;
+    value.func = malloc(sizeof(FunctionMeta));
+    value.func->argsCount = numberOfArguments;
+    value.func->hasVariableArgsCount = false;
+    value.func->referenceCount = 0;
+    return insertHashTableItem(table, key, value);
 }
 
-void removeHashTableItem(HashTable *table, char *key) {
-	if (table == NULL) return;
-	int index = indexForKey(key);
-	HashTableItem *lastItem = NULL;
-	HashTableItem *item = (*table)[index];
-	while (item != NULL && item->key != key) {
-		lastItem = item;
-		item = item->ptrnext;
-	}
-	if (item == NULL) return;
-	if (lastItem != NULL)
-		lastItem->ptrnext = item->ptrnext;
-	else
-		(*table)[index] = item->ptrnext;
-    if (item == NULL) return;
-    if (item->key != NULL) free(item->key);
-    if (item->data != NULL) free(item->data);
-    free(item);
+FunctionMeta *getFunctionMeta(HashTable *table, char* key) {
+    return getHashTableItem(table, key)->data.func;
 }
 
-void destroyHashTable(HashTable *table) {
-	if (table == NULL) return;
-	for (int i = 0; i < HTSIZE; i++) {
-		HashTableItem *item = (*table)[i];
-		while (item != NULL) {
-			HashTableItem *tmp = item->ptrnext;
-            if (item != NULL) {
-                if (item->key != NULL) free(item->key);
-                if (item->data != NULL) free(item->data);
-                free(item);
-            }
-			item = tmp;
-		}
-		(*table)[i] = NULL;
-	}
+HashTable *createSymbolTable() {
+    return createHashTable();
 }
 
-String *getString(HashTable *table, char *key) {
-    HashTableItem *item = getHashTableItem(table, key);
-    return (String *)item->data;
+void insertHashTableSymbol(HashTable *table, char* key) {
+    HashTableValue value;
+    value.symbol = malloc(sizeof(SymbolMeta));
+    value.symbol->referenceCount = 0;
+    insertHashTableItem(table, key, value);
 }
 
-bool contains(HashTable *table, char *key) {
-	return getHashTableItem(table, key) != NULL;
+
+SymbolMeta *getSymbolMeta(HashTable *table, char* key) {
+    return getHashTableItem(table, key)->data.symbol;
 }

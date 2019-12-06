@@ -23,7 +23,7 @@ void DestroyParserState(ParserState *state) {
 }
 
 MainNode *parseTokens(ParserState *state) {
-    state->main = createMainNode(createBodyNode(NULL, createSymTable(), true));
+    state->main = createMainNode(createBodyNode(NULL, createSymbolTable(), true));
     BodyNode *body = state->main->body;
     while (peek(state->list)->type != TOKEN_EOF) {
         if (peek(state->list)->type != TOKEN_EOL) {
@@ -58,14 +58,14 @@ FuncNode *parseFunc(ParserState *state, BodyNode *body) {
         handleError(SemanticIdentifierError, "Invalid redeclaration of a function '%s' on line %d", name->value->value, name->line);
     }
     consume(list, TOKEN_OPAREN);
-    FuncNode *function = createFuncNode(name->value, NULL);
+    FuncNode *function = createFuncNode(name->value, NULL, NULL);
+    registerFunction(state, name->value, 0);
     int argsCount = 0;
-    while(true) {
+    while(peek(list)->type != TOKEN_CPAREN) {
         Token *variable = consume(list, TOKEN_IDENTIFIER);
         addFunctionArgument(function, variable->value);
         argsCount++;
         if(isNextTokenOfType(list, TOKEN_CPAREN)) {
-            consume(list, TOKEN_CPAREN);
             break;
         } else if (isNextTokenOfType(list, TOKEN_COMMA)) {
             consume(list, TOKEN_COMMA);
@@ -74,11 +74,14 @@ FuncNode *parseFunc(ParserState *state, BodyNode *body) {
             handleError(SyntaxError, "Expected ')' or ',' in function declaration %s on line %d", name->value->value, variable->line);
         }
     }
+    consume(list, TOKEN_CPAREN);
     registerFunction(state, name->value, argsCount);
+    FunctionMeta *meta = getFunctionMeta(state->main->funcTable, name->value->value);
+    function->meta = meta;
     consume(list, TOKEN_COLON);
     consume(list, TOKEN_EOL);
     consume(list, TOKEN_INDENT);
-    function->body = parseBody(state, body, function->args, function->argsCount, createSymTable(), false);
+    function->body = parseBody(state, body, function->args, function->argsCount, createSymbolTable(), false);
     consume(list, TOKEN_DEINDENT);
     return function;
 }
@@ -118,18 +121,22 @@ AssignNode *parseAssign(ParserState *state, BodyNode *body) {
     Token *identifier = consume(state->list, TOKEN_IDENTIFIER);
     bool createsVar = true;
     bool isGlobal = body->isGlobal;
+    if (contains(state->main->funcTable, identifier->value->value))
+        handleError(SemanticIdentifierError, "Identifier %s on line %d is allready taken.", identifier->value->value, identifier->line);
     if (containsSymbol(body, identifier->value)) {
+        getHashTableItem(body->symTable, identifier->value->value)->data.symbol->referenceCount++;
         createsVar = false;
     } else {
         registerSymbol(body, identifier->value);
     }
     TokenType type = popToken(state->list)->type;
+    SymbolMeta *meta = getSymbolMeta(body->symTable, identifier->value->value);
     switch (type) {
-    case OPERATOR_ASSIGN: return createAssignNode(identifier->value, ASSIGN_NONE, parseExpression(state, body), createsVar, isGlobal);
-    case OPERATOR_DIV_ASSIGN: return createAssignNode(identifier->value, ASSIGN_DIV, parseExpression(state, body), createsVar, isGlobal);
-    case OPERATOR_MUL_ASSIGN: return createAssignNode(identifier->value, ASSIGN_MUL, parseExpression(state, body), createsVar, isGlobal);
-    case OPERATOR_ADD_ASSIGN: return createAssignNode(identifier->value, ASSIGN_ADD, parseExpression(state, body), createsVar, isGlobal);
-    case OPERATOR_SUB_ASSIGN: return createAssignNode(identifier->value, ASSIGN_SUB, parseExpression(state, body), createsVar, isGlobal);
+    case OPERATOR_ASSIGN: return createAssignNode(identifier->value, ASSIGN_NONE, parseExpression(state, body), meta, createsVar, isGlobal);
+    case OPERATOR_DIV_ASSIGN: return createAssignNode(identifier->value, ASSIGN_DIV, parseExpression(state, body), meta, createsVar, isGlobal);
+    case OPERATOR_MUL_ASSIGN: return createAssignNode(identifier->value, ASSIGN_MUL, parseExpression(state, body), meta, createsVar, isGlobal);
+    case OPERATOR_ADD_ASSIGN: return createAssignNode(identifier->value, ASSIGN_ADD, parseExpression(state, body), meta, createsVar, isGlobal);
+    case OPERATOR_SUB_ASSIGN: return createAssignNode(identifier->value, ASSIGN_SUB, parseExpression(state, body), meta, createsVar, isGlobal);
     default: handleError(SyntaxError, "Expected assign operator, but got %s", convertTokenTypeToString(type));
     }
     return NULL;
@@ -161,9 +168,6 @@ StatementNode *parseStatement(ParserState *state, BodyNode *body) {
 
 CallNode *parseCall(ParserState *state, BodyNode *body) {
     Token* identifier = consume(state->list, TOKEN_IDENTIFIER);
-    if (!containsFunction(state, identifier->value)) {
-        handleError(SemanticIdentifierError, "Unknown function identifier '%s' on line %d", identifier->value->value, identifier->line);
-    }
     CallNode *call = createCallNode(identifier->value);
     consume(state->list, TOKEN_OPAREN);
     long argsCount = 0;
@@ -178,10 +182,14 @@ CallNode *parseCall(ParserState *state, BodyNode *body) {
             consume(state->list, TOKEN_COMMA);
         }
     }
-    long correctNumberOfArguments = getArgumentsCountForFuntion(state, identifier->value);
-    if (argsCount != correctNumberOfArguments && correctNumberOfArguments != __LONG_MAX__)
-        handleError(SemanticArgumentError, "Wrong number of arguments one line %d. Should be %d, but got %d", identifier->line, correctNumberOfArguments, argsCount);
     consume(state->list, TOKEN_CPAREN);
+    if (!containsFunction(state, identifier->value)) {
+        handleError(SemanticIdentifierError, "Unknown function identifier '%s' on line %d", identifier->value->value, identifier->line);
+    }
+    FunctionMeta *meta = getFunctionMeta(state->main->funcTable, identifier->value->value);
+    if (argsCount != meta->argsCount && !meta->hasVariableArgsCount)
+        handleError(SemanticArgumentError, "Wrong number of arguments one line %d. Should be %d, but got %d", identifier->line, meta->argsCount, argsCount);
+    meta->referenceCount++;
     return call;
 }
 
@@ -191,8 +199,13 @@ ExpressionNode *parseValue(ParserState *state, BodyNode *body) {
     case TOKEN_IDENTIFIER:
         if (peekNext(state->list, 1)->type == TOKEN_OPAREN)
             return createExpressionNode(parseCall(state, body), EXPRESSION_CALL, EXPRESSION_DATA_TYPE_UNKNOWN);
+        if (contains(state->main->funcTable, token->value->value))
+            handleError(SemanticIdentifierError, "Invalid function call '%s' on line %d", token->value->value, token->line);
         if (!containsSymbol(body, token->value))
             handleError(SemanticIdentifierError, "Uknown identier '%s' on line %d", token->value->value, token->line);
+        BodyNode *bodyWithIdentifier = findBodyForIdentifier(body, token->value);
+        SymbolMeta *meta = getSymbolMeta(bodyWithIdentifier->symTable, token->value->value);
+        meta->referenceCount++;
         return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_VARIABLE, body->isGlobal), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_UNKNOWN);
     case DATA_TOKEN_INT: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT, false), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_INT);
     case DATA_TOKEN_FLOAT: return createExpressionNode(createValueNode(popToken(state->list)->value, VALUE_CONSTANT, false), EXPRESSION_VALUE, EXPRESSION_DATA_TYPE_FLOAT);
@@ -225,6 +238,8 @@ bool isTokenOperator(Token *token) {
         token->type == OPERATOR_DIV ||
         token->type == OPERATOR_IDIV ||
         token->type == OPERATOR_NOT ||
+        token->type == OPERATOR_AND ||
+        token->type == OPERATOR_OR ||
         token->type == OPERATOR_MUL;
 }
 
@@ -236,7 +251,9 @@ ExpressionNode *parseOperation(ParserState *state, Stack *prefix, OperationType 
     bool isSingleValue = type == OPERATION_NOT;
     int startVal = isSingleValue ? 0 : 1;
     for (int i = startVal; i >= 0; i--) {
-        item = (PrefixItem *) popStack(prefix);
+        if (prefix->count == 0)
+            handleError(SyntaxError, "Invalid expression on line %d", line);
+        item = popStack(prefix).prefixItem;
         if (item->type == PREFIX_OPERATOR_TOKEN) {
             Token *token = (Token *) item->prefix.operator;
             operands[i] = parseOperation(state, prefix, operationTypeForToken(token), line, body);
@@ -285,7 +302,7 @@ int priorityForOperator(TokenType type) {
 }
 
 bool hasStackHigherOrEqualPrecedence(Stack *operators, TokenType type) {
-    Token *top = (Token *)operators->items[operators->count - 1];
+    Token *top = topStack(operators).token;
     return priorityForOperator(top->type) >= priorityForOperator(type);
 }
 
@@ -299,30 +316,33 @@ ExpressionNode *parseExpression(ParserState *state, BodyNode *body) {
     while (isTokenExpression(peek(state->list))) {
         token = peek(state->list);
         if (isTokenValue(token)) {
-            pushStack(prefix, createPrefixItem(parseValue(state, body), PREFIX_VALUE_EXPRESSION));
+            pushPrefixToStack(prefix, createPrefixItem(parseValue(state, body), PREFIX_VALUE_EXPRESSION));
         } else if (isTokenOperator(token)) {
             Token *token = popToken(state->list);
             while (operators->count != 0 && hasStackHigherOrEqualPrecedence(operators, token->type))
-                pushStack(prefix, createPrefixItem(popStack(operators), PREFIX_OPERATOR_TOKEN));
-            pushStack(operators, token);
+                pushPrefixToStack(prefix, createPrefixItem(popStack(operators).token, PREFIX_OPERATOR_TOKEN));
+            pushTokenToStack(operators, token);
         } else if (token->type == TOKEN_OPAREN) {
             parensCount++;
-            pushStack(operators, popToken(state->list));
+            pushTokenToStack(operators, popToken(state->list));
         } else if (token->type == TOKEN_CPAREN) {
             if (parensCount == 0)
                 break;
             popToken(state->list);
             Token *operator;
-            while (operators->count != 0 && (operator = popStack(operators))->type != TOKEN_OPAREN ) {
-                pushStack(prefix, createPrefixItem(operator, PREFIX_OPERATOR_TOKEN));
+            while (operators->count != 0 && (operator = popStack(operators).token)->type != TOKEN_OPAREN ) {
+                pushPrefixToStack(prefix, createPrefixItem(operator, PREFIX_OPERATOR_TOKEN));
             }
             parensCount--;
         }
     }
     while(operators->count != 0)
-        pushStack(prefix, createPrefixItem(popStack(operators), PREFIX_OPERATOR_TOKEN));
+        pushPrefixToStack(prefix, createPrefixItem(popStack(operators).token, PREFIX_OPERATOR_TOKEN));
     destroyStack(operators);
-    PrefixItem *item = (PrefixItem *) popStack(prefix);
+    if (prefix->count == 0) {
+        handleError(SyntaxError, "Expected expression on line %d", line);
+    }
+    PrefixItem *item = popStack(prefix).prefixItem;
     if (item == NULL)
         handleError(SyntaxError, "Invalid expression on line %d", line);
     if(item->type == PREFIX_OPERATOR_TOKEN) {
@@ -351,21 +371,12 @@ BodyNode *findBodyForIdentifier(BodyNode *body, String *identifier) {
     return body;
 }
 
-long getArgumentsCountForFuntion(ParserState *state, String *functionName) {
-    HashTableItem *item = getHashTableItem(state->main->funcTable, functionName->value);
-    long currentCount = (long) item->data;
-    return currentCount;
-}
-
-
 void registerSymbol(BodyNode *body, String *identifier) {
-    insertHashTableItem(body->symTable, identifier->value, NULL);
+    insertHashTableSymbol(body->symTable, identifier->value);
 }
 
 void registerFunction(ParserState *state, String *identifier, int argsCount) {
-    long bigCount = (long)argsCount;
-    void *data = (void *)bigCount;
-    insertHashTableItem(state->main->funcTable, identifier->value, data);
+    insertHashTableFunction(state->main->funcTable, identifier->value, argsCount);
 }
 
 /* --------------- DEBUG Functions ----------------- */

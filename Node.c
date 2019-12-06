@@ -31,11 +31,12 @@ PrefixItem *createPrefixItem(void *value, PrefixType type) {
     return item;
 }
 
-FuncNode *createFuncNode(String *name, BodyNode *body) {
+FuncNode *createFuncNode(String *name, BodyNode *body, FunctionMeta *meta) {
     FuncNode *node = (FuncNode *) malloc(sizeof(FuncNode));
     node->name = name;
     node->argsCount = 0;
     node->args = NULL;
+    node->meta = meta;
     node->body = body;
     return node;
 }
@@ -55,11 +56,12 @@ WhileNode *createWhileNode(ExpressionNode *condition, BodyNode *body) {
     return node;
 }
 
-AssignNode *createAssignNode(String *identifier, AssignOperator operator, ExpressionNode *expression, bool cretesVariable, bool isGlobal) {
+AssignNode *createAssignNode(String *identifier, AssignOperator operator, ExpressionNode *expression, SymbolMeta *meta, bool cretesVariable, bool isGlobal) {
     AssignNode *node = (AssignNode *)malloc(sizeof(AssignNode));
     node->identifier = createString(identifier->value);
     node->expression = expression;
     node->operator = operator;
+    node->meta = meta;
     node->cretesVariable = cretesVariable;
     node->isGlobal = isGlobal;
     return node;
@@ -85,7 +87,7 @@ BodyNode *createBodyNode(BodyNode *parrentBody, HashTable *symtable, bool isGlob
     node->symTable = symtable;
     node->statementsCount = 0;
     if (node->symTable == NULL)
-        node->symTable = createSymTable();
+        node->symTable = createSymbolTable();
     node->parrentBody = parrentBody;
     node->statements = NULL;
     node->isGlobal = isGlobal;
@@ -95,7 +97,7 @@ BodyNode *createBodyNode(BodyNode *parrentBody, HashTable *symtable, bool isGlob
 MainNode *createMainNode(BodyNode *body) {
     MainNode *node = (MainNode *) malloc(sizeof(MainNode));
     node->body = body;
-    node->funcTable = createFuncTable();
+    node->funcTable = createFunctionTable();
     node->functionsCount = 0;
     node->functions = NULL;
     return node;

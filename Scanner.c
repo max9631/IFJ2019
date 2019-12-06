@@ -7,7 +7,7 @@ Document *createDocument(FILE *file) {
 	document->line = 0;
 	document->currentChar = (int) '\n';
     document->indents = createStack();
-    pushStack(document->indents, (void *) 0);
+    pushIntToStack(document->indents, 0);
 	nextCharacter(document);
     return document;
 }
@@ -64,9 +64,12 @@ bool isOperator(int c) {
 
 Token *skipUntilNewLine(Document *document) {
 	int ch = document->currentChar;
-	while (ch != (int) '\n')
+    while (ch != (int) '\n' && ch != EOF) {
 		ch = nextCharacter(document);
-    nextCharacter(document);
+    }
+    if (ch == (int) '\n') {
+        nextCharacter(document);
+    }
 	return createToken(createStringFromChar(ch), TOKEN_EOL);
 }
 
@@ -99,6 +102,9 @@ Token *defineValue(Document *document) {
 		appendCharacter(string, c);
 		c = nextCharacter(document);
 	}
+    if (dotOccuredLast || isCharacter(c)) {
+        handleError(LexError, "Invalid number syntax");
+    }
 	TokenType type = DATA_TOKEN_INT;
 	if (dotOccured)
 		type = DATA_TOKEN_FLOAT;
@@ -140,23 +146,22 @@ Token *defineString(Document *document) {
 
 Token *defineDoubleQuoteString(Document *document) {
 	int ch = nextCharacter(document);
-	bool isMultilineString = false;
 	if (isDoubleQuote(ch)) {
 		ch = nextCharacter(document);
 		if (isDoubleQuote(ch)) {
-			isMultilineString = true;
 			ch = nextCharacter(document);
 		} else {
-			return createToken(createString(""), DATA_TOKEN_STRING);
+			handleError(LexError, "Incorrect string symbol on line %d. Did you mean of \"\"\"?", document->line);
 		}
+	} else {
+		handleError(LexError, "Incorrect string symbol on line %d. Did you mean of \"\"\"?", document->line);
 	}
+	
 	String *string = recordStringUntilChar(document, (int) '"');
-	if (isMultilineString) {
-		for (int i = 0; i < 2; i++) {
-			ch = nextCharacter(document);
-			if (!isDoubleQuote(ch)) {
-				handleError(LexError, "Incorrect string end");
-			}
+	for (int i = 0; i < 2; i++) {
+		ch = nextCharacter(document);
+		if (!isDoubleQuote(ch)) {
+			handleError(LexError, "Incorrect string end");
 		}
 	}
 	nextCharacter(document);
@@ -192,7 +197,7 @@ int getDecimalValueFromHexaChar(int hex) {
 
 int getDecimalChFromHexaCharsOnLine(int hex1, int hex2, int line) {
     if (!isHexadecimal(hex1) || !isHexadecimal(hex2)) {
-        handleError(SyntaxError, "Expected hexadecimal notation after \\x in string on line %d", line);
+        handleError(LexError, "Expected hexadecimal notation after \\x in string on line %d", line);
     }
     int dec1 = getDecimalValueFromHexaChar(hex1);
     int dec2 = getDecimalValueFromHexaChar(hex2);
@@ -203,7 +208,7 @@ String *recordStringUntilChar(Document *document, int endChar) {
 	int ch = document->currentChar;
 	String *string = createString("");
 	bool isEscaping = false;
-	while (ch != endChar || isEscaping) {
+	while ((ch != endChar || isEscaping) && ch != EOF) {
         if (ch == (int) '\\') {
             isEscaping = true;
             ch = nextCharacter(document);
@@ -227,6 +232,8 @@ String *recordStringUntilChar(Document *document, int endChar) {
     
 		ch = nextCharacter(document);
 	}
+	if(ch == EOF)
+		handleError(LexError, "Wrong number of %c. Missing closing %c", endChar, endChar);
 	return string;
 }
 
@@ -252,12 +259,13 @@ Token *defineOperator(Document *document, int c) {
     } else if (type == OPERATOR_DIV && isDevision(nextCH)) {
         appendCharacter(string, nextCH);
         type = OPERATOR_IDIV;
+        nextCharacter(document);
     }
 	return createToken(string, type); 
 }
 
 void generateIndent(List *list, Document *document) {
-	long sum = 0;
+	int sum = 0;
 	int ch = document->currentChar;
 	while (isSpace(ch)) {
 		sum++;
@@ -267,21 +275,21 @@ void generateIndent(List *list, Document *document) {
 		return;
 	if (isEndOfLine(ch))
 		return;
-    long lastIndent = (long) topStack(document->indents);
+    int lastIndent = topStack(document->indents).intValue;
 	if (sum == lastIndent)
 		return;
     else if (sum > lastIndent) {
-        pushStack(document->indents, (void *) sum);
+        pushIntToStack(document->indents, sum);
         addTokenToList(createTokenWithLine(NULL, TOKEN_INDENT, document->line), list);
     } else if (sum < lastIndent){
         while (sum < lastIndent) {
             popStack(document->indents);
             addTokenToList(createTokenWithLine(NULL, TOKEN_DEINDENT, document->line), list);
             addTokenToList(createTokenWithLine(NULL, TOKEN_EOL, document->line), list);
-            lastIndent = (long) topStack(document->indents);
+            lastIndent = topStack(document->indents).intValue;
         }
         if (sum != lastIndent) {
-            handleError(SyntaxError, "Wrong number of indents at line %d column %d", document->line, document->column);
+            handleError(LexError, "Wrong number of indents at line %d column %d", document->line, document->column);
         }
     }
 }
@@ -297,11 +305,11 @@ void removeDuplicitEOLsFromList(List *list) {
     ListItem *item = list->first;
     bool lastWasEOL = false;
     while (item != NULL) {
-        Token *token = (Token *) item->value;
+        Token *token = item->value.token;
         if (token->type == TOKEN_EOL) {
             if (lastWasEOL) {
                 lastItem->nextItem = item->nextItem;
-                Token *lastManStanding = (Token *)item->value;
+                Token *lastManStanding = item->value.token;
                 destroyToken(lastManStanding);
                 destroyListItem(item);
                 item = lastItem;
@@ -341,7 +349,7 @@ void scan(List *list, Document *document) {
 		else if (isTerminator(current)) nextCharacter(document);
 		else {
 			msg("%c is value of %d\n", current, current);
-			handleError(SyntaxError, "Invalid number syntax on line %d, column %d", document->line, document->column);
+			handleError(LexError, "Invalid number syntax on line %d, column %d", document->line, document->column);
 		}
 		if (token != NULL) {
 			msg("new token: %s\n", token->value->value);

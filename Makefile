@@ -20,4 +20,4 @@ clean:
 zip:$(XLOGIN).zip
 
 $(XLOGIN).zip:
-	zip $(XLOGIN).zip *.c *.h Makefile dokumentace.pdf rozdeleni
+	zip $(XLOGIN).zip *.c *.h Makefile dokumentace.pdf rozdeleni rozsireni
