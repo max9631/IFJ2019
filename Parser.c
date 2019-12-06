@@ -124,13 +124,15 @@ AssignNode *parseAssign(ParserState *state, BodyNode *body) {
     if (contains(state->main->funcTable, identifier->value->value))
         handleError(SemanticIdentifierError, "Identifier %s on line %d is allready taken.", identifier->value->value, identifier->line);
     if (containsSymbol(body, identifier->value)) {
-        getHashTableItem(body->symTable, identifier->value->value)->data.symbol->referenceCount++;
+        BodyNode *idBody = findBodyForIdentifier(body, identifier->value);
+        getHashTableItem(idBody->symTable, identifier->value->value)->data.symbol->referenceCount++;
         createsVar = false;
     } else {
         registerSymbol(body, identifier->value);
     }
+    BodyNode *idBody = findBodyForIdentifier(body, identifier->value);
     TokenType type = popToken(state->list)->type;
-    SymbolMeta *meta = getSymbolMeta(body->symTable, identifier->value->value);
+    SymbolMeta *meta = getSymbolMeta(idBody->symTable, identifier->value->value);
     switch (type) {
     case OPERATOR_ASSIGN: return createAssignNode(identifier->value, ASSIGN_NONE, parseExpression(state, body), meta, createsVar, isGlobal);
     case OPERATOR_DIV_ASSIGN: return createAssignNode(identifier->value, ASSIGN_DIV, parseExpression(state, body), meta, createsVar, isGlobal);
