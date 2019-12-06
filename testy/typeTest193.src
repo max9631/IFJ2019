@@ -1,3 +1,0 @@
-res = True < '3'
-print(res)
-

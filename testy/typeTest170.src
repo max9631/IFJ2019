@@ -1,3 +1,0 @@
-res = True != None
-print(res)
-

@@ -1,3 +1,0 @@
-res = True + 1
-print(res)
-
