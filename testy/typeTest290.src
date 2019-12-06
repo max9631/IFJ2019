@@ -1,3 +1,0 @@
-res = '3' and None
-print(res)
-
