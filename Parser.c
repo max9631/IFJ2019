@@ -22,8 +22,38 @@ void DestroyParserState(ParserState *state) {
     free(state);
 }
 
+void registerFunctionNames(ParserState *state) {
+    ListItem *item = state->list->first;
+    while (item != NULL) {
+        if (item->value.token->type == KEYWORD_DEF) {
+            item = item->nextItem;
+            if (item->value.token->type == TOKEN_IDENTIFIER) {
+                String *identifier = item->value.token->value;
+                if (containsFunction(state, identifier)) {
+                    handleError(SemanticIdentifierError, "Invalid redeclaration of a function '%s' on line %d", identifier->value, item->value.token->line);
+                }
+                int argsCount = 0;
+                item = item->nextItem;
+                if (item->value.token->type != TOKEN_OPAREN) {
+                    handleError(SyntaxError, "Wrong function syntax on line %d", item->value.token->line);
+                }
+                item = item->nextItem;
+                while(item->value.token->type != TOKEN_CPAREN && item != NULL) {
+                    if (item->value.token->type == TOKEN_IDENTIFIER) {
+                        argsCount++;
+                    }
+                    item = item->nextItem;
+                }
+                registerFunction(state, identifier, argsCount);
+            }
+        }
+        item = item->nextItem;
+    }
+}
+
 MainNode *parseTokens(ParserState *state) {
     state->main = createMainNode(createBodyNode(NULL, createSymbolTable(), true));
+    registerFunctionNames(state);
     BodyNode *body = state->main->body;
     while (peek(state->list)->type != TOKEN_EOF) {
         if (peek(state->list)->type != TOKEN_EOL) {
@@ -54,9 +84,6 @@ FuncNode *parseFunc(ParserState *state, BodyNode *body) {
     List *list = state->list;
     consume(list, KEYWORD_DEF);
     Token *name = consume(list, TOKEN_IDENTIFIER);
-    if (containsFunction(state, name->value)) {
-        handleError(SemanticIdentifierError, "Invalid redeclaration of a function '%s' on line %d", name->value->value, name->line);
-    }
     consume(list, TOKEN_OPAREN);
     FuncNode *function = createFuncNode(name->value, NULL, NULL);
     registerFunction(state, name->value, 0);
