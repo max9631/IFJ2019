@@ -20,6 +20,4 @@ int main(int argc, char *argv[]) {
 	ParserState *state = createParserState(tokenList);
 	MainNode *tree = parseTokens(state);
     generateMain(createGenerator(), tree);
-
-	//DestroyParserState(state); // TODO: Fix memory management.
 }
