@@ -162,14 +162,17 @@ Token *defineDoubleQuoteString(Document *document) {
 	while (true) {
 		String *string = recordStringUntilChar(document, (int) '"');
 		
-		for (int i = 0; i < 2; i++) {
-			ch = nextCharacter(document);
-			if (!isDoubleQuote(ch)) {
-				resultStr = createString("%s\"%s", resultStr->value, string->value);
-				continue;
-			}
-		}
-
+        ch = nextCharacter(document);
+        if (!isDoubleQuote(ch)) {
+            resultStr = createString("%s%s\"", resultStr->value, string->value);
+            continue;
+        }
+        ch = nextCharacter(document);
+        if (!isDoubleQuote(ch)) {
+            resultStr = createString("%s%s\"\"", resultStr->value, string->value);
+            continue;
+        }
+        resultStr = createString("%s%s", resultStr->value, string->value);
 		break;
 	}
 
