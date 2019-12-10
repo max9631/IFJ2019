@@ -106,7 +106,7 @@ Token *defineValue(Document *document) {
         handleError(LexError, "Invalid number syntax");
     }
 	TokenType type = DATA_TOKEN_INT;
-	if (dotOccured)
+	if (dotOccured || expOccured)
 		type = DATA_TOKEN_FLOAT;
 	return createToken(string, type);
 }
