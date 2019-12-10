@@ -157,15 +157,27 @@ Token *defineDoubleQuoteString(Document *document) {
 		handleError(LexError, "Incorrect string symbol on line %d. Did you mean of \"\"\"?", document->line);
 	}
 	
-	String *string = recordStringUntilChar(document, (int) '"');
-	for (int i = 0; i < 2; i++) {
-		ch = nextCharacter(document);
-		if (!isDoubleQuote(ch)) {
-			handleError(LexError, "Incorrect string end");
-		}
+	String *resultStr = createString("");
+	
+	while (true) {
+		String *string = recordStringUntilChar(document, (int) '"');
+		
+        ch = nextCharacter(document);
+        if (!isDoubleQuote(ch)) {
+            resultStr = createString("%s%s\"", resultStr->value, string->value);
+            continue;
+        }
+        ch = nextCharacter(document);
+        if (!isDoubleQuote(ch)) {
+            resultStr = createString("%s%s\"\"", resultStr->value, string->value);
+            continue;
+        }
+        resultStr = createString("%s%s", resultStr->value, string->value);
+		break;
 	}
+
 	nextCharacter(document);
-	return createToken(string, DATA_TOKEN_STRING);
+	return createToken(resultStr, DATA_TOKEN_STRING);
 }
 
 Token *defineApostrophString(Document *document) {
