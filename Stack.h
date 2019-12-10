@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "Node.h"
 #include "Token.h"
+
 typedef union StackItem {
     int intValue;
     PrefixItem *prefixItem;

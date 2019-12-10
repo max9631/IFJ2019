@@ -1,15 +1,14 @@
 #include "main.h"
 
 int main(int argc, char *argv[]) {
-	UNUSED(argc);
-	UNUSED(argv);
-
     inDebugMode = false;
     FILE *file;
     #ifdef IS_XCODE
+        if (argc == 0)
+            handleError(InternalError, "Unspecified file name");
         file = fopen(argv[1], "r");
         if (file == NULL)
-            handleError(2, "Invalid file name");
+            handleError(InternalError, "Invalid file name");
     #else
         file = stdin;
     #endif

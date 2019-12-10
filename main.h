@@ -5,9 +5,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-// Fakin hack, protoze GCC nedokaze vypnut warningy na nepouzivane promenne napric platformami.
-#define UNUSED(x) (void)(x);
-
 #include "List.h"
 #include "Scanner.h"
 #include "String.h"
