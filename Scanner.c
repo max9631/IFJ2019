@@ -75,21 +75,24 @@ Token *skipUntilNewLine(Document *document) {
 
 Token *defineValue(Document *document) {
 	int c = document->currentChar;
+    bool startsWithZero = c == (int)'0';
 	struct String *string = createStringFromChar(c);
 	bool dotOccured = false, expOccured = false, dotOccuredLast = false;
 	int i = 0;
 	c = nextCharacter(document);
-
+    int lenght = 1;
+    bool hasExplicitZerosAtStart = false;
 	while (isNumber(c) || isDot(c) || isExp(c)) {
-		if(isNumber(c)){}
-		else if(isDot(c) && !dotOccured && !expOccured){
+		if(isNumber(c)){
+            if (lenght == 2 && startsWithZero) {
+                hasExplicitZerosAtStart = true;
+            }
+        } else if(isDot(c) && !dotOccured && !expOccured){
 			dotOccured = dotOccured || isDot(c);
 			dotOccuredLast = dotOccured;
-		}
-		else if(isExp(c) && !expOccured && !dotOccuredLast){
+		} else if(isExp(c) && !expOccured && !dotOccuredLast){
 			expOccured = expOccured || isExp(c);
-		}
-		else{
+		} else{
 			handleError(LexError, "Invalid number syntax");
 		}
 		if(dotOccuredLast){
@@ -99,6 +102,7 @@ Token *defineValue(Document *document) {
                 i = 0;
 			}
 		}
+        lenght++;
 		appendCharacter(string, c);
 		c = nextCharacter(document);
 	}
@@ -108,6 +112,8 @@ Token *defineValue(Document *document) {
 	TokenType type = DATA_TOKEN_INT;
 	if (dotOccured || expOccured)
 		type = DATA_TOKEN_FLOAT;
+    if (type == DATA_TOKEN_INT && hasExplicitZerosAtStart)
+        handleError(LexError, "Invalid number notation. Redundant zero at start.");
 	return createToken(string, type);
 }
 
