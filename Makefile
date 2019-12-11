@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -pedantic -Wall -Wextra -std=c99
+CFLAGS = -pedantic -Wall -std=c99
 SOURCES = $(wildcard *.c)
 OBJECTS = $(SOURCES:.c=.o)
 PROGRAM = ifj
@@ -16,6 +16,9 @@ $(PROGRAM): $(OBJECTS)
 
 clean:
 	rm *.o $(PROGRAM) $(XLOGIN).zip
+
+check:
+	bash ./is_it_ok.sh
 
 zip:$(XLOGIN).zip
 
