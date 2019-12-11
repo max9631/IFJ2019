@@ -1,7 +1,9 @@
 /*
  * Author(s): Adam Salih (xsalih01), Jiří Veverka (xvever12)
+ * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
  * File: String.h, adds support for strings
  */
+ 
 #ifndef STRING_H
 #define STRING_H
 

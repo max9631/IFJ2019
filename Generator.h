@@ -1,5 +1,6 @@
 /*
  * Author(s): Jiří Veverka (xvever12), Michal Halabica (xhalab00), Adam Salih (xsalih01)
+ * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
  * File: Generator.h, Generates assembly instructions from nodes
  */
 

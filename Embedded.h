@@ -1,5 +1,6 @@
 /*
  * Author(s): Adam Salih (xsalih01)
+ * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
  * File: Embedded.h, defines embedded functions
  */
 #ifndef EMBEDDED_H

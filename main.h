@@ -1,5 +1,6 @@
 /*
  * Author(s): Adam Salih (xsalih01)
+ * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
  * File: main.h, Contains main body of the program
  */
  

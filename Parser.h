@@ -1,5 +1,6 @@
 /*
  * Author(s): Adam Salih (xsalih01), Michal Halabica (xhalab00)
+ * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
  * File: Parser.h, implementation of semantic and syntax analysation
  */
 

@@ -1,5 +1,6 @@
 /*
  * Author(s): Michal Halabica (xhalab00)
+ * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
  * File: Error.h, Implementation of error codes and error handling
  */
  

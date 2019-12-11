@@ -1,5 +1,6 @@
 /*
  * Author(s): Adam Salih (xsalih01)
+ * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
  * File: symtable.h, Implementation of hash table structure
  */
 

@@ -1,7 +1,9 @@
 /*
  * Author(s): Adam Salih (xsalih01), Michal Halabica (xhalab00)
- * File: Token.h
+ * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
+ * File: Token.h, token implementation and declaration of token types
  */
+ 
 #ifndef TOKEN_H
 #define TOKEN_H
 #include <stdbool.h>
