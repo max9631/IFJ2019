@@ -1,3 +1,9 @@
+/*
+ * Author(s): Adam Salih (xsalih01), Michal Halabica (xhalab00)
+ * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
+ * File: Parser.c, implementation of semantic and syntax analysation
+ */
+ 
 #include "Parser.h"
 
 ParserState *createParserState(List *list) {

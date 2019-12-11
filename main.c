@@ -1,3 +1,9 @@
+/*
+ * Author(s): Adam Salih (xsalih01)
+ * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
+ * File: main.c, Contains main body of the program
+ */
+ 
 #include "main.h"
 
 int main(int argc, char *argv[]) {

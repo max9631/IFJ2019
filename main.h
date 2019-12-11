@@ -1,3 +1,9 @@
+/*
+ * Author(s): Adam Salih (xsalih01)
+ * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
+ * File: main.h, Contains main body of the program
+ */
+ 
 #ifndef MAIN_H
 #define MAIN_H
 
@@ -16,4 +22,4 @@ Document *document;
 List *tokenList;
 bool inDebugMode;
 
-#endif
+#endif //MAIN_H

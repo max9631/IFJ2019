@@ -1,10 +1,16 @@
+/*
+ * Author(s): Tomáš Rusín (xrusin04)
+ * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
+ * File: Instruction.h, definitions of assembly instructions
+ */
+
 #ifndef ASSEMBLYDEFS_H
 #define ASSEMBLYDEFS_H
 #include "String.h"
 
 void instructionIFJSign(void);
 
-// Prace s ramci, volani funkci
+// Work with frames and function calling instructions
 void instructionMove(String *var, String *sym);
 void instructionCreateFrame(void);
 void instructionPushFrame(void);
@@ -13,12 +19,12 @@ void instructionDefVar(String *var);
 void instructionCall(String *label);
 void instructionReturn(void);
 
-// Prace s datovym zasobnikem
+// Data stack functions
 void instructionPushStack(String *var);
 void instructionPopStack(String *var);
 void instructionClearStack(void);
 
-// Aritmeticke, relacni, booleovske a konverzni instrukce
+// Arithmetic, relational, boolean and converting instructions
 void instructionAdd(String *var, String *symb1, String *symb2);
 void instructionSub(String *var, String *symb1, String *symb2);
 void instructionMul(String *var, String *symb1, String *symb2);
@@ -50,20 +56,20 @@ void instructionFloatToIntStack(void);
 void instructionIntToCharStack(void);
 void instructionStriToIntStack(void);
 
-// Vstupne-Vystupni instrukce
+// Input-output instructions
 void instructionRead(String *var, String *type);
 void instructionWrite(String *symb);
 
-// Prace s reteci
+// Work with strings
 void instructionConcat(String *var, String *sym1, String *sym2);
 void instructionStrLen(String *var, String *str);
 void instructionGetChar(String *var, String *str, String *position);
 void instructionSetChar(String *var);
 
-// Prace s typy
+// Work with types
 void instructionType(String *var, String *sym);
 
-// Instrukce pro rizeni toku programu
+// Functions for controling program flow
 void instructionLabel(String *label);
 void instructionJump(String *label);
 void instructionJumpIfEquals(String *label, String *symb1, String *symb2);
@@ -72,8 +78,8 @@ void instructionJumpIfEqualsStack(String *label);
 void instructionJumpIfNotEqualsStack(String *label);
 void instructionExit(int exitCode);
 
-// Ladici instrukce
+// Debug instrictions
 void instructionBreak(void);
 void instructionDPrint(void);
 
-#endif
+#endif //ASSEMBLYDEFS_H

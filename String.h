@@ -1,3 +1,9 @@
+/*
+ * Author(s): Adam Salih (xsalih01), Jiří Veverka (xvever12), Michal Halabica (xhalab00)
+ * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
+ * File: String.h, adds support for strings
+ */
+ 
 #ifndef STRING_H
 #define STRING_H
 
@@ -8,6 +14,7 @@
 #include <string.h>
 #include "Error.h"
 
+//Struct containing defined string
 typedef struct String {
     int lenght;
     char *value;
@@ -15,9 +22,13 @@ typedef struct String {
 
 
 /**
- * Creates a string using malloc.
+ * Creates a string from array of chars using malloc. Accepts variable arguments
  */
 String *createString(char *chars, ...);
+
+/**
+ * Creates a string from char using malloc.
+ */
 String *createStringFromChar(char ch);
 
 /**
@@ -43,11 +54,28 @@ void destroyString(String *str);
   * [in] char *str: Variable with input string
   * [out] int with length of the string
   */
-
 int stringLength(char *str);
 
+
+/**
+ * Converts string chars to hexa
+ * [in] String *fromStr: Variable with input string
+ * [out] string with valid hexa chars
+ */
 String *convertStringCharsToHexadecimal(String *fromStr);
+
+/**
+ * Converts string float numbers to hexa
+ * [in] String *fl: Variable with input string
+ * [out] string with valid float in hexa
+ */
 String *convertFloatToHexadecimal(String *fl);
+
+/**
+ * Converts bool to lowercase
+ * [in] String *fl: Variable with input string containing bool
+ * [out] string with bool in lowercase
+ */
 String *convertBoolToLowercase(String *fl);
 
-#endif
+#endif //STRING_H
