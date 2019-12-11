@@ -48,7 +48,7 @@ bool isPlus(int c) { return c == (int) '+'; }
 bool isMinus(int c) { return c == (int) '-'; }
 bool isDevision(int c) { return c == (int) '/'; }
 bool isMultiplication(int c) { return c == (int) '*'; }
-bool isSpace(int c) { return c == (int) ' '; }
+bool isSpace(int c) { return c == (int) ' ' || c == (int)'\t'; }
 bool isComment(int c) { return c == (int) '#'; }
 bool isUnderscore(int c) { return c == (int) '_'; }
 bool isExp(int c){ return (c == (int) 'E' || c == (int) 'e'); }
