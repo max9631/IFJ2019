@@ -110,10 +110,12 @@ Token *defineValue(Document *document) {
         handleError(LexError, "Invalid number syntax");
     }
 	TokenType type = DATA_TOKEN_INT;
-	if (dotOccured || expOccured)
+	if (dotOccured || expOccured){
 		type = DATA_TOKEN_FLOAT;
-    if (type == DATA_TOKEN_INT && hasExplicitZerosAtStart)
+	}
+    if (type == DATA_TOKEN_INT && hasExplicitZerosAtStart){
         handleError(LexError, "Invalid number notation. Redundant zero at start.");
+	}
 	return createToken(string, type);
 }
 
