@@ -1,5 +1,5 @@
 /*
- * Author(s): Adam Salih (xsalih01), Tomáš Rusín (xrusin04), Jiří Veverka (xvever12)
+ * Author(s): Adam Salih (xsalih01), Tomáš Rusín (xrusin04), Jiří Veverka (xvever12), Michal Halabica (xhalab00)
  * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
  * File: Scanner.c, scans and tokenizes input file
  */
