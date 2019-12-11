@@ -1,3 +1,8 @@
+/*
+ * Author(s): Adam Salih (xsalih01)
+ * File: Node.h, implementation of node structure
+ */
+
 #ifndef NODE_H
 #define NODE_H
 #include "String.h"
@@ -188,4 +193,4 @@ void destroyExpressionNode(ExpressionNode *node);
 void destroyBodyNode(BodyNode *node);
 void destroyMainNode(MainNode *node);
 
-#endif
+#endif //NODE_H

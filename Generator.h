@@ -1,3 +1,8 @@
+/*
+ * Author(s): Jiří Veverka (xvever12), Michal Halabica (xhalab00), Adam Salih (xsalih01)
+ * File: Generator.h, Generates assembly instructions from nodes
+ */
+
 #ifndef GENERATOR_H
 #define GENERATOR_H
 #include "Node.h"
@@ -33,6 +38,7 @@ typedef struct _Generator {
 
 Generator *createGenerator(void);
 
+//Generates assembly code from nodes
 void generateMain(Generator *generator, MainNode *main);
 void generateBody(Generator *generator, BodyNode *body);
 void generateFunc(Generator *generator, FuncNode *function);
@@ -50,4 +56,4 @@ void generatePrint(Generator *generator, CallNode *call);
 void generateInput(Generator *generator, String *type);
 void generateLen(Generator *generator, ExpressionNode *expression);
 
-#endif
+#endif //GENERATOR_H

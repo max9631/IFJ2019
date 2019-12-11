@@ -1,3 +1,8 @@
+/*
+ * Author(s): Adam Salih (xsalih01)
+ * File: symtable.h, Implementation of hash table structure
+ */
+
 #ifndef _HASHTABLE_H_
 #define _HASHTABLE_H_
 
@@ -7,7 +12,7 @@
 #include "Error.h"
 #include "String.h"
 
-#define HTSIZE 61
+#define HTSIZE 61 //Hash table size
 
 typedef struct FunctionMeta {
     int argsCount;
@@ -57,4 +62,4 @@ HashTable *createSymbolTable(void);
 void insertHashTableSymbol(HashTable *table, char* key);
 SymbolMeta *getSymbolMeta(HashTable *table, char* key);
 
-#endif
+#endif //HASHTABLE_H
