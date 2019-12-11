@@ -1,3 +1,8 @@
+/*
+ * Author(s): Adam Salih (xsalih01)
+ * File: Resource.h, Support for global variables availability
+ */
+
 #ifndef PARSER_H
 #define PARSER_H
 #include "List.h"

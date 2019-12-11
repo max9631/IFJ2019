@@ -1,3 +1,8 @@
+/*
+ * Author(s): Adam Salih (xsalih01)
+ * File: List.h, Implementation of single linked list data structure 
+ */
+ 
 #ifndef LIST_H
 #define LIST_H
 #include <stdlib.h>
@@ -83,4 +88,4 @@ Token *consume(List *list, TokenType expectedType);
  */
 bool isNextTokenOfType(List *list, TokenType type);
 
-#endif
+#endif //LIST_H

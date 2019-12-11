@@ -1,3 +1,8 @@
+/*
+ * Author(s): Adam Salih (xsalih01)
+ * File: Resource.h, Support for global variables availability
+ */
+
 #ifndef STACK_H
 #define STACK_H
 #include <stdlib.h>

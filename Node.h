@@ -1,3 +1,8 @@
+/*
+ * Author(s): Adam Salih (xsalih01)
+ * File: Resource.h, Support for global variables availability
+ */
+
 #ifndef NODE_H
 #define NODE_H
 #include "String.h"
