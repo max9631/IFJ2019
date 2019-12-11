@@ -1,3 +1,9 @@
+/*
+ * Author(s): Tomáš Rusín (xrusin04)
+ * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
+ * File: Instruction.c, definitions of assembly instructions
+ */
+
 #include "Instruction.h"
 
 void instructionIFJSign() {

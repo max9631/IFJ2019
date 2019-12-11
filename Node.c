@@ -1,3 +1,9 @@
+/*
+ * Author(s): Adam Salih (xsalih01)
+ * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
+ * File: Node.c, implementation of node structure
+ */
+ 
 #include "Node.h"
 
 OperationNode *createOperationNode(OperationType type) {
