@@ -3,6 +3,9 @@
  * File: Node.h, implementation of node structure
  */
 
+// This file contains set of nodes that togather makes a derivation tree.
+// The top of a derivation tree is allways MainNode.
+
 #ifndef NODE_H
 #define NODE_H
 #include "String.h"
@@ -161,6 +164,7 @@ typedef struct _MainNode {
     FuncNode **functions;
 } MainNode;
 
+// Allocates given node structure, initializes its values and returns its pointer
 PrefixItem *createPrefixItem(void *value, PrefixType type);
 OperationNode *createOperationNode(OperationType type);
 ValueNode *createValueNode(String *str, ValueType type, bool isGlobal);
@@ -176,10 +180,14 @@ MainNode *createMainNode(BodyNode *body);
 
 OperationType operationTypeForToken(Token *token);
 
+// Adds statement node to body node
 void addBodyStatement(BodyNode *body, StatementNode *statement);
+// Add argument identifier to function node
 void addFunctionArgument(FuncNode *function, String *argument);
+// Add argument value to call node
 void addCallArgument(CallNode *call, ExpressionNode *expression);
 
+// Deallocates given node structure and its siblings.
 void destroyPrefixItem(PrefixItem *item);
 void destroyOperationNode(OperationNode *node);
 void destroyValueNode(ValueNode *node);
