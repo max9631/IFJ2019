@@ -1,5 +1,11 @@
-#ifndef Error_H
-#define Error_H
+/*
+ * Author(s): Michal Halabica (xhalab00)
+ * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
+ * File: Error.h, Implementation of error codes and error handling
+ */
+ 
+#ifndef ERROR_H
+#define ERROR_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,6 +14,7 @@
 
 #include "Resource.h"
 
+//Enum containing error codes
 typedef enum ErrorCodes {
     OK = 0,
     LexError = 1,
@@ -20,6 +27,7 @@ typedef enum ErrorCodes {
     InternalError = 99
 } ErrorCodes;
 
+//Handles error and prints error message
 void handleError(ErrorCodes code, char* message, ...);
 
-#endif
+#endif //ERROR_H

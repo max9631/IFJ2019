@@ -1,3 +1,9 @@
+/*
+ * Author(s): Adam Salih (xsalih01)
+ * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
+ * File: Stack.c, implementation of stack
+ */
+
 #include "Stack.h"
 
 
@@ -50,4 +56,3 @@ void destroyStack(Stack *stack) {
     if (stack->count > 0) free(stack->items);
     free(stack);
 }
-

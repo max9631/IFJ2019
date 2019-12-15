@@ -1,3 +1,9 @@
+/*
+ * Author(s): Adam Salih (xsalih01), Tomáš Rusín (xrusin04), Jiří Veverka (xvever12), Michal Halabica (xhalab00)
+ * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
+ * File: Scanner.c, scans and tokenizes input file
+ */
+
 #include "Scanner.h"
 
 Document *createDocument(FILE *file) {
@@ -48,7 +54,7 @@ bool isPlus(int c) { return c == (int) '+'; }
 bool isMinus(int c) { return c == (int) '-'; }
 bool isDevision(int c) { return c == (int) '/'; }
 bool isMultiplication(int c) { return c == (int) '*'; }
-bool isSpace(int c) { return c == (int) ' '; }
+bool isSpace(int c) { return c == (int) ' ' || c == (int)'\t'; }
 bool isComment(int c) { return c == (int) '#'; }
 bool isUnderscore(int c) { return c == (int) '_'; }
 bool isExp(int c){ return (c == (int) 'E' || c == (int) 'e'); }
@@ -75,21 +81,24 @@ Token *skipUntilNewLine(Document *document) {
 
 Token *defineValue(Document *document) {
 	int c = document->currentChar;
+    bool startsWithZero = c == (int)'0';
 	struct String *string = createStringFromChar(c);
 	bool dotOccured = false, expOccured = false, dotOccuredLast = false;
 	int i = 0;
 	c = nextCharacter(document);
-
+    int lenght = 1;
+    bool hasExplicitZerosAtStart = false;
 	while (isNumber(c) || isDot(c) || isExp(c)) {
-		if(isNumber(c)){}
-		else if(isDot(c) && !dotOccured && !expOccured){
+		if(isNumber(c)){
+            if (lenght == 2 && startsWithZero) {
+                hasExplicitZerosAtStart = true;
+            }
+        } else if(isDot(c) && !dotOccured && !expOccured){
 			dotOccured = dotOccured || isDot(c);
 			dotOccuredLast = dotOccured;
-		}
-		else if(isExp(c) && !expOccured && !dotOccuredLast){
+		} else if(isExp(c) && !expOccured && !dotOccuredLast){
 			expOccured = expOccured || isExp(c);
-		}
-		else{
+		} else{
 			handleError(LexError, "Invalid number syntax");
 		}
 		if(dotOccuredLast){
@@ -99,6 +108,7 @@ Token *defineValue(Document *document) {
                 i = 0;
 			}
 		}
+        lenght++;
 		appendCharacter(string, c);
 		c = nextCharacter(document);
 	}
@@ -106,8 +116,12 @@ Token *defineValue(Document *document) {
         handleError(LexError, "Invalid number syntax");
     }
 	TokenType type = DATA_TOKEN_INT;
-	if (dotOccured)
+	if (dotOccured || expOccured){
 		type = DATA_TOKEN_FLOAT;
+	}
+    if (type == DATA_TOKEN_INT && hasExplicitZerosAtStart){
+        handleError(LexError, "Invalid number notation. Redundant zero at start.");
+	}
 	return createToken(string, type);
 }
 
@@ -157,15 +171,27 @@ Token *defineDoubleQuoteString(Document *document) {
 		handleError(LexError, "Incorrect string symbol on line %d. Did you mean of \"\"\"?", document->line);
 	}
 	
-	String *string = recordStringUntilChar(document, (int) '"');
-	for (int i = 0; i < 2; i++) {
-		ch = nextCharacter(document);
-		if (!isDoubleQuote(ch)) {
-			handleError(LexError, "Incorrect string end");
-		}
+	String *resultStr = createString("");
+	
+	while (true) {
+		String *string = recordStringUntilChar(document, (int) '"');
+		
+        ch = nextCharacter(document);
+        if (!isDoubleQuote(ch)) {
+            resultStr = createString("%s%s\"", resultStr->value, string->value);
+            continue;
+        }
+        ch = nextCharacter(document);
+        if (!isDoubleQuote(ch)) {
+            resultStr = createString("%s%s\"\"", resultStr->value, string->value);
+            continue;
+        }
+        resultStr = createString("%s%s", resultStr->value, string->value);
+		break;
 	}
+
 	nextCharacter(document);
-	return createToken(string, DATA_TOKEN_STRING);
+	return createToken(resultStr, DATA_TOKEN_STRING);
 }
 
 Token *defineApostrophString(Document *document) {

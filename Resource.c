@@ -1,3 +1,9 @@
+/*
+ * Author(s): Adam Salih (xsalih01)
+ * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
+ * File: Resource.c, Support for global variables availability
+ */
+
 #include "Resource.h"
 #include "List.h"
 

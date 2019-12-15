@@ -1,3 +1,0 @@
-res = '3' or 1
-print(res)
-

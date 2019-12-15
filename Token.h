@@ -1,3 +1,9 @@
+/*
+ * Author(s): Adam Salih (xsalih01), Michal Halabica (xhalab00)
+ * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
+ * File: Token.h, token implementation and declaration of token types
+ */
+ 
 #ifndef TOKEN_H
 #define TOKEN_H
 #include <stdbool.h>
@@ -56,17 +62,26 @@ typedef enum {
     KEYWORD_PASS //pass
  } TokenType;
 
+//Struct defining token and its info
 typedef struct Token {
     String *value;
     TokenType type;
     int line;
 } Token;
 
+//Creates new token
 Token *createToken(String *string, TokenType type);
+
+//Creates new token with a given value
 Token *createTokenWithLine(String *string, TokenType type, int line);
+
+//Converts token type to a string
 String *convertTokenTypeToString(TokenType type);
+
+//Destroys token
 void destroyToken(Token *token);
 
+//Checks if given token is an operator
 bool isTokenAsignOperator(Token *token);
 
-#endif
+#endif //TOKEN_H

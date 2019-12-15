@@ -1,3 +1,9 @@
+/*
+ * Author(s): Adam Salih (xsalih01), Michal Halabica (xhalab00)
+ * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
+ * File: Token.c, token implementation and declaration of token types
+ */
+ 
 #include "Token.h"
 
 Token *createToken(String *string, TokenType type) {

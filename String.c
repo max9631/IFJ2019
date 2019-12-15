@@ -1,3 +1,9 @@
+/*
+ * Author(s): Adam Salih (xsalih01), Jiří Veverka (xvever12), Michal Halabica (xhalab00)
+ * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
+ * File: String.c, adds support for strings
+ */
+
 #include "String.h"
 
 String *createStringFromChar(char ch){

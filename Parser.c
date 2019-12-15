@@ -1,3 +1,9 @@
+/*
+ * Author(s): Adam Salih (xsalih01), Michal Halabica (xhalab00)
+ * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
+ * File: Parser.c, implementation of semantic and syntax analysation
+ */
+ 
 #include "Parser.h"
 
 ParserState *createParserState(List *list) {
@@ -22,8 +28,38 @@ void DestroyParserState(ParserState *state) {
     free(state);
 }
 
+void registerFunctionNames(ParserState *state) {
+    ListItem *item = state->list->first;
+    while (item != NULL) {
+        if (item->value.token->type == KEYWORD_DEF) {
+            item = item->nextItem;
+            if (item->value.token->type == TOKEN_IDENTIFIER) {
+                String *identifier = item->value.token->value;
+                if (containsFunction(state, identifier)) {
+                    handleError(SemanticIdentifierError, "Invalid redeclaration of a function '%s' on line %d", identifier->value, item->value.token->line);
+                }
+                int argsCount = 0;
+                item = item->nextItem;
+                if (item->value.token->type != TOKEN_OPAREN) {
+                    handleError(SyntaxError, "Wrong function syntax on line %d", item->value.token->line);
+                }
+                item = item->nextItem;
+                while(item->value.token->type != TOKEN_CPAREN && item != NULL) {
+                    if (item->value.token->type == TOKEN_IDENTIFIER) {
+                        argsCount++;
+                    }
+                    item = item->nextItem;
+                }
+                registerFunction(state, identifier, argsCount);
+            }
+        }
+        item = item->nextItem;
+    }
+}
+
 MainNode *parseTokens(ParserState *state) {
     state->main = createMainNode(createBodyNode(NULL, createSymbolTable(), true));
+    registerFunctionNames(state);
     BodyNode *body = state->main->body;
     while (peek(state->list)->type != TOKEN_EOF) {
         if (peek(state->list)->type != TOKEN_EOL) {
@@ -54,9 +90,6 @@ FuncNode *parseFunc(ParserState *state, BodyNode *body) {
     List *list = state->list;
     consume(list, KEYWORD_DEF);
     Token *name = consume(list, TOKEN_IDENTIFIER);
-    if (containsFunction(state, name->value)) {
-        handleError(SemanticIdentifierError, "Invalid redeclaration of a function '%s' on line %d", name->value->value, name->line);
-    }
     consume(list, TOKEN_OPAREN);
     FuncNode *function = createFuncNode(name->value, NULL, NULL);
     registerFunction(state, name->value, 0);
@@ -124,13 +157,15 @@ AssignNode *parseAssign(ParserState *state, BodyNode *body) {
     if (contains(state->main->funcTable, identifier->value->value))
         handleError(SemanticIdentifierError, "Identifier %s on line %d is allready taken.", identifier->value->value, identifier->line);
     if (containsSymbol(body, identifier->value)) {
-        getHashTableItem(body->symTable, identifier->value->value)->data.symbol->referenceCount++;
+        BodyNode *idBody = findBodyForIdentifier(body, identifier->value);
+        getHashTableItem(idBody->symTable, identifier->value->value)->data.symbol->referenceCount++;
         createsVar = false;
     } else {
         registerSymbol(body, identifier->value);
     }
+    BodyNode *idBody = findBodyForIdentifier(body, identifier->value);
     TokenType type = popToken(state->list)->type;
-    SymbolMeta *meta = getSymbolMeta(body->symTable, identifier->value->value);
+    SymbolMeta *meta = getSymbolMeta(idBody->symTable, identifier->value->value);
     switch (type) {
     case OPERATOR_ASSIGN: return createAssignNode(identifier->value, ASSIGN_NONE, parseExpression(state, body), meta, createsVar, isGlobal);
     case OPERATOR_DIV_ASSIGN: return createAssignNode(identifier->value, ASSIGN_DIV, parseExpression(state, body), meta, createsVar, isGlobal);

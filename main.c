@@ -1,15 +1,20 @@
+/*
+ * Author(s): Adam Salih (xsalih01)
+ * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
+ * File: main.c, Contains main body of the program
+ */
+ 
 #include "main.h"
 
 int main(int argc, char *argv[]) {
-	UNUSED(argc);
-	UNUSED(argv);
-
     inDebugMode = false;
     FILE *file;
     #ifdef IS_XCODE
+        if (argc == 0)
+            handleError(InternalError, "Unspecified file name");
         file = fopen(argv[1], "r");
         if (file == NULL)
-            handleError(2, "Invalid file name");
+            handleError(InternalError, "Invalid file name");
     #else
         file = stdin;
     #endif
@@ -21,6 +26,4 @@ int main(int argc, char *argv[]) {
 	ParserState *state = createParserState(tokenList);
 	MainNode *tree = parseTokens(state);
     generateMain(createGenerator(), tree);
-
-	//DestroyParserState(state); // TODO: Fix memory management.
 }

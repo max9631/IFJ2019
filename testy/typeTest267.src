@@ -1,3 +1,0 @@
-res = True >= 2.0
-print(res)
-

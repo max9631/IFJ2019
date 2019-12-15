@@ -1,12 +1,15 @@
+/*
+ * Author(s): Adam Salih (xsalih01)
+ * Project: Implementace prekladace imperativniho jazyka jazyka IFJ19
+ * File: main.h, Contains main body of the program
+ */
+ 
 #ifndef MAIN_H
 #define MAIN_H
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-
-// Fakin hack, protoze GCC nedokaze vypnut warningy na nepouzivane promenne napric platformami.
-#define UNUSED(x) (void)(x);
 
 #include "List.h"
 #include "Scanner.h"
@@ -19,4 +22,4 @@ Document *document;
 List *tokenList;
 bool inDebugMode;
 
-#endif
+#endif //MAIN_H
